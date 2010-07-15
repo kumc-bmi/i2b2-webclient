@@ -21,7 +21,7 @@
 		},
 		category: ["core","cell"],
 		paramTranslation: [
-			{xmlName:'OntMax', thinClientName:'max', defaultValue:100},
+			{xmlName:'OntMax', thinClientName:'max', defaultValue:500},
 			{xmlName:'OntHiddens', thinClientName:'hiddens', defaultValue:false},
 			{xmlName:'OntSynonyms', thinClientName:'synonyms', defaultValue:false}
 		]

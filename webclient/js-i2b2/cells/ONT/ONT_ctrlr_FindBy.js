@@ -21,9 +21,13 @@ i2b2.ONT.ctrlr.FindBy = {
 		var f = $('ontFormFindName');
 		var search_info = {};
 		search_info.SearchStr = f.ontFindNameMatch.value;
+		if (search_info.SearchStr.length < 3) {
+			alert("Search string must be greater than 3 characters.");
+		} else {
 		search_info.Category = f.ontFindCategory.options[f.ontFindCategory.selectedIndex].value;
 		search_info.Strategy = f.ontFindStrategy.options[f.ontFindStrategy.selectedIndex].value;
 		i2b2.ONT.ctrlr.FindBy.doNameSearch(search_info);
+		}
 	},
 
 // ================================================================================================== //
@@ -73,7 +77,14 @@ i2b2.ONT.ctrlr.FindBy = {
 			searchCats.push(inSearchData.Category);
 		}
 			
-		var treeObj = i2b2.ONT.view['find'].yuiTreeName;
+	//	var treeObj = i2b2.ONT.view['find'].yuiTreeName;
+		
+		//Create a new treeobject so it does not append 
+		treeObj = new YAHOO.widget.TreeView("ontSearchNamesResults");
+		treeObj.setDynamicLoad(i2b2.sdx.Master.LoadChildrenFromTreeview,1);
+		// register the treeview with the SDX subsystem to be a container for CONCPT objects
+		i2b2.sdx.Master.AttachType("ontSearchNamesResults","CONCPT");
+		
 		var jsTreeObjPath = 'i2b2.ONT.view.find.yuiTreeName';
 		var tmpNode;
 
@@ -84,13 +95,36 @@ i2b2.ONT.ctrlr.FindBy = {
 		searchOptions.ont_hidden_records = i2b2.ONT.view['find'].params.hiddens;
 		searchOptions.ont_search_strategy = inSearchData.Strategy;
 		searchOptions.ont_search_string = inSearchData.SearchStr;
+		
+		document.getElementById('ontFindNameButtonWorking').style.display = 'block';
 		// fire multiple AJAX calls
 		l = searchCats.length;
+		var totalCount = 0;
 		for (var i=0; i<l; i++) {
 			searchOptions.ont_category = searchCats[i];
 			var results = i2b2.ONT.ajax.GetNameInfo("ONT:FindBy", searchOptions);
+			
+						//Determine if a error occured
+			// <result_status>  <status type="ERROR">MAX_EXCEEDED</status>  </result_status> 
+			var s = i2b2.h.XPath( results.refXML, 'descendant::result_status/status[@type="ERROR"]');
+			if (s.length > 0) {
+				// we have a proper error msg
+				try {
+					if (s[0].firstChild.nodeValue == "MAX_EXCEEDED")
+						alert("Max number of terms exceeded please try with a more specific query.");
+					else
+						alert("ERROR: "+s[0].firstChild.nodeValue);	
+					document.getElementById('ontFindButtonWorking').style.display = 'none';						
+					return;
+				} catch (e) {
+					alert("An unknown error has occured during your rest call attempt!");
+				}
+			} 
+		
+
 			// display the results
 			var c = results.refXML.getElementsByTagName('concept');
+			totalCount = totalCount + c.length;
 			for(var i2=0; i2<1*c.length; i2++) {
 				var o = new Object;
 				o.xmlOrig = c[i2];
@@ -122,8 +156,17 @@ i2b2.ONT.ctrlr.FindBy = {
 				i2b2.sdx.Master.AppendTreeNode(treeObj, treeObj.root, sdxRenderData);
 			}
 			// redraw treeview
+
 			treeObj.draw();
 		}
+		
+		if (totalCount == 0)
+		{
+			alert("No Records Found");
+		}
+	
+		document.getElementById('ontFindNameButtonWorking').style.display = 'none';
+
 	},
 
 // ================================================================================================== //
@@ -154,6 +197,9 @@ i2b2.ONT.ctrlr.FindBy = {
 				return false;
 			}
 		}
+		
+		document.getElementById('ontFindCodeButtonWorking').style.display = 'block';
+		
 		var code_system = inSearchData.Coding;
 		// scope our callback function
 		var scopedCallback = new i2b2_scopedCallback();
@@ -208,9 +254,16 @@ i2b2.ONT.ctrlr.FindBy = {
 				var sdxRenderData = i2b2.sdx.Master.RenderHTML(treeObj.id, sdxDataNode, renderOptions);
 				i2b2.sdx.Master.AppendTreeNode(treeObj, treeObj.root, sdxRenderData);
 			}
+			
+			if (c.length == 0)
+			{
+				alert("No Records Found");
+			}
 			// redraw treeview	
 			treeObj.draw();
 		}
+		document.getElementById('ontFindCodeButtonWorking').style.display = 'none';			
+
 		// add options
 		var searchOptions = {};
 		searchOptions.ont_max_records = "max='"+i2b2.ONT.view['find'].params.max+"' ";

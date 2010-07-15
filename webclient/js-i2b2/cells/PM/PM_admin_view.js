@@ -1,3 +1,4 @@
+
 /**
  * @projectDescription	PM Administration Module
  * @inherits			i2b2
@@ -7,7 +8,49 @@
  */
 
 i2b2.PM.model.helpMSGS = {};
-i2b2.PM.model.helpMSGS.LOADED = "Welcome to the i2b2 Project Management Interface<br />Use the tree on the left to load a configuration screen.";
+i2b2.PM.model.helpMSGS.LOADED = "<div><img width=152 height=152 style=\"padding: 10px; vertical-align: middle;\" src=js-i2b2/cells/PM/assets/i2b2_hive.png><span style=\"font-size: 36pt; color: rgb(54, 95, 145);\">i2b2 Administration</span></div><br/>" 
+    +"Welcome to the <b>i2b2 Administration module</b> of the <i>project management interface</i>.<br><br>"
+	+ "The pages within i2b2 Admin are designed to assist with workflow and overall ease of use, individuals can easily save data and parameters for the hive, projects and users.<br/><br/><table>"
+	+ "<tr><td><b>Manage Hive</b></td>"
+	+ "<td>View domain information and capture cell data and global parameters.</td></tr>"
+	+ "<tr><td><b>Manage Project</b></td>"
+	
+
+	+ "<td>General information about the project as well as project specific cell data, parameters, and user access and roles.</td></tr>"
+
+ 
+	
+
+ 
+
+	+ "<tr><td><b>Manage Users</b></td>"
+	
+
+	+ "<td>General information about a user.</td></tr>"
+
+ 
+	
+
+ 
+
+	+ "<tr><td><b>Manage Approvals</b></td>"
+	
+
+	+ "<td>Captures general information used to authorize projects.</td></tr>"
+
+ 
+	
+
+ 
+
+	+ "<tr><td><b>Project Requests</b></td>"
+	
+
+	+ "<td>View information about submitted project requests.</td></tr></table>"
+
+ 
+
+	+"<br>The <b>navigation bar</b> on the left side of the page can be used to access individual pages.";
 i2b2.PM.model.helpMSGS.HIVE = "Hive Configuration<br />Describe what these functions are for.";
 i2b2.PM.model.helpMSGS.PROJECT = "<form><p>Click on \"Project\" in the navigation bar to refresh the list of projects.<br />Please select a project on the left to edit it's properties</p>"+
 	'<div id="AddNewProjBtnDIV"><input type="BUTTON" value="Add New Project" onclick="$(\'AddNewProjBtnDIV\').hide(); $(\'AddNewProjDIV\').show();"></div>'+
@@ -37,6 +80,7 @@ i2b2.PM.model.adminButtonsPrimary["HIVEDOMAINS"] = "<form><input type='button' v
 i2b2.PM.model.adminButtonsPrimary["HIVECELLS"] = "<form><input type='button' value='Save Updates' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'UPDATE');\"/><input type='button' value='Delete' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'DELETE');\"/><input type='button' value='Add New' onclick=\"i2b2.PM.admin.clickActionBtn(1,'NEW');\"/></form>";
 i2b2.PM.model.adminButtonsPrimary["HIVEGLOBALS"] = "<form><input type='button' value='Save Updates' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'UPDATE');\"/><input type='button' value='Delete' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'DELETE');\"/><input type='button' value='Add New' onclick=\"i2b2.PM.admin.clickActionBtn(1,'NEW');\"/></form>";
 i2b2.PM.model.adminButtonsPrimary["USERS"] = "<form><input type='button' value='Save Updates' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'UPDATE');\"/><input type='button' value='Delete' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'DELETE');\"/><input type='button' value='Add New' onclick=\"i2b2.PM.admin.clickActionBtn(1,'NEW');\"/></form>";
+i2b2.PM.model.adminButtonsPrimary["APPROVALS"] = "<form><input type='button' value='Save Updates' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'UPDATE');\"/><input type='button' value='Delete' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'DELETE');\"/><input type='button' value='Add New' onclick=\"i2b2.PM.admin.clickActionBtn(1,'NEW');\"/></form>";
 i2b2.PM.model.adminButtonsPrimary["PROJECTREC-PARAMS"] = "<form><input type='button' value='Save Updates' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'UPDATE');\"/><input type='button' value='Delete' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'DELETE');\"/><input type='button' value='Add New' onclick=\"i2b2.PM.admin.clickActionBtn(1,'NEW');\"/></form>";
 i2b2.PM.model.adminButtonsPrimary["PROJECTREC-CELLS"] = "<form><input type='button' value='Save Updates' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'UPDATE');\"/><input type='button' value='Delete' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'DELETE');\"/><input type='button' value='Add New' onclick=\"i2b2.PM.admin.clickActionBtn(1,'NEW');\"/></form>";
 i2b2.PM.model.adminButtonsPrimary["PROJECTREC-USERS"] = "<form><input type='button' value='Save Updates' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'UPDATE');\"/><input type='button' value='Delete' onclick=\"i2b2.PM.admin.clickActionBtn(1, 'DELETE');\"/><input type='button' value='Add New' onclick=\"i2b2.PM.admin.clickActionBtn(1,'NEW');\"/></form>";
@@ -77,6 +121,24 @@ i2b2.PM.model.adminColumnDef["HIVECELLPARAMS"] = [
 	{key:"value",sortable:true, resizeable:true,editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}
 ];
 
+i2b2.PM.model.adminColumnDef["PROJECTREQUESTS"] = [
+	{key:"id", sortable:true, resizeable:true}, 
+	{key:"project_id",sortable:true, resizeable:true}, 
+	{key:"title",sortable:true, resizeable:true}, 
+	{key:"entry_date",sortable:true, resizeable:true, formatter:YAHOO.widget.DataTable.formatDate},
+	{key:"submit_char",sortable:true, resizeable:true},
+	{key:"request_xml",sortable:true, resizeable:true}
+
+];
+
+i2b2.PM.model.adminColumnDef["APPROVALS"] = [
+	{key:"id", sortable:true, resizeable:true, editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}, 
+	{key:"name",sortable:true, resizeable:true, editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}, 
+	{key:"description",sortable:true, resizeable:true, editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}, 
+	{key:"activation_date",sortable:true, resizeable:true, formatter:"myDate", editor: new YAHOO.widget.DateCellEditor()}, 
+	{key:"expiration_date",sortable:true, resizeable:true,formatter:"myDate", editor: new YAHOO.widget.DateCellEditor()}
+]; 
+
 i2b2.PM.model.adminColumnDef["USERS"] = [
 	{key:"full_name", sortable:true, resizeable:true, editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}, 
 	{key:"user_name",sortable:true, resizeable:true, editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}, 
@@ -96,6 +158,23 @@ i2b2.PM.model.adminColumnDef["PROJECTREC-USERS"] = [
 	{key:"roles", sortable:false, resizeable:true, editor: new YAHOO.widget.CheckboxCellEditor({checkboxOptions:codes, disableBtns:false})}
 ];
 
+i2b2.PM.view.admin.formatDateInDataTable = function(elCell, oRecord, oColumn, oData)
+{
+	var oDate = oData;
+	var o = typeof(oData);
+	if ( o == 'string'){
+		oData = oData.substring(0,10);
+		elCell.innerHTML = YAHOO.util.Date.format(oData, { format: "%F"}); //oData; //.toString('MM/dd/yyyy');
+	} else if ( o == 'object'  && oDate != 'Invalid Date') {
+		elCell.innerHTML = YAHOO.util.Date.format(oDate); //'here';// oDate.toString('MM/dd/yyyy');
+	} else {
+		elCell.innerHTML = "";
+	}
+};
+
+
+// Add the custom formatter to the shortcuts
+YAHOO.widget.DataTable.Formatter.myDate = i2b2.PM.view.admin.formatDateInDataTable;
 
 i2b2.PM.model.adminButtonsSecondary = {};
 i2b2.PM.model.adminButtonsSecondary["USERS"] = "<form><input type='button' value='Save Updates' onclick=\"i2b2.PM.admin.clickActionBtn(2, 'UPDATE');\"/><input type='button' value='Delete' onclick=\"i2b2.PM.admin.clickActionBtn(2, 'DELETE');\"/><input type='button' value='Add New' onclick=\"i2b2.PM.admin.clickActionBtn(2,'NEW');\"/></form>";
@@ -172,6 +251,213 @@ i2b2.PM.view.admin.configScreenDispay = function(dispLevel) {
 
 
 
+i2b2.PM.view.admin.ProjectRequestViewer = {
+	show: function(request_xml) {
+		if (!i2b2.PM.view.admin.ProjectRequestViewer.yuiPanel) {
+			// show non-modal dialog with help documentation		
+			var panel = new YAHOO.widget.Panel("project-request-viewer-panel", { 
+				draggable: true,
+				zindex:10000,
+				width: "650px", 
+				height: "450px", 
+				autofillheight: "body", 
+				constraintoviewport: true, 
+				context: ["showbtn", "tl", "bl"]
+			}); 
+			$("project-request-viewer-panel").show();
+			panel.render(document.body); 
+			panel.show(); 
+			i2b2.PM.view.admin.ProjectRequestViewer.yuiPanel = panel;
+			
+			// resizer object and event handlers
+			i2b2.PM.view.admin.ProjectRequestViewer.resizer = new YAHOO.util.Resize("project-request-viewer-panel", { 
+				handles: ['br'], 
+				autoRatio: false, 
+				minWidth: 300, 
+				minHeight: 200, 
+				status: false 
+			}); 
+			
+			i2b2.PM.view.admin.ProjectRequestViewer.resizer.on('resize', function(args) { 
+				var panelHeight = args.height; 
+				this.cfg.setProperty("height", panelHeight + "px"); 
+			}, i2b2.PM.view.admin.ProjectRequestViewer.yuiPanel, true); 
+			
+			i2b2.PM.view.admin.ProjectRequestViewer.resizer.on('startResize', function(args) { 	 
+				if (this.cfg.getProperty("constraintoviewport")) { 
+					var D = YAHOO.util.Dom; 
+					var clientRegion = D.getClientRegion(); 
+					var elRegion = D.getRegion(this.element); 
+					resize.set("maxWidth", clientRegion.right - elRegion.left - YAHOO.widget.Overlay.VIEWPORT_OFFSET); 
+					resize.set("maxHeight", clientRegion.bottom - elRegion.top - YAHOO.widget.Overlay.VIEWPORT_OFFSET); 
+				} else { 
+					resize.set("maxWidth", null); 
+					resize.set("maxHeight", null); 
+				} 
+			}, i2b2.PM.view.admin.ProjectRequestViewer.yuiPanel, true); 			
+		} else {
+			i2b2.PM.view.admin.ProjectRequestViewer.yuiPanel.show();
+		}
+		//request_xml
+
+		var docXML = i2b2.h.parseXml(request_xml);
+
+		var c = docXML.getElementsByTagName('project_request'); // YAHOO.DataType.XML.parse(request_xml); //loadXMLString(request_xml); 
+		var l = c.length;
+		for (var i=0; i<l; i++) {
+			var tmpRec = {};
+			var s = 	"<div class='ProjectRequest-MainContent'>" +
+        "    <div class='droptrgtlbl'>Title:</div>" +
+        "    <div class='outputOptions'>" + i2b2.h.getXNodeVal(c[i], "title") +
+        "    </div>" +
+        "    <br clear='all'>" +
+        "    <div class='droptrgtlbl'>Approval:</div>" +
+        "    <div class='outputOptions'>" + i2b2.h.getXNodeVal(c[i], "approval") +
+        "    </div>" +
+        "    <br clear='all'>" +
+        "    <div style='display: block;' id='part2'>" +
+        "      <div class='droptrgtlbl'>Users:</div>" +
+        "      <div class='outputOptions'>" +
+        "        <div id='ProjectRequest-roleItem' class='workarea'><table width='100%'><tbody><tr><td>User</td><td>Data Role</td><td>Admin Role</td></tr>";
+		
+					// include cases
+			var c2 = i2b2.h.XPath(c[i], '//users/user');
+			var l2 = c2.length;
+							
+			for (var i2=0; i2<l2; i2++) {
+				s = s + 
+					"        <tr><td>" + i2b2.h.getXNodeVal(c2[i2], "username") + "</td><td>" + i2b2.h.getXNodeVal(c2[i2], "data_role") + "</td><td>" + i2b2.h.getXNodeVal(c2[i2], "admin_role") + "</td></tr>";
+			}
+	
+		s = s + "</tbody></table></div></div>";
+		
+		
+			// include cases
+			var c2 = i2b2.h.XPath(c[i], '//cases/item');
+			var l2 = c2.length;
+							
+			if (l2 > 0)
+				s = s +
+					"      <br clear='all'>" +
+       				"      <div class='droptrgtlbl'>Included cases:</div>" +
+       		 		"      <div id='ProjectRequest-PRSDROP' class='droptrgt SDX-PRS'>";
+			for (var i2=0; i2<l2; i2++) {
+				s = s + 
+					"        <div class='prsItem'>" + i2b2.h.getXNodeVal(c2[i2], "query_result_instance/description") + " - " + i2b2.h.getXNodeVal(c2[i2], "query_result_instance/result_instance_id") + "</div>";
+			}
+
+			if (l2 > 0)
+        		s = s + "      </div>";
+				
+			// excluded patient cases
+			var c2 = i2b2.h.XPath(c[i], '//exclude_cases/item');
+			var l2 = c2.length;
+							
+			if (l2 > 0)
+				s = s +
+					"      <br clear='all'>" +
+       				"      <div class='droptrgtlbl'>Exclude these patients from the cases:</div>" +
+       		 		"      <div id='ProjectRequest-PRSDROP' class='droptrgt SDX-PRS'>";
+			for (var i2=0; i2<l2; i2++) {
+				s = s + 
+					"        <div class='prsItem'>" + i2b2.h.getXNodeVal(c2[i2], "query_result_instance/description") + " - " + i2b2.h.getXNodeVal(c2[i2], "query_result_instance/result_instance_id") + "</div>";
+			}
+
+			if (l2 > 0)
+        		s = s + "      </div>";				
+	
+			// include patient controls
+			var c2 = i2b2.h.XPath(c[i], '//controls/item');
+			var l2 = c2.length;
+							
+			if (l2 > 0)
+				s = s +
+					"      <br clear='all'>" +
+       				"      <div class='droptrgtlbl'>Identify controls:</div>" +
+       		 		"      <div id='ProjectRequest-PRSDROP' class='droptrgt SDX-PRS'>";
+			for (var i2=0; i2<l2; i2++) {
+				s = s + 
+					"        <div class='prsItem'>" + i2b2.h.getXNodeVal(c2[i2], "query_result_instance/description") + " - " + i2b2.h.getXNodeVal(c2[i2], "query_result_instance/result_instance_id") + "</div>";
+			}
+
+			if (l2 > 0)
+        		s = s + "      </div>";
+
+		
+			// excluded patient controls
+			var c2 = i2b2.h.XPath(c[i], '//exclude_controls/item');
+			var l2 = c2.length;
+							
+			if (l2 > 0)
+				s = s +
+					"      <br clear='all'>" +
+       				"      <div class='droptrgtlbl'>Exclude these patients from the controls:</div>" +
+       		 		"      <div id='ProjectRequest-PRSDROP' class='droptrgt SDX-PRS'>";
+			for (var i2=0; i2<l2; i2++) {
+				s = s + 
+					"        <div class='prsItem'>" + i2b2.h.getXNodeVal(c2[i2], "query_result_instance/description") + " - " + i2b2.h.getXNodeVal(c2[i2], "query_result_instance/result_instance_id") + "</div>";
+			}
+
+			if (l2 > 0)
+        		s = s + "      </div>";
+				
+		
+			// Concept Included
+			var c2 = i2b2.h.XPath(c[i], '//concept_include/item');
+			var l2 = c2.length;
+							
+			if (l2 > 0)
+				s = s +
+					"      <br clear='all'>" +
+       				"      <div class='droptrgtlbl'>Identify Concepts to be Included:</div>" +
+       		 		"      <div id='ProjectRequest-PRSDROP' class='droptrgt SDX-PRS'>";
+			for (var i2=0; i2<l2; i2++) {
+				s = s + 
+					"        <div class='prsItem'>" + i2b2.h.getXNodeVal(c2[i2], "concept/name") + " - " + i2b2.h.getXNodeVal(c2[i2], "concept/dimcode") + "</div>";
+			}
+
+			if (l2 > 0)
+        		s = s + "      </div>";
+		
+
+			//Concept Excluded	
+			var c2 = i2b2.h.XPath(c[i], '//concept_exclude/item');
+			var l2 = c2.length;
+							
+			if (l2 > 0)  
+				s = s +
+					"      <br clear='all'>" +
+       				"      <div class='droptrgtlbl'>Exclude these concepts:</div>" +
+       		 		"      <div id='ProjectRequest-PRSDROP' class='droptrgt SDX-PRS'>";
+			for (var i2=0; i2<l2; i2++) {
+				s = s + 
+					"        <div class='prsItem'>" + i2b2.h.getXNodeVal(c2[i2], "concept/name") + " - " + i2b2.h.getXNodeVal(c2[i2], "concept/dimcode") + "</div>";
+			} 
+
+			if (l2 > 0)
+        		s = s + "      </div>";
+
+		
+        	s = s +"    </div>" +
+        		"  </div>";
+
+		}
+		
+		document.getElementById("project-request-viewer-body").innerHTML = s;
+
+		
+		//"<pre>" + request_xml + "</pre>";
+		// load the help page
+		//new Ajax.Updater('help-viewer-body', 'help/default.htm', {method: 'get', parameters: { cell: 'CORE', page:'ROOT' }});
+	},
+	hide: function() {
+		try {
+			i2b2.PM.view.admin.ProjectRequestViewer.yuiPanel.hide();
+		} catch (e) {}
+	}
+};
+
+
 
 // data retreval and display
 
@@ -204,11 +490,18 @@ i2b2.PM.view.admin.showProjectUsers = function() {
 	delete recList;
 	// create grid 
 	i2b2.PM.admin.grdPrimaryColumnDefs = i2b2.PM.model.adminColumnDef["PROJECTREC-USERS"];
-	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, {});
+	if (l > 10)
+    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, oConfigs);
 	i2b2.PM.view.admin.yuiControls.primaryGrid = t;
 	t.isDirty = false;
-	t.subscribe("rowMouseoverEvent", t.onEventHighlightRow);
-	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightRow);
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
 	t.subscribe("cellClickEvent", i2b2.PM.view.admin.gridClickHandler);
 	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
 };
@@ -218,7 +511,7 @@ i2b2.PM.view.admin.showUserParams = function(usrname) {
 	// show the secondary grid
 	i2b2.PM.view.admin.configScreenDispay(2);
 	// get data
-	var recList = i2b2.PM.ajax.getAllParam("PM:Admin", {table:"user", id_xml:"<user_id>"+usrname+"</user_id>"});
+	var recList = i2b2.PM.ajax.getAllParam("PM:Admin", {table:"user", id_xml:"<user_name>"+usrname+"</user_name>"});
 	recList.parse(usrname);
 	var tmp = recList.model;
 	// create datasource
@@ -229,11 +522,18 @@ i2b2.PM.view.admin.showUserParams = function(usrname) {
 	delete recList;
 	// create grid
 	i2b2.PM.admin.grdSecondaryColumnDefs = i2b2.PM.model.adminColumnDef.USERPARAMS;
-	var t = new YAHOO.widget.DataTable("pmAdminParamTableview", i2b2.PM.admin.grdSecondaryColumnDefs, i2b2.PM.admin.dsSecondary, {});
+	if (l > 10)
+    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminParamTableview", i2b2.PM.admin.grdSecondaryColumnDefs, i2b2.PM.admin.dsSecondary, oConfigs);
 	i2b2.PM.view.admin.yuiControls.secondaryGrid = t;
 	t.isDirty = false;
-	t.subscribe("rowMouseoverEvent", t.onEventHighlightRow);
-	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightRow);
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
 	t.subscribe("cellClickEvent", i2b2.PM.view.admin.paramgridClickHandler);
 	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
 };
@@ -267,11 +567,18 @@ i2b2.PM.view.admin.showCellParams = function(cellName, path) {
 	delete recList;
 	// create grid
 	i2b2.PM.admin.grdSecondaryColumnDefs = i2b2.PM.model.adminColumnDef.HIVECELLPARAMS;
-	var t = new YAHOO.widget.DataTable("pmAdminParamTableview", i2b2.PM.admin.grdSecondaryColumnDefs, i2b2.PM.admin.dsSecondary, {});
+	if (l > 10)
+    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminParamTableview", i2b2.PM.admin.grdSecondaryColumnDefs, i2b2.PM.admin.dsSecondary, oConfigs);
 	i2b2.PM.view.admin.yuiControls.secondaryGrid = t;
 	t.isDirty = false;
-	t.subscribe("rowMouseoverEvent", t.onEventHighlightRow);
-	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightRow);
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
 	t.subscribe("cellClickEvent", i2b2.PM.view.admin.paramgridClickHandler);
 	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
 };
@@ -304,11 +611,18 @@ i2b2.PM.view.admin.showDomainParams = function(DomainID) {
 	delete recList;
 	// create grid
 	i2b2.PM.admin.grdSecondaryColumnDefs = i2b2.PM.model.adminColumnDef.HIVECELLPARAMS;
-	var t = new YAHOO.widget.DataTable("pmAdminParamTableview", i2b2.PM.admin.grdSecondaryColumnDefs, i2b2.PM.admin.dsSecondary, {});
+	if (l > 10)
+    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminParamTableview", i2b2.PM.admin.grdSecondaryColumnDefs, i2b2.PM.admin.dsSecondary, oConfigs);
 	i2b2.PM.view.admin.yuiControls.secondaryGrid = t;
 	t.isDirty = false;
-	t.subscribe("rowMouseoverEvent", t.onEventHighlightRow);
-	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightRow);
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
 	t.subscribe("cellClickEvent", i2b2.PM.view.admin.paramgridClickHandler);
 	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
 };
@@ -334,11 +648,18 @@ i2b2.PM.view.admin.showProjectCells = function() {
 	};
 	// create the grid
 	i2b2.PM.admin.grdPrimaryColumnDefs = i2b2.PM.model.adminColumnDef.HIVECELLS;
-	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, {});
+	if (l > 10)
+    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, oConfigs);
 	i2b2.PM.view.admin.yuiControls.primaryGrid = t;
 	t.isDirty = false;
-	t.subscribe("rowMouseoverEvent", t.onEventHighlightRow);
-	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightRow);
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
 	t.subscribe("cellClickEvent", i2b2.PM.view.admin.gridClickHandler);
 	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
 };
@@ -372,15 +693,117 @@ i2b2.PM.view.admin.showProjectParams = function() {
 	delete recList;
 	// create grid
 	i2b2.PM.admin.grdPrimaryColumnDefs = i2b2.PM.model.adminColumnDef.PROJPARAMS;
-	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, {});
+	if (l > 10)
+    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, oConfigs);
 	i2b2.PM.view.admin.yuiControls.primaryGrid = t;
 	t.isDirty = false;
-	t.subscribe("rowMouseoverEvent", t.onEventHighlightRow);
-	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightRow);
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
 	t.subscribe("cellClickEvent", i2b2.PM.view.admin.gridClickHandler);
 	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
 };
 
+i2b2.PM.view.admin.showProjectRequests = function() {
+	$('pmMainTitle').innerHTML = "Project Requests";
+	i2b2.PM.view.admin.showInfoPanel(false);
+	i2b2.PM.view.admin.configScreenDispay(1);
+	// get a list of user info
+	var usrList = i2b2.PM.ajax.getAllProjectRequest("PM:Admin", {});
+	usrList.parse();
+	var tmp = [];
+	var l = usrList.model.length;
+	for (var i=0; i<l; i++) {
+		tmp.push(usrList.model[i]);
+	}
+	delete usrList.model;
+	delete usrList;		
+	i2b2.PM.admin.dsPrimary = new YAHOO.util.DataSource(tmp);
+	i2b2.PM.admin.dsPrimary.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+	i2b2.PM.admin.dsPrimary.responseSchema = {fields: ["id","project_id","submit_char","title",{key:"entry_date",parser:myDateParser},"request_xml"]};
+	//i2b2.PM.admin.dsPrimary.hideColumn("request_xml"); 
+	// create the grid
+	i2b2.PM.admin.grdPrimaryColumnDefs = i2b2.PM.model.adminColumnDef.PROJECTREQUESTS;
+	if (l > 10)
+    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, oConfigs);
+	t.hideColumn("request_xml"); 
+	i2b2.PM.view.admin.yuiControls.primaryGrid = t;
+	t.isDirty = false;
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
+	t.subscribe("cellClickEvent", i2b2.PM.view.admin.gridClickHandler);
+	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
+};
+
+
+var myDateParser = function (sDate) {
+// break up the date components and return a date object
+
+	//var t = YAHOO.widget.DateMath.add(new Date(sDate), YAHOO.widget.DateMath.DAY, 1);new Date(sDate);
+	//return t;
+	//alert(sDate);
+	
+		//var t = YAHOO.widget.DateMath.add(new Date(sDate), YAHOO.widget.DateMath.DAY, 1);new Date(sDate);
+		//alert(sDate);
+		//2010-10-20
+		//1234567890
+		if (!Object.isUndefined(sDate)) {
+			//alert(sDate.substring(0,4) + ":" + sDate.substring(5,7)  + ":" + sDate.substring(8,10));
+			var t =  new Date(sDate.substring(0,4), sDate.substring(5,7)-1, sDate.substring(8,10), 12,0,0,0);
+			return t;
+		}
+		else
+		{
+			return new Date(sDate);
+		}
+	//return new Date();
+};
+
+i2b2.PM.view.admin.showApprovals = function() {
+	$('pmMainTitle').innerHTML = "Manage Approvals";
+	i2b2.PM.view.admin.showInfoPanel(false);
+	i2b2.PM.view.admin.configScreenDispay(1);
+	// get a list of user info
+	var usrList = i2b2.PM.ajax.getAllApproval("PM:Admin", {});
+	usrList.parse();
+	var tmp = [];
+	var l = usrList.model.length;
+	for (var i=0; i<l; i++) {
+		tmp.push(usrList.model[i]);
+	}
+	delete usrList.model;
+	delete usrList;		
+	i2b2.PM.admin.dsPrimary = new YAHOO.util.DataSource(tmp);
+	i2b2.PM.admin.dsPrimary.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+	i2b2.PM.admin.dsPrimary.responseSchema = {fields: ["id","name","description", {key:"activation_date",parser:myDateParser}, {key:"expiration_date",parser:myDateParser}, "object"]};
+	// create the grid
+	i2b2.PM.admin.grdPrimaryColumnDefs = i2b2.PM.model.adminColumnDef.APPROVALS;
+	if (l > 10)	
+    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, oConfigs);
+	i2b2.PM.view.admin.yuiControls.primaryGrid = t;
+	t.isDirty = false;
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
+	t.subscribe("cellClickEvent", i2b2.PM.view.admin.gridClickHandler);
+	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
+};
 
 i2b2.PM.view.admin.showUsers = function() {
 	$('pmMainTitle').innerHTML = "Manage Users";
@@ -401,11 +824,18 @@ i2b2.PM.view.admin.showUsers = function() {
 	i2b2.PM.admin.dsPrimary.responseType.responseSchema = {fields: ["user_name","full_name","password", "email"]};
 	// create the grid
 	i2b2.PM.admin.grdPrimaryColumnDefs = i2b2.PM.model.adminColumnDef.USERS;
-	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, {});
+	if (l > 10)	 
+	        var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 
+	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, oConfigs);
 	i2b2.PM.view.admin.yuiControls.primaryGrid = t;
 	t.isDirty = false;
-	t.subscribe("rowMouseoverEvent", t.onEventHighlightRow);
-	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightRow);
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
 	t.subscribe("cellClickEvent", i2b2.PM.view.admin.gridClickHandler);
 	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
 };
@@ -437,11 +867,18 @@ i2b2.PM.view.admin.showHiveDomains = function() {
 	delete recList;
 	// create grid
 	i2b2.PM.admin.grdPrimaryColumnDefs = i2b2.PM.model.adminColumnDef.HIVEDOMAINS;
-	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, {});
+	if (l > 10)
+    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, oConfigs);
 	i2b2.PM.view.admin.yuiControls.primaryGrid = t;
 	t.isDirty = false;
-	t.subscribe("rowMouseoverEvent", t.onEventHighlightRow);
-	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightRow);
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
 	t.subscribe("cellClickEvent", i2b2.PM.view.admin.gridClickHandler);
 	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
 };
@@ -466,11 +903,18 @@ i2b2.PM.view.admin.showHiveCells = function() {
 	};
 	// create the grid
 	i2b2.PM.admin.grdPrimaryColumnDefs = i2b2.PM.model.adminColumnDef.HIVECELLS;
-	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, {});
+	if (l > 10)
+    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, oConfigs);
 	i2b2.PM.view.admin.yuiControls.primaryGrid = t;
 	t.isDirty = false;
-	t.subscribe("rowMouseoverEvent", t.onEventHighlightRow);
-	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightRow);
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
 	t.subscribe("cellClickEvent", i2b2.PM.view.admin.gridClickHandler);
 	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
 };
@@ -491,11 +935,18 @@ i2b2.PM.view.admin.showGlobals = function() {
 	delete recList;
 	// create grid
 	i2b2.PM.admin.grdPrimaryColumnDefs = i2b2.PM.model.adminColumnDef.HIVEGLOBALS;
-	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, {});
+	if (l > 10)
+	    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminMainTableview", i2b2.PM.admin.grdPrimaryColumnDefs, i2b2.PM.admin.dsPrimary, oConfigs);
 	i2b2.PM.view.admin.yuiControls.primaryGrid = t;
 	t.isDirty = false;
-	t.subscribe("rowMouseoverEvent", t.onEventHighlightRow);
-	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightRow);
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
 	t.subscribe("cellClickEvent", i2b2.PM.view.admin.gridClickHandler);
 	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
 };
@@ -525,11 +976,18 @@ i2b2.PM.view.admin.showUserProjParams = function(username, project) {
 	delete recList;
 	// create grid
 	i2b2.PM.admin.grdSecondaryColumnDefs = i2b2.PM.model.adminColumnDef.USERPARAMS;
-	var t = new YAHOO.widget.DataTable("pmAdminParamTableview", i2b2.PM.admin.grdSecondaryColumnDefs, i2b2.PM.admin.dsSecondary, {});
+	if (l > 10)
+    var oConfigs = { 
+	                paginator: new YAHOO.widget.Paginator({ 
+	                    rowsPerPage: 10 
+	                }), 
+	                initialRequest: "results=" + l 
+	        }; 	
+	var t = new YAHOO.widget.DataTable("pmAdminParamTableview", i2b2.PM.admin.grdSecondaryColumnDefs, i2b2.PM.admin.dsSecondary, oConfigs);
 	i2b2.PM.view.admin.yuiControls.secondaryGrid = t;
 	t.isDirty = false;
-	t.subscribe("rowMouseoverEvent", t.onEventHighlightRow);
-	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightRow);
+	t.subscribe("rowMouseoverEvent", t.onEventHighlightCell);
+	t.subscribe("rowMouseoutEvent", t.onEventUnhighlightCell);
 	t.subscribe("cellClickEvent", i2b2.PM.view.admin.paramgridClickHandler);
 	t.subscribe("editorSaveEvent", i2b2.PM.view.admin.editorSaved);
 	

@@ -21,11 +21,13 @@ i2b2.h.getProject = function() { return i2b2.PM.model.login_project; }
 i2b2.h.isSHRINE = function() { return i2b2.PM.model.shrine_domain; }
 i2b2.h.inDebugMode = function() { return i2b2.PM.model.login_debugging; }
 i2b2.h.allowAnalysis = function() { return i2b2.PM.model.allow_analysis; }
+i2b2.h.adminOnly = function() { return i2b2.PM.model.admin_only; }
 
 i2b2.PM.model.login_username = '';
 i2b2.PM.model.login_password = '';
 i2b2.PM.model.login_domain = '';
 i2b2.PM.model.shrine_domain = false;
+i2b2.PM.model.admin_only = false;
 i2b2.PM.model.Domains = i2b2.hive.cfg.lstDomains;
 
 

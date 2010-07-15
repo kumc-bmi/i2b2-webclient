@@ -89,6 +89,8 @@ DIV#ontMainBox DIV.findSubFrame {
 	width:45px;
 	color:#FFF;
 	cursor:pointer;
+	float:left;
+	margin-right:10px;
 }
 .ontFindButton a {
 	color:#FFF;

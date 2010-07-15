@@ -235,6 +235,7 @@ i2b2.sdx.TypeControllers.QI.getChildRecords = function(sdxParentNode, onComplete
 			o.start_date = i2b2.h.getXNodeVal(ps[i1],'start_date');
 			o.end_date = i2b2.h.getXNodeVal(ps[i1],'end_date');
 			o.result_type = i2b2.h.XPath(ps[i1],'query_result_type/name/text()')[0].nodeValue;
+			var addme = false;
 			switch (o.result_type) {
 				case "PATIENTSET":
 					o.PRS_id = i2b2.h.getXNodeVal(ps[i1],'result_instance_id');
@@ -261,6 +262,7 @@ i2b2.sdx.TypeControllers.QI.getChildRecords = function(sdxParentNode, onComplete
 					o.title = pn.parent.sdxInfo.sdxDisplayName + ' [PATIENTSET_'+o.PRS_id+']';
 					o.result_instance_id = o.PRS_id;
 					var sdxDataNode = i2b2.sdx.Master.EncapsulateData('PRS',o);
+					addme = true;
 					break;
 				case "PATIENT_COUNT_XML":
 					o.PRC_id = i2b2.h.getXNodeVal(ps[i1],'result_instance_id');
@@ -288,12 +290,15 @@ i2b2.sdx.TypeControllers.QI.getChildRecords = function(sdxParentNode, onComplete
 					//o.title = 'PATIENT_COUNT_XML_'+o.PRC_id;
 					o.result_instance_id = o.PRC_id;
 					var sdxDataNode = i2b2.sdx.Master.EncapsulateData('PRC',o);
+					addme = true;
 					break;
 			}
+			if (addme) {
 			// save record in the SDX system
 			sdxDataNode = i2b2.sdx.Master.Save(sdxDataNode, pn);
 			// append the data node to our returned results
 			retChildren.push(sdxDataNode);
+			}
 		}
 		pn.children.loaded = true;
 		// TODO: broadcast a data update event of the CRC data model

@@ -21,6 +21,7 @@
 		authRoles: [
 			{code:"ADMIN", name:"Hive Administrator"},
 			{code:"MANAGER", name:"Hive Manager"},
+			{code:"EDITOR", name:"Hive Editor"},
 			{code:"USER", name:"Hive User"},
 			{code:"DATA_PROT", name:"Data Protect - DATA_PROT"},
 			{code:"DATA_DEID", name:"Data Protect - DATA_DEID"},

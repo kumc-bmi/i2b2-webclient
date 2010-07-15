@@ -347,7 +347,20 @@ i2b2.PM.showItem = function(inputItem) {
 
 		document.getElementById("pmMainTitle").innerHTML="Project Data";
 		document.getElementById("pmAddButton").innerHTML="Add Project Data";		
-		break;						 
+		break;	
+	case "approval":
+
+		var myColumnDefs = [
+		                    {key:"id", sortable:true, resizeable:true, editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}, 
+		                    {key:"name", sortable:true, resizeable:true, editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}, ,
+		                    {key:"param"}
+		                    ];
+
+		i2b2.PM.getAll("approval", ["id", "name"],null,  myColumnDefs, this.myDataTable);
+
+		document.getElementById("pmMainTitle").innerHTML="Approval Data";
+		document.getElementById("pmAddButton").innerHTML="Add Approval Data";		
+		break;			
 	case "user":
 
 			var myColumnDefs = [
@@ -363,7 +376,7 @@ i2b2.PM.showItem = function(inputItem) {
 
 	 	this.myDataTable = i2b2.PM.getAll( "user", ["full_name","user_name","email"],null, myColumnDefs, this.myDataTable);
 
-		document.getElementById("pmMainTitle").innerHTML="Manage Users";
+		document.getElementById("pmMainTitle").innerHTML="Users";
 		document.getElementById("pmAddButton").innerHTML="Add User";		
 		break;
 	case "global":

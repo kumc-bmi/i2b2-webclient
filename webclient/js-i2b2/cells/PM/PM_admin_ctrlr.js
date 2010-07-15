@@ -57,7 +57,7 @@ i2b2.events.changedViewMode.subscribe((function(eventTypeName, newMode){
 			var tree = new YAHOO.widget.TreeView("pmNavTreeview");
 			i2b2.PM.view.admin.yuiControls.pmNavTreeview = tree;
 			var root = tree.getRoot(); 
-			var tmpNode = new YAHOO.widget.TextNode({label: "Hive", expanded: false}, root);
+			var tmpNode = new YAHOO.widget.TextNode({label: "Manage Hive", expanded: false}, root);
 			tmpNode.data.i2b2NodeType = "HIVE";
 			var tmpNode2 = new YAHOO.widget.TextNode({label: "Domains", expanded: false}, tmpNode);
 			tmpNode2.data.i2b2NodeType = "HIVEDOMAINS";
@@ -66,11 +66,15 @@ i2b2.events.changedViewMode.subscribe((function(eventTypeName, newMode){
 			var tmpNode2 = new YAHOO.widget.TextNode({label: "Global Params", expanded: false}, tmpNode);
 			tmpNode2.data.i2b2NodeType = "HIVEGLOBALS";
 			// save this for later use (refresh project list)
-			i2b2.PM.view.admin.yuiTreeNodePROJECTS = new YAHOO.widget.TextNode({label: "Projects", expanded: false}, root);
+			i2b2.PM.view.admin.yuiTreeNodePROJECTS = new YAHOO.widget.TextNode({label: "Manage Projects", expanded: false}, root);
 			i2b2.PM.view.admin.yuiTreeNodePROJECTS.data.i2b2NodeType = "PROJECTS";
 			i2b2.PM.view.admin.yuiTreeNodePROJECTS.setDynamicLoad(i2b2.PM.admin.refreshProjects);
 			var tmpNode = new YAHOO.widget.TextNode({label: "Manage Users", expanded: false}, root);
 			tmpNode.data.i2b2NodeType = "USERS";
+			var tmpNode = new YAHOO.widget.TextNode({label: "Manage Approvals", expanded: false}, root);
+			tmpNode.data.i2b2NodeType = "APPROVALS";
+			var tmpNode = new YAHOO.widget.TextNode({label: "Project Requests", expanded: false}, root);
+			tmpNode.data.i2b2NodeType = "PROJECTREQUESTS";
 			tree.render(); 
 			tree.subscribe('clickEvent', i2b2.PM.view.admin.treeClick);
 		}
@@ -251,6 +255,38 @@ i2b2.PM.admin.clickActionBtn = function(btnLevel, btnCommand) {
 						}
 					}
 					break;
+				case "APPROVALS": 
+					if (btnLevel==1) {
+						// DELETE USER
+						if (!Object.isUndefined(deleteRow.id)) {
+							i2b2.PM.ajax.deleteApproval("PM:Admin", {id:deleteRow.id}, i2b2.PM.view.admin.refreshScreen);
+						} else {
+							errAlertMissing();
+						}
+					} else {
+						// DELETE USER PARAMETER
+						try {
+							// get the required username from the selected row in the primary grid
+							var pgrd = i2b2.PM.view.admin.yuiControls.primaryGrid;
+							var un = pgrd.getSelectedRows();
+							un = pgrd.getRecord(un[0]).getData();
+							if (!Object.isUndefined(un.id, deleteRow.name, deleteRow.value)) {
+								i2b2.PM.ajax.deleteParam("PM:Admin", {table:"approval", msg_xml:deleteRow.id}, (function(result) {
+									i2b2.PM.view.admin.showUserParams(un.id);
+								}));
+								i2b2.PM.view.admin.yuiControls.secondaryGrid.isDirty = false;
+								i2b2.PM.view.admin.yuiControls.secondaryGrid.unselectAllRows();
+							} else {
+								errAlertMissing();
+							}
+						} catch(e) {
+							var s="Failed to delete the record";
+							console.error(s);
+							console.dir(e);
+							alert(s);
+						}
+					}
+					break;					
 				case "USERS":
 					if (btnLevel==1) {
 						// DELETE USER
@@ -440,45 +476,21 @@ i2b2.PM.admin.clickActionBtn = function(btnLevel, btnCommand) {
 								alert('The username "'+updateRow.user_name+'" has no roles selected.\nPlease select one or more roles or use the delete button to remove the user from the project.');
 								return;
 							}
-							// GET THE USER'S EXISTING ROLES
-							var roleList = i2b2.PM.ajax.getAllRole("PM:Admin", {id: i2b2.PM.view.admin.currentProject.i2b2NodeKey, proj_path:"/"+i2b2.PM.view.admin.currentProject.i2b2NodeKey});
-							var c = i2b2.h.XPath(roleList.refXML, '//user_name[text() = "i2b2"]/../role/text()');
-							var l = c.length;
-							var actions = {};
-							for (var i=0; i<l; i++) {
-								actions[c[i].nodeValue] = "DELETE";
-							}
-							// CREATE AN ALTER PLAN USING THE NEW ROLE LIST
 							var c = updateRow.roles;
-							var l = c.length;
-							for (var i=0; i<l; i++) {
-								if (actions[c[i]]) {
-									// the role already exists, keep it
-									actions[c[i]] = "KEEP";
-								} else {
-									// the role does not exist, add it
-									actions[c[i]] = "ADD";
-								}
+
+							var t = i2b2.PM.cfg.config.authRoles;
+
+							for (var i=0; i<t.length; i++) {
+
+								var result = i2b2.PM.ajax.deleteRole("PM:Admin", {user_id: updateRow.user_name, user_role: t[i].code, project_id:i2b2.PM.view.admin.currentProject.i2b2NodeKey});
+
 							}
-							// UPDATE THE USERNAME's PERMISSIONS USING THE ALTER PLAN
-							var deletedRoles = false;
-							for (var roleCode in actions) {
-								switch(actions[roleCode]) {
-									case "DELETE":
-										var result = i2b2.PM.ajax.deleteRole("PM:Admin", {user_id: updateRow.user_name, user_role: roleCode, project_id:i2b2.PM.view.admin.currentProject.i2b2NodeKey});
-										break;
-									case "ADD":
-                                                                                if (deletedRoles == false)
-                                                                                {
-											var t = i2b2.PM.cfg.config.authRoles;
-											for (var i=0; i<t.length; i++) {
-												var result = i2b2.PM.ajax.deleteRole("PM:Admin", {user_id: updateRow.user_name, user_role: t[i].code, project_id:i2b2.PM.view.admin.currentProject.i2b2NodeKey});
-											}
-											deletedRoles = true;
-                                                                                }
-										var result = i2b2.PM.ajax.setRole("PM:Admin", {user_id: updateRow.user_name, user_role: roleCode, project_id:i2b2.PM.view.admin.currentProject.i2b2NodeKey});
-										break;
-								}
+
+							for (var i=0; i<c.length; i++) { 
+
+										var result = i2b2.PM.ajax.setRole("PM:Admin", {user_id: updateRow.user_name, user_role: c[i], project_id:i2b2.PM.view.admin.currentProject.i2b2NodeKey});
+
+
 							}
 							i2b2.PM.view.admin.yuiControls.primaryGrid.isDirty = false;
 							i2b2.PM.view.admin.yuiControls.primaryGrid.unselectAllRows();
@@ -507,6 +519,56 @@ i2b2.PM.admin.clickActionBtn = function(btnLevel, btnCommand) {
 							}
 						}
 						break;
+					case "APPROVALS":
+						if (btnLevel==1) {
+							// UPDATE USER
+							if (!Object.isUndefined(updateRow.name, updateRow.id)) {
+				
+									if (!Object.isUndefined(updateRow.expiration_date)) {
+										var edate = YAHOO.util.Date.format(updateRow.expiration_date, { format: "%F"}) + "T12:00:00.000-04:00"; //  updateRow.expiration_date;
+									} else {
+										var edate = "";
+									}
+									if (!Object.isUndefined(updateRow.activation_date)) {
+										var adate = YAHOO.util.Date.format(updateRow.activation_date, { format: "%F"}) +  "T12:00:00.000-04:00"; //updateRow.activation_date;
+									} else {
+										var adate = "";
+									}
+
+								i2b2.PM.ajax.setApproval("PM:Admin", {id:updateRow.id, name:updateRow.name, description:updateRow.description, activation_date:adate,expiration_date:edate}, i2b2.PM.view.admin.refreshScreen);
+							} else {
+								errAlertMissing();
+							}
+						} else {
+							// UPDATE USER PARAMETER
+							try {
+								// get the required username from the selected row in the primary grid
+								var pgrd = i2b2.PM.view.admin.yuiControls.primaryGrid;
+								var un = pgrd.getSelectedRows();
+								un = pgrd.getRecord(un[0]).getData();
+								if (!Object.isUndefined(un.id, updateRow.name, updateRow.value)) {
+									if (updateRow.id) {
+										var t = 'id="'+updateRow.id+'"';
+									} else {
+										var t = "";
+									}
+									var vals = '<user_name>'+un.user_name+'</user_name><param '+t+' datatype="'+updateRow.datatype+'" name="'+updateRow.name+'">'+updateRow.value+'</param>';
+									i2b2.PM.ajax.setParam("PM:Admin", {table:"approval", msg_xml:vals}, (function(result) {
+										i2b2.PM.view.admin.showApprovalParams(un.id);
+									}));
+									i2b2.PM.view.admin.yuiControls.secondaryGrid.isDirty = false;
+									i2b2.PM.view.admin.yuiControls.secondaryGrid.unselectAllRows();
+								} else {
+									errAlertMissing();
+								}
+							} catch(e) {
+								var s="Failed to update the record";
+								console.error(s);
+								console.dir(e);
+								alert(s);
+							}
+						}	
+						break;						
 					case "USERS":
 						if (btnLevel==1) {
 							// UPDATE USER
@@ -568,6 +630,7 @@ i2b2.PM.admin.clickActionBtn = function(btnLevel, btnCommand) {
 			trgtGrid.unselectAllRows();
 			trgtGrid.set("sortedBy", null);
 			trgtGrid.addRow(t,0);
+			trgtGrid.configs.paginator.setPage(1);			
 			trgtGrid.selectRow(0);
 			trgtGrid.isDirty = true;
 			if (btnLevel == 1) {
@@ -751,6 +814,14 @@ i2b2.PM.view.admin.treeClick = function(tvEvent, override) {
 			i2b2.PM.view.admin.currentProject = tvEvent.node.parent.data;
 			i2b2.PM.view.admin.showProjectParams();
 			break;
+		case "PROJECTREQUESTS":
+			delete i2b2.PM.view.admin.currentProject;
+			i2b2.PM.view.admin.showProjectRequests();
+			break;
+		case "APPROVALS":
+			delete i2b2.PM.view.admin.currentProject;
+			i2b2.PM.view.admin.showApprovals();
+			break;
 		case "USERS":
 			delete i2b2.PM.view.admin.currentProject;
 			i2b2.PM.view.admin.showUsers();
@@ -803,6 +874,9 @@ i2b2.PM.view.admin.gridClickHandler = function(evtData) {
 		var configScreen = i2b2.PM.view.admin.configScreen;
 		var selectedRec = this.getRecord(evtData.target)._oData;		
 		switch(configScreen) {
+			case "PROJECTREQUESTS":
+				i2b2.PM.view.admin.ProjectRequestViewer.show(selectedRec.request_xml);
+				break;
 			case "HIVEDOMAINS":
 				i2b2.PM.view.admin.showDomainParams(selectedRec.domain_id);
 				break;
@@ -843,6 +917,9 @@ i2b2.PM.view.admin.gridClickHandler = function(evtData) {
 			case "USERS":
 				i2b2.PM.view.admin.showUserParams(selectedRec.user_name);
 				break;
+			case "APPROVALS":
+				i2b2.PM.view.admin.showApprovalParams(selectedRec.id);
+				break;				
 		}
 	}
 };
