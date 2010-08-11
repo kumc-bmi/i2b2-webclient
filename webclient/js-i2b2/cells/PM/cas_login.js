@@ -59,7 +59,7 @@ i2b2.PM.doCASLogin = function() {
 
     var callback = new i2b2_scopedCallback(i2b2.PM._processUserConfig, i2b2.PM);
     var parameters = {
-        domain: domainname, 
+        domain: domain.domain, 
         is_shrine: Boolean.parseTo(domain.isSHRINE),
         project: domain.project,
         username: username,
@@ -69,7 +69,7 @@ i2b2.PM.doCASLogin = function() {
         url: domain.urlCellPM,
         user: username,
         password: ticket,
-        domain: domainname,
+        domain: domain.domain,
         project: domain.project
     };
 
