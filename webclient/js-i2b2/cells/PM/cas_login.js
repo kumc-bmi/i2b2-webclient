@@ -6,6 +6,9 @@
  * umm... not sure what these mean...
  * @inherits    i2b2
  * @namespace           i2b2
+ *
+ * @todo: figure out what to do if PM:Login fails; maybe include a link
+ *        back to the portal or something?
  */
 
 /* see JSLint, The JavaScript Code Quality Tool http://www.jslint.com/ */
@@ -73,7 +76,33 @@ i2b2.PM.doCASLogin = function() {
         project: domain.project
     };
 
+    _make_dialog();
     i2b2.PM.ajax.getUserAuth("PM:Login", parameters, callback, transportopts);
 };
 
 
+/**
+ * i2b2.PM._processUserConfig assumes the dialog exists, so...
+ */
+function _make_dialog() {
+    if (!$("i2b2_login_modal_dialog")) {
+	var htmlFrag = i2b2.PM.model.html.loginDialog;
+	Element.insert(document.body,htmlFrag);
+
+	if (!i2b2.PM.view.modal.login) {
+	    i2b2.PM.view.modal.login = new YAHOO.widget.Panel("i2b2_login_modal_dialog", {
+		    zindex: 700,
+		    width: "501px",
+		    fixedcenter: true,
+		    constraintoviewport: true,
+		    close: false,
+		    draggable: true
+		});
+	    // connect the form to the PM controller
+	    i2b2.PM.udlogin = {};
+	    i2b2.PM.udlogin.inputUser = $('loginusr');
+	    i2b2.PM.udlogin.inputPass = $('loginpass');
+	    i2b2.PM.udlogin.inputDomain = $('logindomain');
+	}
+    }
+}
