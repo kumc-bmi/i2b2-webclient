@@ -18,7 +18,7 @@
  * doCASLogin gets username, ticket, and domain from URL and calls PM:Login
  */
 i2b2.PM.doCASLogin = function() {
-    var match;
+    var match, i;
     var adr = location.href;
 
     match = /ticket=([^&#]*)/.exec(adr);
@@ -43,10 +43,15 @@ i2b2.PM.doCASLogin = function() {
         return;
     }
 
-    var domain = i2b2.PM.model.Domains[domainname];
-
+    var domain, domains = i2b2.PM.model.Domains;
+    for (i = 0; i < domains.length; i++) {
+	if (domains[i].name == domainname) {
+	    domain = domains[i];
+	    break;
+	}
+    }
     if (!domain) {
-        alert('login failed: no such domain i2b2 config: ' + domainname);
+        alert('login failed: no such domain in i2b2 config: ' + domainname);
         return;
     }
 
