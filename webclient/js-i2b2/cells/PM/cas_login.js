@@ -20,29 +20,17 @@
 /**
  * doCASLogin gets username, ticket, and domain from URL and calls PM:Login
  */
-i2b2.PM.doCASLogin = function() {
+i2b2.PM.doCASLogin = function(domainname) {
     var match, i;
     var adr = location.href;
+
+    var service = adr.split("?")[0];
 
     match = /ticket=([^&#]*)/.exec(adr);
     var ticket = match ? match[1] : null;
     if (!ticket) {
         // alert()? that's how we're doing error handling? hmm.
         alert("login failed: no CAS ticket URL parameter");
-        return;
-    }
-
-    match = /user=([^&#]*)/.exec(adr);
-    var username = match ? match[1] : null;
-    if (!username) {
-        alert("login failed: no user URL parameter");
-        return;
-    }
-
-    match = /domain=([^&#]*)/.exec(adr);
-    var domainname = match ? match[1] : null;
-    if (!domainname) {
-        alert("login failed: no domain name URL parameter");
         return;
     }
 
@@ -65,12 +53,12 @@ i2b2.PM.doCASLogin = function() {
         domain: domain.domain, 
         is_shrine: Boolean.parseTo(domain.isSHRINE),
         project: domain.project,
-        username: username,
+        username: service,
         password_text: ticket
     };
     var transportopts = {
         url: domain.urlCellPM,
-        user: username,
+        user: service,
         password: ticket,
         domain: domain.domain,
         project: domain.project
