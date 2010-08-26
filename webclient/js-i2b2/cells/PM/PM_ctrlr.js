@@ -87,6 +87,8 @@ i2b2.PM._processUserConfig = function (data) {
 	try {
 		var t = i2b2.h.XPath(data.refXML, '//user/password')[0];
 		i2b2.PM.model.login_password = i2b2.h.Xml2String(t);
+		t = i2b2.h.XPath(data.refXML, '//user/user_name/text()')[0];
+		i2b2.PM.model.login_username = i2b2.h.Xml2String(t);
 	} catch (e) {
 		console.error("Could not find returned password node in login XML");
 		i2b2.PM.model.login_password = "<password>"+data.msgParams.sec_pass+"</password>\n";
