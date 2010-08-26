@@ -46,6 +46,8 @@ i2b2.PM.doCASLogin = function(domainname) {
         return;
     }
 
+    i2b2.PM.model.url = domain.urlCellPM;
+
     i2b2.h.LoadingMask.show(); // GUI goes busy
 
     var callback = new i2b2_scopedCallback(i2b2.PM._processUserConfig, i2b2.PM);
