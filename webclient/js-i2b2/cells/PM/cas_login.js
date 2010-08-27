@@ -47,6 +47,8 @@ i2b2.PM.doCASLogin = function(domainname) {
     }
 
     i2b2.PM.model.url = domain.urlCellPM;
+    i2b2.PM.model.allow_analysis = _flag(domain.allowAnalysis, true);
+    i2b2.PM.model.login_debugging = _flag(domain.debug, true);
 
     i2b2.h.LoadingMask.show(); // GUI goes busy
 
@@ -69,6 +71,15 @@ i2b2.PM.doCASLogin = function(domainname) {
     _make_dialog();
     i2b2.PM.ajax.getUserAuth("PM:Login", parameters, callback, transportopts);
 };
+
+
+function _flag(expr, fallback){
+    if (expr != undefined) {
+	return Boolean.parseTo(expr);
+    } else {
+	return fallback;
+    }
+}
 
 
 /**
