@@ -43,6 +43,7 @@ i2b2.PM.doCASLogin = function(domainname) {
         return;
     }
 
+    i2b2.PM.model.CAS_server = domain.CAS_server;
     i2b2.PM.model.url = domain.urlCellPM;
     i2b2.PM.model.allow_analysis = _flag(domain.allowAnalysis, true);
     i2b2.PM.model.login_debugging = _flag(domain.debug, true);
@@ -54,12 +55,12 @@ i2b2.PM.doCASLogin = function(domainname) {
         domain: domain.domain, 
         is_shrine: Boolean.parseTo(domain.isSHRINE),
         project: domain.project,
-        username: service,
+        username: document.location, // aka CAS service
         password_text: ticket
     };
     var transportopts = {
         url: domain.urlCellPM,
-        user: service,
+        user: document.location,
         password: ticket,
         domain: domain.domain,
         project: domain.project
@@ -114,8 +115,6 @@ i2b2.PM.CASTicketMissing = function() {
 i2b2.PM.set_cas_ticket_cookie_from_url = function(){
     var match, i;
     var adr = location.href;
-
-    var service = adr.split("?")[0];
 
     match = /ticket=([^&#]*)/.exec(adr);
     var ticket = match ? match[1] : null;
