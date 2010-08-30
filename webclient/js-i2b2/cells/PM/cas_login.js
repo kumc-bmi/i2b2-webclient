@@ -17,20 +17,17 @@
 /*global i2b2, i2b2_scopedCallback */
 "use strict";
 
+if (undefined==i2b2) { var i2b2 = {}; }
+if (undefined==i2b2.PM) { i2b2.PM = {}; }	
+
 /**
- * doCASLogin gets username, ticket, and domain from URL and calls PM:Login
+ * doCASLogin gets ticket from cookie, looks up domain info, and calls PM:Login
  */
 i2b2.PM.doCASLogin = function(domainname) {
-    var match, i;
-    var adr = location.href;
+    var ticket = readCookie("CAS_ticket");
 
-    var service = adr.split("?")[0];
-
-    match = /ticket=([^&#]*)/.exec(adr);
-    var ticket = match ? match[1] : null;
     if (!ticket) {
-        // alert()? that's how we're doing error handling? hmm.
-        alert("login failed: no CAS ticket URL parameter");
+	document.location = document.location + "cas_login.html";
         return;
     }
 
@@ -106,4 +103,51 @@ function _make_dialog() {
 	    i2b2.PM.udlogin.inputDomain = $('logindomain');
 	}
     }
+}
+
+/**
+ * Exception: expected CAS ticket but didn't find one.
+ */
+i2b2.PM.CASTicketMissing = function() {
+}
+
+i2b2.PM.set_cas_ticket_cookie_from_url = function(){
+    var match, i;
+    var adr = location.href;
+
+    var service = adr.split("?")[0];
+
+    match = /ticket=([^&#]*)/.exec(adr);
+    var ticket = match ? match[1] : null;
+    if (!ticket) {
+	throw new i2b2.PM.CASTicketMissing();
+    }
+
+    createCookie("CAS_ticket", ticket, 1);
+}
+
+// all praise quirksmode. http://www.quirksmode.org/js/cookies.html
+function createCookie(name,value,days) {
+    if (days) {
+	var date = new Date();
+	date.setTime(date.getTime()+(days*24*60*60*1000));
+	var expires = "; expires="+date.toGMTString();
+    }
+    else var expires = "";
+    document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+	var c = ca[i];
+	while (c.charAt(0)==' ') c = c.substring(1,c.length);
+	if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+
+function eraseCookie(name) {
+    createCookie(name,"",-1);
 }

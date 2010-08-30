@@ -156,8 +156,13 @@ i2b2.PM._processUserConfig = function (data) {
 
 // ================================================================================================== //
 i2b2.PM.doLogout = function() {
+    if (undefined != i2b2.PM.CAS_server) {
+	eraseCookie("CAS_ticket");
+	window.location = i2b2.PM.CAS_server + "logout";
+    } else {
 	// bug fix - must reload page to avoid dirty data from lingering
 	window.location.reload();
+    }
 }
 
 
