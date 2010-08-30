@@ -25,9 +25,10 @@ if (undefined==i2b2.PM) { i2b2.PM = {}; }
  */
 i2b2.PM.doCASLogin = function(domainname) {
     var ticket = readCookie("CAS_ticket");
+    var login_service = document.location + "cas_login.html";
 
     if (!ticket) {
-	document.location = document.location + "cas_login.html";
+	document.location = login_service;
         return;
     }
 
@@ -55,12 +56,12 @@ i2b2.PM.doCASLogin = function(domainname) {
         domain: domain.domain, 
         is_shrine: Boolean.parseTo(domain.isSHRINE),
         project: domain.project,
-        username: document.location, // aka CAS service
+        username: login_service,
         password_text: ticket
     };
     var transportopts = {
         url: domain.urlCellPM,
-        user: document.location,
+        user: login_service,
         password: ticket,
         domain: domain.domain,
         project: domain.project

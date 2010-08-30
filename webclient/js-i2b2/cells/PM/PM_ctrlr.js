@@ -92,6 +92,12 @@ i2b2.PM._processUserConfig = function (data) {
 	} catch (e) {
 		console.error("Could not find returned password node in login XML");
 		i2b2.PM.model.login_password = "<password>"+data.msgParams.sec_pass+"</password>\n";
+                if (i2b2.PM.model.CAS_server) {
+		    alert("Login attempt failed.");
+		    eraseCookie("CAS_ticket");
+		    i2b2.PM.doCASLogin(data.msgParams.sec_domain);
+		    return true;
+		}
 	}	
 	i2b2.PM.model.login_domain = data.msgParams.sec_domain;
 	i2b2.PM.model.shrine_domain = Boolean.parseTo(data.msgParams.is_shrine);
@@ -134,7 +140,9 @@ i2b2.PM._processUserConfig = function (data) {
 	if (projs.length == 0) {
 		try { i2b2.h.LoadingMask.hide(); } catch(e) {}
 		alert("Your account does not have access to any i2b2 projects.");
-		try { i2b2.PM.view.modal.login.show(); } catch(e) {}
+		if (undefined == i2b2.PM.model.CAS_server) {
+		    try { i2b2.PM.view.modal.login.show(); } catch(e) {}
+		}
 		return true;
 	} else if (projs.length == 1) {
 		// default to the only project the user has access to
