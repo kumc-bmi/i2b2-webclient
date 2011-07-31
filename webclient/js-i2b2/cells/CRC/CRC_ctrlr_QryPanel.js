@@ -21,7 +21,9 @@ function i2b2_PanelController(parentCtrlr) {
 	this.refButtonOccurs = undefined;
 	this.refButtonOccursNum = undefined;
 	this.refDispContents = undefined;
+	this.refButtonTiming = undefined;
 	this.refBalloon = undefined;
+	this.itemNumber = 0;
 
 // ================================================================================================== //
 	this.doRedraw = function() {
@@ -39,6 +41,7 @@ function i2b2_PanelController(parentCtrlr) {
 			pd.dateTo = false;
 			pd.dateFrom = false;
 			pd.exclude = false;
+			pd.timing = i2b2.CRC.ctrlr.QT.queryTiming; //'ANY';
 			pd.occurs = '0';
 			pd.items = [];
 		}
@@ -54,12 +57,18 @@ function i2b2_PanelController(parentCtrlr) {
 			Element.removeClassName(this.refButtonExclude,'queryPanelButtonHover');
 			Element.removeClassName(this.refButtonOccurs,'queryPanelButtonHover');
 			Element.removeClassName(this.refButtonDates,'queryPanelButtonHover');
+			Element.removeClassName(this.refButtonTiming,'queryPanelButtonHover');
 			Element.removeClassName(this.refButtonExclude,'queryPanelButtonSelected');
 			Element.removeClassName(this.refButtonOccurs,'queryPanelButtonSelected');
 			Element.removeClassName(this.refButtonDates,'queryPanelButtonSelected');
+			Element.removeClassName(this.refButtonTiming,'queryPanelButtonSelected');
+			
 			// is this panel one up from the max number of panels?
 			if (this.panelCurrentIndex == i2b2.CRC.model.queryCurrent.panels.length) {
 				this.isActive = 'Y';
+				if (this.QTController.queryTiming == "SAME") {
+					$("queryPanelTimingB" + (this.panelCurrentIndex+1) +  "-button").disabled = false;			
+				}
 				Element.removeClassName(this.refDispContents,'queryPanelHover');
 				Element.removeClassName(this.refDispContents,'queryPanelDisabled');
 				this.refBalloon.style.display = 'block';
@@ -73,6 +82,7 @@ function i2b2_PanelController(parentCtrlr) {
 		} else {
 			// enable visual changes on hover
 			Element.addClassName(this.refButtonExclude,'queryPanelButtonHover');
+			Element.addClassName(this.refButtonTiming,'queryPanelButtonHover');
 			Element.addClassName(this.refButtonOccurs,'queryPanelButtonHover');
 			Element.addClassName(this.refButtonDates,'queryPanelButtonHover');
 			this.isActive = 'Y';
@@ -158,9 +168,15 @@ function i2b2_PanelController(parentCtrlr) {
 
 // ================================================================================================== //
 	this.showLabValues = function(key, extData) {
-		i2b2.CRC.view.modalLabValues.show(this.panelCurrentIndex, this, key, extData);
+		i2b2.CRC.view.modalLabValues.show(this.panelCurrentIndex, this, key, extData, false);
 	}
 
+// ================================================================================================== //
+	this.showModValues = function(key, extData) {
+		i2b2.CRC.view.modalLabValues.show(this.panelCurrentIndex, this, key, extData, true);
+	}
+	
+	
 // ================================================================================================== //
 	this.showOccurs = function(iMinCount) {
 		if (i2b2.CRC.model.queryCurrent.panels.length==0) { return;}
@@ -247,7 +263,79 @@ function i2b2_PanelController(parentCtrlr) {
 	}
 
 // ================================================================================================== //
-	this.doDrop = function(sdxConcept) {	// function to handle drag and drop
+	this.doTiming = function(sTiming) { 
+		if (i2b2.CRC.model.queryCurrent.panels.length==0) { return;}
+		var bVal;
+		var dm = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex];
+		
+		//this.QTController.panelControllers[this.panelCurrentIndex];
+		if (undefined!==dm) {
+			if (undefined!=sTiming) {
+				bVal = sTiming;
+			} else {
+				bVal = i2b2.CRC.ctrlr.QT.queryTiming; //'ANY';
+			}
+			dm.timing = bVal;
+			//this._redrawButtons(dm);
+		}
+		// clear the query name and set the query as having dirty data
+		//var QT = i2b2.CRC.ctrlr.QT;
+		//QT.doSetQueryName.call(QT,'');
+	}
+	
+
+	this.clone = function(obj){
+
+
+		/*
+	var outpurArr = {};
+		for (var i in obj) {
+		outpurArr[i] = typeof (obj[i]) == 'object' ? this.clone(obj[i]) : obj[i]; 
+		} 
+	return outpurArr;
+*/
+	
+	//return YAHOO.lang.JSON.parse( YAHOO.lang.JSON.stringify( obj ) );
+		
+		
+		if ((null == obj) || ("object" != (typeof obj))) return obj;
+		
+		var copy = obj.constructor();
+		for (var attr in obj) {
+			if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+		}	
+		copy.itemNumber = this.itemNumber++;
+		return copy;
+/* *
+		if(obj == null || typeof(obj) != 'object')
+			return obj;
+	
+	
+	        var copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = this.clone(obj[attr]);
+        }
+        return copy;
+ */
+	/*
+        var clone = {};
+        for(var i in obj) {
+            if(typeof(obj[i])=="object")
+                clone[i] = this.clone(obj[i]);
+            else
+                clone[i] = obj[i];
+        }
+        return clone;
+
+*/
+	}
+
+
+// ================================================================================================== //
+	this.doDrop = function(sdxConceptOrig) {	// function to handle drag and drop
+	
+		//Clone it
+		var sdxConcept  = this.clone(sdxConceptOrig)
 		// insert concept into our panel's items array;
 		var dm = i2b2.CRC.model.queryCurrent;
 		var repos = false;
@@ -258,9 +346,17 @@ function i2b2_PanelController(parentCtrlr) {
 		} 
 		var il = dm.panels[targetPanelIndex].items;
 		// check for duplicate data
-		for (var i=0; i<il.length; i++) {
-			if (il[i].sdxInfo.sdxKeyValue==sdxConcept.sdxInfo.sdxKeyValue) {return false; }					
-		}
+		//if (sdxConcept.origData.isModifier != true) {
+		//	for (var i=0; i<il.length; i++) {
+		//		if (il[i].sdxInfo.sdxKeyValue==sdxConcept.sdxInfo.sdxKeyValue) {return false; }					
+		//	}
+		//}
+		
+		//Delete any lab or modifiers that exist
+		delete sdxConcept.LabValues;
+		delete sdxConcept.ModValues;
+		//sdxConcept.origData.itemNumber = this.itemNumber++;
+		
 		// save data
 		this._addConcept(sdxConcept,this.yuiTree.root, true);
 		// reset the query name to be blank and flag as having dirty data
@@ -280,20 +376,171 @@ function i2b2_PanelController(parentCtrlr) {
 // ================================================================================================== //
 	this._addConceptVisuals = function (sdxConcept, tvParent, isDragged) {
 		var tvTree = tvParent.tree;
-		var sdxDataNode = i2b2.sdx.Master.EncapsulateData('CONCPT',sdxConcept.origData);
-		if (!sdxDataNode) { return false; }
-		var renderOptions = {
-			title: sdxConcept.origData.name,
-			dblclick: "i2b2.CRC.ctrlr.QT.ToggleNode(this,'"+tvTree.id+"')",
-			icon: {
-				root: "sdx_ONT_CONCPT_root.gif",
-				rootExp: "sdx_ONT_CONCPT_root-exp.gif",
-				branch: "sdx_ONT_CONCPT_branch.gif",
-				branchExp: "sdx_ONT_CONCPT_branch-exp.gif",
-				leaf: "sdx_ONT_CONCPT_leaf.gif"
+		if (sdxConcept.sdxInfo.sdxType == "CONCPT") { 
+		    var sdxDataNode = i2b2.sdx.Master.EncapsulateData('CONCPT',sdxConcept.origData);
+			
+			
+				var title = "";
+			
+				if (sdxConcept.origData.isModifier) {
+					var values = sdxConcept.ModValues;
+				} else  {
+					var values = sdxConcept.LabValues;				
+				}
+				if (values != null) {
+					switch(values.MatchBy) {
+								case "FLAG":
+								//mm ??not sure tvChildren[i].html = ' = '+i2b2.h.Escape(values.ValueFlag) + "</div></div>";
+									break;
+								case "VALUE":
+									if ((values.GeneralValueType=="ENUM") || (values.GeneralValueType=="TEXT")) {
+										var sEnum = [];
+										for (var i2=0;i2<values.ValueEnum.length;i2++) {
+											sEnum.push(i2b2.h.Escape(values.ValueEnum[i2]));
+										}
+										sEnum = sEnum.join("\", \"");
+										sEnum = ' =  ('+sEnum+')';
+										//tvChildren[i].html =  sEnum + "</div></div>"
+										title = sEnum;
+									} else {
+										if (values.NumericOp == 'BETWEEN') {
+											title =  ' '+i2b2.h.Escape(values.ValueLow)+' and '+i2b2.h.Escape(values.ValueHigh);
+										} else {
+											switch(values.NumericOp) {
+											case "LT":
+												var numericOp = " < ";
+												break;
+											case "LTEQ":
+												var numericOp = " <= ";
+												break;
+											case "EQ":
+												var numericOp = " = ";
+												break;
+											case "GT":
+												var numericOp = " > ";
+												break;
+											case "GTEQ":
+												var numericOp = " >= ";
+												break;
+												
+											case "":
+												break;	
+											}
+											title =   numericOp +i2b2.h.Escape(values.Value);
+										}
+									}
+									break;
+								case "":
+									break;
+							}
+				}
+			
+			if (sdxConcept.origData.isModifier) {
+
+				//Get the blob for this now.
+				if (isDragged) {
+					var cdetails = i2b2.ONT.ajax.GetModifierInfo("CRC:QueryTool", {modifier_applied_path:sdxConcept.origData.applied_path, modifier_key_value:sdxConcept.origData.key, ont_synonym_records: true, ont_hidden_records: true} );
+					// this is what comes out of the old AJAX call
+					var c = i2b2.h.XPath(cdetails.refXML, 'descendant::modifier');
+					if (c.length > 0) {
+							sdxConcept.origData.xmlOrig = c[0];
+					}
+				}
+
+				sdxConcept.origData.newName = sdxConcept.origData.parent.name + " [" + sdxConcept.origData.name + title + "]";
+				var renderOptions = {
+					title: sdxConcept.origData.parent.name + " [" + sdxConcept.origData.name + title + "]",
+					dblclick: "i2b2.CRC.ctrlr.QT.ToggleNode(this,'"+tvTree.id+"')",
+					icon: {
+						root: "sdx_ONT_CONCPT_root.gif",
+						rootExp: "sdx_ONT_CONCPT_root-exp.gif",
+						branch: "sdx_ONT_CONCPT_branch.gif",
+						branchExp: "sdx_ONT_CONCPT_branch-exp.gif",
+						leaf: "sdx_ONT_CONCPT_leaf.gif"
+					}
+				};
+				
+			} else {
+				if (isDragged) {
+					var cdetails = i2b2.ONT.ajax.GetTermInfo("CRC:QueryTool", {concept_key_value:sdxConcept.origData.key, ont_synonym_records: true, ont_hidden_records: true} );
+									var c = i2b2.h.XPath(cdetails.refXML, 'descendant::concept');
+					if (c.length > 0) {
+							sdxConcept.origData.xmlOrig = c[0];					
+					 }
+				}
+					
+				sdxConcept.origData.newName = sdxConcept.origData.name + title;
+				var renderOptions = {
+					title: sdxConcept.origData.name + title,
+					dblclick: "i2b2.CRC.ctrlr.QT.ToggleNode(this,'"+tvTree.id+"')",
+					icon: {
+						root: "sdx_ONT_CONCPT_root.gif",
+						rootExp: "sdx_ONT_CONCPT_root-exp.gif",
+						branch: "sdx_ONT_CONCPT_branch.gif",
+						branchExp: "sdx_ONT_CONCPT_branch-exp.gif",
+						leaf: "sdx_ONT_CONCPT_leaf.gif"
+					}
+				};
 			}
-		};
+		} else if (sdxConcept.sdxInfo.sdxType == "ENS") {
+			var sdxDataNode = i2b2.sdx.Master.EncapsulateData('ENS',sdxConcept.origData);
+			var title = sdxConcept.origData.titleCRC;
+			if (title == undefined)
+			{
+				title = sdxConcept.origData.title;
+			}
+			var renderOptions = {
+				title: title,
+				icon: "sdx_CRC_PRS.jpg"
+				};
+		} else if (sdxConcept.sdxInfo.sdxType == "PRS") {
+			var sdxDataNode = i2b2.sdx.Master.EncapsulateData('PRS',sdxConcept.origData);
+			var title = sdxConcept.origData.titleCRC;
+			if (title == undefined)
+			{
+				title = sdxConcept.origData.title;
+			}
+			var renderOptions = {
+				title: title,
+				icon: "sdx_CRC_PRS.jpg"
+			};		
+		} else if (sdxConcept.sdxInfo.sdxType == "QM") {
+			var sdxDataNode = i2b2.sdx.Master.EncapsulateData('QM',sdxConcept.origData);
+			var title = sdxConcept.origData.titleCRC;
+			if (title == undefined)
+			{
+				title = sdxConcept.origData.title;
+			}
+			var renderOptions = {
+				title: title,
+				icon: "sdx_CRC_QM.gif"
+			};
+		
+		}
+		
+		if (!sdxDataNode) { return false; }
+
 		var sdxRenderData = i2b2.sdx.Master.RenderHTML(tvTree.id, sdxDataNode, renderOptions);
+	
+		sdxRenderData.itemNumber = sdxConcept.itemNumber;
+	
+		if (!sdxConcept.origData.isModifier) {
+			//check if lab has value if so than auto popup
+			var lvMetaDatas2 = i2b2.h.XPath(sdxConcept.origData.xmlOrig, 'metadataxml/ValueMetadata[string-length(Version)>0]');
+			if (lvMetaDatas2.length > 0) {
+				//bring up popup
+				this.showLabValues(sdxConcept.origData.key, sdxRenderData);
+			}
+		} else {
+			//check if the mod has a value, if so than auto popup
+			var lvMetaDatas1 = i2b2.h.XPath(sdxConcept.origData.xmlOrig, 'metadataxml/ValueMetadata[string-length(Version)>0]');
+			if (lvMetaDatas1.length > 0) {
+				//bring up popup
+				this.showModValues(sdxConcept.origData.key, sdxRenderData);			
+			}
+		}
+
+		
 		i2b2.sdx.Master.AppendTreeNode(tvTree, tvParent, sdxRenderData);
 		return sdxRenderData;
 	}	
@@ -303,7 +550,8 @@ function i2b2_PanelController(parentCtrlr) {
 		var pd = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex];
 		// remove the concept from panel
 		for (var i=0; i< pd.items.length; i++) {
-			if (pd.items[i].origData.key == key) {
+			if ((pd.items[i].origData.key == key)
+						  || (pd.items[i].origData.id == key)) {
 				// found the concept to remove
 				var rto = pd.items[i];
 				break;
@@ -313,7 +561,8 @@ function i2b2_PanelController(parentCtrlr) {
 		// remove the node in the treeview
 		var tvChildren = pd.tvRootNode.children
 		for (var i=0; i< tvChildren.length; i++) {
-			if (tvChildren[i].data.i2b2_SDX.sdxInfo.sdxKeyValue===rto.origData.key) {
+			if ((tvChildren[i].data.i2b2_SDX.sdxInfo.sdxKeyValue===rto.origData.key)
+							|| (tvChildren[i].data.i2b2_SDX.sdxInfo.sdxKeyValue===rto.origData.id)) {
 				this.yuiTree.removeNode(tvChildren[i],false);
 				this._redrawTree.call(this, pd);
 				break;
@@ -326,6 +575,119 @@ function i2b2_PanelController(parentCtrlr) {
 		// clear the query name if it was set
 		this.QTController.doSetQueryName.call(this,'');
 	}
+
+// ================================================================================================== //
+	this._renameConcept = function(key, isModifier, pd) {
+		//var pd = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex];
+		// remove the concept from panel
+		for (var i=0; i< pd.items.length; i++) {
+			if ((pd.items[i].origData.key == key)
+						  || (pd.items[i].itemNumber == key)) {
+				// found the concept to remove
+				var rto = pd.items[i];
+				break;
+			}
+		}
+		if (undefined===rto) { return; }
+		// rename the node in the treeview
+		var tvChildren = pd.tvRootNode.children
+		for (var i=0; i< tvChildren.length; i++) {
+			//if ((tvChildren[i].data.i2b2_SDX.sdxInfo.sdxKeyValue===rto.origData.key)
+				//			|| (tvChildren[i].data.i2b2_SDX.sdxInfo.sdxKeyValue===rto.origData.id)) {
+				
+			if (tvChildren[i].data.i2b2_SDX.itemNumber==key) {	
+				var tt = tvChildren[i].getContentHtml();
+				var tt2 = tt.substring(0, tt.lastIndexOf("\"/>")+3);
+				var tt3 = "";
+				if (isModifier) {
+					var values = rto.ModValues;
+					tt2 +=  rto.origData.parent.name + " ["+ rto.origData.name;
+					tt3 =  "]";
+					rto.origData.newName =  rto.origData.parent.name + " ["+ rto.origData.name;
+				} else  {
+					var values = rto.LabValues;				
+					tt2 +=  rto.origData.name;
+					rto.origData.newName =rto.origData.name;
+				}
+				tvChildren[i].html = tt2  + tt3 + "</div></div>"
+				rto.origData.newName +=  tt3 ;
+				
+				if (undefined  != values) {
+				    switch(values.MatchBy) {
+								case "FLAG":
+								tvChildren[i].html = tt2 + ' = '+i2b2.h.Escape(values.ValueFlag) + "</div></div>";
+								rto.origData.newName += ' = '+i2b2.h.Escape(values.ValueFlag);
+
+									break;
+								case "VALUE":
+									if (values.GeneralValueType=="ENUM") {
+										var sEnum = [];
+										for (var i2=0;i2<values.ValueEnum.length;i2++) {
+											sEnum.push(i2b2.h.Escape(values.NameEnum[i2].text));
+										}
+										sEnum = sEnum.join("\", \"");
+										sEnum = ' =  ("'+sEnum+'")';
+										tvChildren[i].html = tt2 + sEnum + tt3 + "</div></div>"
+										rto.origData.newName += sEnum + tt3 ;
+									} else {
+										if (!Object.isUndefined(values.UnitsCtrl))
+										{
+											tt3 = " " + values.UnitsCtrl + tt3;				
+										}
+										
+										if (values.NumericOp == 'BETWEEN') {
+											tvChildren[i].html = tt2 + ' '+i2b2.h.Escape(values.ValueLow)+' and '+i2b2.h.Escape(values.ValueHigh) + tt3 + "</div></div>"
+											rto.origData.newName += ' '+i2b2.h.Escape(values.ValueLow)+' and '+i2b2.h.Escape(values.ValueHigh) + tt3;
+										} else {
+											switch(values.NumericOp) {
+											case "LT":
+												var numericOp = " < ";
+												break;
+											case "LTEQ":
+												var numericOp = " <= ";
+												break;
+											case "EQ":
+												var numericOp = " = ";
+												break;
+											case "GT":
+												var numericOp = " > ";
+												break;
+											case "GTEQ":
+												var numericOp = " >= ";
+												break;
+												
+											case "":
+												break;	
+											}
+											tvChildren[i].html = tt2  + numericOp +i2b2.h.Escape(values.Value) + tt3 + "</div></div>"
+											rto.origData.newName += numericOp +i2b2.h.Escape(values.Value) + tt3 ;
+										}
+									}
+									break;
+								case "":
+									break;
+							}
+				}
+				//tvChildren[i].setNodesProperty("label", "test", true);
+				//tvChildren[i].getLabelEl().innerHTML = label;
+				//this.yuiTree.removeNode(tvChildren[i],false);
+				
+				
+				//this._redrawTree.call(this, pd);
+				//this._redrawTree(pd);
+				pd.tvRootNode.tree.draw();
+				break;
+			}
+		}
+		// remove the concept from the data model
+		//pd.items.splice(i,1);
+		// remove this panel if it's empty
+		if (pd.items.length == 0) { this.doDelete(); }
+		// clear the query name if it was set
+		this.QTController.doSetQueryName.call(this,'');
+	}
+
+
 
 // ================================================================================================== //
 	this.setPanelRecord = function (index) { 

@@ -27,14 +27,27 @@ i2b2.CRC.view.modalLabValues = {
 		enumInfo: {}
 	},
 	
+	updateValue: function(e) {
+		posx = 0; posy = 0;
+		 var point = YAHOO.util.Event.getXY(e);
+		 var point2 = YAHOO.util.Dom.getXY('mlvfrmGrp');
+
+		var newvalue = point[0] - point2[0];
+		var newvalue = (520/($('mlvfrmGrpHighOfHigh').innerHTML -  $('mlvfrmGrpLowOfLow').innerHTML)) * newvalue;
+		var newvalue2 = "as";
+	},
+	
 // ================================================================================================== //
-	show: function(panelIndex, queryPanelController, key, extData) {
+	show: function(panelIndex, queryPanelController, key, extData, isModifier) {
 		if (Object.isUndefined(i2b2.CRC.model.queryCurrent.panels[panelIndex])) { return; }
 		var fd = i2b2.CRC.view.modalLabValues.formdata;
 		var dm = i2b2.CRC.model.queryCurrent.panels[panelIndex];
 		// save info for callback
 		this.qpi = panelIndex;
 		this.cpc = queryPanelController;
+		i2b2.CRC.view.modalLabValues.isModifier = isModifier;
+		i2b2.CRC.view.modalLabValues.itemNumber = extData.itemNumber;
+		//this.isModifier = isMod;
 		this.key = key;
 		this.i2b2Data = extData;
 		// Create SimpleDialog control
@@ -53,18 +66,32 @@ i2b2.CRC.view.modalLabValues = {
 							var closure_qpi = i2b2.CRC.view.modalLabValues.qpi;
 							var closure_cpc = i2b2.CRC.view.modalLabValues.cpc;
 							var closure_key = i2b2.CRC.view.modalLabValues.key;
+							var closure_number = i2b2.CRC.view.modalLabValues.itemNumber;
 							// submit value(s)
 							if (this.submit()) {
 								var pd = i2b2.CRC.model.queryCurrent.panels[closure_qpi];
 								// find the correct item in the panel
 								for (var i=0; i<pd.items.length; i++) {
-									if (pd.items[i].sdxInfo.sdxKeyValue==closure_key) {
-										pd.items[i].LabValues = i2b2.CRC.view.modalLabValues.i2b2Data.LabValues;
+									//if (pd.items[i].sdxInfo.sdxKeyValue==closure_key) {
+									if (pd.items[i].itemNumber==closure_number) {
+										if (i2b2.CRC.view.modalLabValues.isModifier) {
+											pd.items[i].ModValues = i2b2.CRC.view.modalLabValues.i2b2Data.ModValues;
+										} else {
+											pd.items[i].LabValues = i2b2.CRC.view.modalLabValues.i2b2Data.LabValues;										
+										}
 										break;
 									}
 								}
 								// update the panel/query tool GUI
 								i2b2.CRC.ctrlr.QT.doSetQueryName.call(this, '');
+								
+								//queryPanelController._renameConcept(closure_key, i2b2.CRC.view.modalLabValues.isModifier, pd);
+								
+								queryPanelController._renameConcept(i2b2.CRC.view.modalLabValues.i2b2Data.itemNumber, i2b2.CRC.view.modalLabValues.isModifier, pd);
+								
+								
+								delete i2b2.CRC.view.modalLabValues.isModifier;
+							
 							}
 						})
 					}, {
@@ -107,26 +134,35 @@ i2b2.CRC.view.modalLabValues = {
 		}
 				
 		// configure the form
-		var mdnodes = i2b2.h.XPath(extData.origData.xmlOrig, 'descendant::metadataxml/ValueMetadata[Loinc]');
+		var mdnodes = i2b2.h.XPath(extData.origData.xmlOrig, 'descendant::metadataxml/ValueMetadata[Version]');
 		if (mdnodes.length > 0) {
 			this.cfgByMetadata(mdnodes[0]);
 		} else {
 			// no LabValue configuration
 			return false;
 		}
-		if (!this.i2b2Data.LabValues && this.i2b2Data.origData.LabValues) {
-			// copy server delivered Lab Values to our scope
-			this.i2b2Data.LabValues = this.i2b2Data.origData.LabValues;
+		if (i2b2.CRC.view.modalLabValues.isModifier) {
+			if (!this.i2b2Data.ModValues && this.i2b2Data.origData.ModValues) {
+				// copy server delivered Lab Values to our scope
+				this.i2b2Data.ModValues = this.i2b2Data.origData.ModValues;
+			}
+			var tmpLab = this.i2b2Data.ModValues;
+		} else {	
+			if (!this.i2b2Data.LabValues && this.i2b2Data.origData.LabValues) {
+				// copy server delivered Lab Values to our scope
+				this.i2b2Data.LabValues = this.i2b2Data.origData.LabValues;
+			}
+			var tmpLab = this.i2b2Data.LabValues;
 		}
 		// load any data already attached to the node
-		if (this.i2b2Data.LabValues) {
-			switch(this.i2b2Data.LabValues.MatchBy) {
+		if (tmpLab) {
+			switch(tmpLab.MatchBy) {
 				case "FLAG":
 					fd.selectedType = "FLAG";
 					$("mlvfrmTypeFLAG").checked = true;
 					var tn = $("mlvfrmFlagValue");
 					for (var i=0; i<tn.options.length; i++) {
-						if (tn.options[i].value == this.i2b2Data.LabValues.ValueFlag) {
+						if (tn.options[i].value == tmpLab.ValueFlag) {
 							tn.selectedIndex = i;
 							fd.flagValue = i;
 							break;
@@ -137,27 +173,27 @@ i2b2.CRC.view.modalLabValues = {
 					fd.selectedType = "VALUE";
 					$("mlvfrmTypeVALUE").checked = true;
 					// select the correct numeric matching operator
-					if (this.i2b2Data.LabValues.NumericOp) {
+					if (tmpLab.NumericOp) {
 						var tn = $("mlvfrmOperator");
 						for (var i=0; i<tn.options.length; i++) {
-							if (tn.options[i].value == this.i2b2Data.LabValues.NumericOp) {
+							if (tn.options[i].value == tmpLab.NumericOp) {
 								tn.selectedIndex = i;
-								fd.numericOperator = this.i2b2Data.LabValues.NumericOp;
+								fd.numericOperator = tmpLab.NumericOp;
 								break;
 							}
 						}
 						// load the values if any
-						if (this.i2b2Data.LabValues.Value) 		{ $('mlvfrmNumericValue').value = this.i2b2Data.LabValues.Value; }
-						if (this.i2b2Data.LabValues.ValueHigh) 	{ $('mlvfrmNumericValueHigh').value = this.i2b2Data.LabValues.ValueHigh; }
-						if (this.i2b2Data.LabValues.ValueLow) 	{ $('mlvfrmNumericValueLow').value = this.i2b2Data.LabValues.ValueLow; }
+						if (tmpLab.Value) 		{ $('mlvfrmNumericValue').value = tmpLab.Value; }
+						if (tmpLab.ValueHigh) 	{ $('mlvfrmNumericValueHigh').value = tmpLab.ValueHigh; }
+						if (tmpLab.ValueLow) 	{ $('mlvfrmNumericValueLow').value = tmpLab.ValueLow; }
 					}
-					if (this.i2b2Data.LabValues.ValueString) {
-						$('mlvfrmStrValue').value = this.i2b2Data.LabValues.ValueString;
+					if (tmpLab.ValueString) {
+						$('mlvfrmStrValue').value = tmpLab.ValueString;
 					}
-					if (this.i2b2Data.LabValues.ValueEnum) 	{ 
+					if (tmpLab.ValueEnum) 	{ 
 						var tn = $("mlvfrmEnumValue");
 						for (var i=0; i<tn.options.length; i++) {
-							if (this.i2b2Data.LabValues.ValueEnum.indexOf(tn.options[i].text) > -1) {
+							if (tmpLab.ValueEnum.indexOf(tn.options[i].text) > -1) {
 								tn.options[i].selected = true;
 							} else {
 								tn.options[i].selected = false;
@@ -212,18 +248,22 @@ i2b2.CRC.view.modalLabValues = {
 				fd.enumValue = tn.options[fd.enumIndex].innerHTML;
 				break;
 			case "mlvfrmUnits":
+				
 				var u1 = $('mlvfrmUnits');
 				// convert entered values
 				var cvD = dm.valueUnits[fd.unitIndex].multFactor;
 				var cvM = dm.valueUnits[u1.selectedIndex].multFactor;
 				var lst = [$('mlvfrmNumericValue'), $('mlvfrmNumericValueLow'), $('mlvfrmNumericValueHigh')];
+				/*
 				for (var i=0;i<lst.length;i++) {
 					try {
+						var t2 = lst[i].value;
 						var t = (parseFloat(lst[i].value) / cvD) * cvM;
 						if (isNaN(t)) { t = '';	}
 						lst[i].value = t;
 					} catch(e) {}
 				}
+				*/
 				// save the new Units
 				fd.unitIndex = u1.selectedIndex;
 				// message if selected Unit is excluded from use
@@ -237,7 +277,8 @@ i2b2.CRC.view.modalLabValues = {
 					$('mlvfrmNumericValue').disabled = false;
 					$('mlvfrmNumericValueLow').disabled = false;
 					$('mlvfrmNumericValueHigh').disabled = false;
-				}
+				}	
+				
 				break;
 			default:
 				console.warn("onClick element was not captured for ID:"+tn.id)
@@ -345,14 +386,36 @@ i2b2.CRC.view.modalLabValues = {
 					dm.valueValidate.onlyInt = false;
 					dm.valueValidate.maxString = false;
 					// extract the enum data
-					var t = i2b2.h.XPath(refXML,"descendant::EnumValues/Val/text()");
-					var t2 = [];
-					for (var i=0; i<t.length; i++) {
-						t2.push(t[i].nodeValue);
+					var t1 = i2b2.h.XPath(refXML,"descendant::EnumValues/Val");
+					//var t = i2b2.h.XPath(refXML,"descendant::EnumValues/Val/text()");
+					//var t2 = [];
+					var sn = $('mlvfrmEnumValue');
+					// clear the drop down
+					while( sn.hasChildNodes() ) { sn.removeChild( sn.lastChild ); }			
+					
+					var t2 = new Array();
+					for (var i=0; i<t1.length; i++) {
+						if (t1[i].attributes[0].nodeValue != "" ) {
+							//t2.push(t[i].attributes[0].nodeValue);
+							var name = t1[i].attributes[0].nodeValue;
+						} else {
+							//t2.push(t[i].childNodes[0].nodeValue);
+							var name = t1[i].childNodes[0].nodeValue;
+						}
+						t2[(t1[i].childNodes[0].nodeValue)] = name;
+						
+
+						var sno = document.createElement('OPTION');
+						sno.setAttribute('value', (t1[i].childNodes[0].nodeValue));
+						var snt = document.createTextNode(name);
+						sno.appendChild(snt);
+						sn.appendChild(sno);
+							
 					}
-					dm.enumInfo = t2.uniq();
+					dm.enumInfo = t2;
 
 					// remove any Enums found in <CommentsDeterminingExclusion> section
+					
 					var t = i2b2.h.XPath(refXML,"descendant::CommentsDeterminingExclusion/Com/text()");
 					var t2 = [];
 					for (var i=0; i<t.length; i++) {
@@ -371,17 +434,20 @@ i2b2.CRC.view.modalLabValues = {
 						}
 					}
 					// clear & populate the Enum dropdown
-					var sn = $('mlvfrmEnumValue');
-					// clear the drop down
-					while( sn.hasChildNodes() ) { sn.removeChild( sn.lastChild ); }			
 					// populate values
-					for (var i=0; i<dm.enumInfo.length; i++) {
+					var count = 0;
+					//for (var i in dm.enumInfo) {
+					
+					/*for (var i in dm.enumInfo) {
+					//for (var i=0; i<dm.enumInfo.length; i++) {
 						var sno = document.createElement('OPTION');
 						sno.setAttribute('value', i);
 						var snt = document.createTextNode(dm.enumInfo[i]);
 						sno.appendChild(snt);
 						sn.appendChild(sno);
-					}
+						count ++;
+						//mm  if (count == t1.length) {break;}
+					}*/
 					break;
 				default:
 					dm.valueType = false;
@@ -398,7 +464,7 @@ i2b2.CRC.view.modalLabValues = {
 		var tProcessing = new Hash();
 		try {
 			// save list of all possible units (from)
-			var t = i2b2.h.XPath(refXML,"descendant::UnitValues/descendant::text()[parent::NormalUnits or parent::ExcludingUnits or parent::Units]");
+			var t = i2b2.h.XPath(refXML,"descendant::UnitValues/descendant::text()[parent::NormalUnits or parent::EqualUnits or parent::Units]");
 			var t2 = [];
 			for (var i=0; i<t.length; i++) {
 				t2.push(t[i].nodeValue);
@@ -407,9 +473,15 @@ i2b2.CRC.view.modalLabValues = {
 			for (var i=0;i<t.length;i++) {
 				var d = {name: t[i]};
 				// is unit excluded?
-				if (i2b2.h.XPath(refXML,"descendant::UnitValues/descendant::ExcludingUnits[text()='"+t[i]+"']").length>0) {
-					d.excluded = true;
-				}
+				//if (i2b2.h.XPath(refXML,"descendant::UnitValues/descendant::ExcludingUnits[text()='"+t[i]+"']").length>0) {
+				//	d.excluded = true;
+				//}
+				
+				// Equal Units
+				//if (i2b2.h.XPath(refXML,"descendant::UnitValues/descendant::ExcludingUnits[text()='"+t[i]+"']").length>0) {
+				//	d.excluded = true;
+				//}
+				
 				// does unit require conversion?
 				try {
 					d.multFactor = i2b2.h.XPath(refXML,"descendant::UnitValues/descendant::ConvertingUnits[Units/text()='"+t[i]+"']/MultiplyingFactor/text()")[0].nodeValue;
@@ -492,15 +564,29 @@ i2b2.CRC.view.modalLabValues = {
 		dm.rangeInfo = {};
 		try {
 			dm.rangeInfo.LowOfLow = parseFloat(refXML.getElementsByTagName('LowofLowValue')[0].firstChild.nodeValue);
+			$('mlvfrmGrpLowOfLow').innerHTML = dm.rangeInfo.LowOfLow;
 		} catch(e) {}
 		try {
 			dm.rangeInfo.HighOfLow = parseFloat(refXML.getElementsByTagName('HighofLowValue')[0].firstChild.nodeValue);		
+			$('mlvfrmGrpHighOfLow').innerHTML = dm.rangeInfo.HighOfLow;
 		} catch(e) {}
 		try {
 			dm.rangeInfo.LowOfHigh = parseFloat(refXML.getElementsByTagName('LowofHighValue')[0].firstChild.nodeValue);
+			$('mlvfrmGrpLowOfHigh').innerHTML = dm.rangeInfo.LowOfHigh;
 		} catch(e) {}
 		try {
 			dm.rangeInfo.HighOfHigh = parseFloat(refXML.getElementsByTagName('HighofHighValue')[0].firstChild.nodeValue);
+			$('mlvfrmGrpHighOfHigh').innerHTML = dm.rangeInfo.HighOfHigh;
+			$('mlvfrmGrpMiddle').innerHTML = dm.rangeInfo.HighOfHigh - dm.rangeInfo.LowOfLow;
+			$('mlvfrmGrpMiddle').style.width = (((520/(dm.rangeInfo.HighOfHigh -  dm.rangeInfo.LowOfLow))* (dm.rangeInfo.LowOfHigh - dm.rangeInfo.HighOfLow))-35) + "px";			
+			
+			
+			$('mlvfrmGrpLowOfLow').style.width= ((520/(dm.rangeInfo.HighOfHigh -  dm.rangeInfo.LowOfLow))* (dm.rangeInfo.HighOfLow - dm.rangeInfo.LowOfLow)) + "px";
+			$('mlvfrmGrpHighOfHigh').style.width= ((520/(dm.rangeInfo.HighOfHigh -  dm.rangeInfo.LowOfLow))* (dm.rangeInfo.HighOfHigh - dm.rangeInfo.LowOfHigh)) + "px";			
+			
+			$('mlvfrmGrpLow').style.width= ((520/(dm.rangeInfo.HighOfHigh -  dm.rangeInfo.LowOfLow))* (dm.rangeInfo.HighOfLow - dm.rangeInfo.LowOfLow)) + "px";
+			$('mlvfrmGrpHigh').style.width= ((520/(dm.rangeInfo.HighOfHigh -  dm.rangeInfo.LowOfLow))* (dm.rangeInfo.HighOfHigh - dm.rangeInfo.LowOfHigh)) + "px";			
+			
 		} catch(e) {}
 		try {
 			dm.rangeInfo.LowOfToxic = parseFloat(refXML.getElementsByTagName('LowOfToxic')[0].firstChild.nodeValue);
@@ -665,7 +751,11 @@ i2b2.CRC.view.modalLabValues = {
 		var errorMsg = [];
 		switch (fd.selectedType) {
 			case "NONE":
-				delete i2b2.CRC.view.modalLabValues.i2b2Data.LabValues;
+			    if (i2b2.CRC.view.modalLabValues.isModifier) {
+					delete i2b2.CRC.view.modalLabValues.i2b2Data.ModValues;
+				} else {
+					delete i2b2.CRC.view.modalLabValues.i2b2Data.LabValues;					
+				}
 				return true;
 				break;
 			case "FLAG":
@@ -737,9 +827,9 @@ i2b2.CRC.view.modalLabValues = {
 						}
 						try {
 							var convtMult = dm.valueUnits[fd.unitIndex].multFactor;
-							if (tmpLabValue.ValueHigh) tmpLabValue.ValueHigh = (tmpLabValue.ValueHigh / convtMult);
-							if (tmpLabValue.ValueLow) tmpLabValue.ValueLow = (tmpLabValue.ValueLow / convtMult);
-							if (tmpLabValue.Value) tmpLabValue.Value = (tmpLabValue.Value / convtMult);
+							if (tmpLabValue.ValueHigh) tmpLabValue.ValueHigh = (tmpLabValue.ValueHigh * convtMult);
+							if (tmpLabValue.ValueLow) tmpLabValue.ValueLow = (tmpLabValue.ValueLow * convtMult);
+							if (tmpLabValue.Value) tmpLabValue.Value = (tmpLabValue.Value * convtMult);
 							for (var i=0; i<dm.valueUnits.length;i++){
 								if (dm.valueUnits[i].masterUnit) {
 									tmpLabValue.UnitsCtrl = dm.valueUnits[i].name;
@@ -765,10 +855,12 @@ i2b2.CRC.view.modalLabValues = {
 						tmpLabValue.GeneralValueType = "ENUM";
 						tmpLabValue.SpecificValueType = "ENUM";
 						tmpLabValue.ValueEnum = [];
+						tmpLabValue.NameEnum = [];
 						var t = $('mlvfrmEnumValue').options;
 						for (var i=0; i<t.length;i++) {
 							if (t[i].selected) {
-								tmpLabValue.ValueEnum.push(dm.enumInfo[t[i].value]);
+								tmpLabValue.ValueEnum.push(t[i].value); //dm.enumInfo[t[i].value]);
+								tmpLabValue.NameEnum.push(t[i]);
 							}
 						}
 						break;
@@ -784,10 +876,18 @@ i2b2.CRC.view.modalLabValues = {
 			return false;
 		}
 		// save the labValues data into the node's data element
-		if (tmpLabValue) {
-			i2b2.CRC.view.modalLabValues.i2b2Data.LabValues = tmpLabValue;
-		} else {
-			delete i2b2.CRC.view.modalLabValues.i2b2Data.LabValues;
+		if (i2b2.CRC.view.modalLabValues.isModifier) {
+			if (tmpLabValue) {
+				i2b2.CRC.view.modalLabValues.i2b2Data.ModValues = tmpLabValue;
+			} else {
+				delete i2b2.CRC.view.modalLabValues.i2b2Data.ModValues;
+			}
+		} else { 
+			if (tmpLabValue) {
+				i2b2.CRC.view.modalLabValues.i2b2Data.LabValues = tmpLabValue;
+			} else {
+				delete i2b2.CRC.view.modalLabValues.i2b2Data.LabValues;
+			}
 		}
 		return true;
 	}

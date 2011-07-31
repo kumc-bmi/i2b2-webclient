@@ -40,7 +40,7 @@ i2b2.WORK.cfg.msgs.moveChild = '<?xml version="1.0" encoding="UTF-8" standalone=
 '		<receiving_facility>\n'+
 '			<facility_name>i2b2 Hive</facility_name>\n'+
 '		</receiving_facility>\n'+
-'		<datetime_of_message>2008-08-29T11:03:57.462-04:00</datetime_of_message>\n'+
+'		<datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
 '		<security>\n'+
 '			<domain>{{{sec_domain}}}</domain>\n'+
 '			<username>{{{sec_user}}}</username>\n'+
@@ -96,7 +96,7 @@ i2b2.WORK.cfg.msgs.getFoldersByUserId = '<?xml version="1.0" encoding="UTF-8" st
 '		<receiving_facility>\n'+
 '			<facility_name>i2b2 Hive</facility_name>\n'+
 '		</receiving_facility>\n'+
-'		<datetime_of_message>2008-08-20T15:58:19.057-04:00</datetime_of_message>\n'+
+'		<datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
 '		<security>\n'+
 '			<domain>{{{sec_domain}}}</domain>\n'+
 '			<username>{{{sec_user}}}</username>\n'+
@@ -179,7 +179,7 @@ i2b2.WORK.cfg.msgs.getChildren = '<?xml version="1.0" encoding="UTF-8" standalon
 '		<receiving_facility>\n'+
 '			<facility_name>i2b2 Hive</facility_name>\n'+
 '		</receiving_facility>\n'+
-'		<datetime_of_message>2008-08-20T16:08:43.052-04:00</datetime_of_message>\n'+
+'		<datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
 '		<security>\n'+
 '			<domain>{{{sec_domain}}}</domain>\n'+
 '			<username>{{{sec_user}}}</username>\n'+
@@ -265,7 +265,7 @@ i2b2.WORK.cfg.msgs.addChild = '<?xml version="1.0" encoding="UTF-8" standalone="
 '		<receiving_facility>\n'+
 '			<facility_name>i2b2 Hive</facility_name>\n'+
 '		</receiving_facility>\n'+
-'		<datetime_of_message>2008-08-20T16:31:25.553-04:00</datetime_of_message>\n'+
+'		<datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
 '		<security>\n'+
 '			<domain>{{{sec_domain}}}</domain>\n'+
 '			<username>{{{sec_user}}}</username>\n'+
@@ -342,9 +342,12 @@ i2b2.WORK.cfg.msgs.encapsulatePRS = ''+
 '					<ns4:query_result_instance xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/">\n'+
 '						<result_instance_id>{{{prs_id}}}</result_instance_id>\n'+
 '						<query_instance_id>{{{qi_id}}}</query_instance_id>\n'+
+'						<description>{{{prs_description}}}</description>\n' +
 '						<query_result_type>\n'+
 '							<result_type_id>1</result_type_id>\n'+
 '							<name>PATIENTSET</name>\n'+
+'							<display_type>LIST</display_type>\n' +
+'							<visual_attribute_type>LA</visual_attribute_type>\n' +
 '							<description>Patient list</description>\n'+
 '						</query_result_type>\n'+
 '						<set_size>{{{prs_set_size}}}</set_size>\n'+
@@ -355,6 +358,29 @@ i2b2.WORK.cfg.msgs.encapsulatePRS = ''+
 //'							<name>FINISHED</name>\n'+
 //'							<description>FINISHED</description>\n'+
 //'						</query_status_type>\n'+
+'					</ns4:query_result_instance>\n'+
+'				</ns5:plugin_drag_drop>\n'+
+'			</work_xml>\n';
+// ================================================================================================== //
+
+// URL: <none> (used by addChild to encapsulate non-WRK SDX type of PRS)
+i2b2.WORK.cfg.msgs.encapsulateENS = ''+
+'			<work_xml>\n'+
+'				<ns5:plugin_drag_drop xmlns:ns5="http://www.i2b2.org/xsd/hive/plugin/">\n'+
+'					<ns4:query_result_instance xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/">\n'+
+'						<result_instance_id>{{{prs_id}}}</result_instance_id>\n'+
+'						<query_instance_id>{{{qi_id}}}</query_instance_id>\n'+
+'						<description>{{{prs_description}}}</description>\n' +
+'						<query_result_type>\n'+
+'							<result_type_id>1</result_type_id>\n'+
+'							<name>ENCOUNTERSET</name>\n'+
+'							<display_type>LIST</display_type>\n' +
+'							<visual_attribute_type>LA</visual_attribute_type>\n' +
+'							<description>Encounter list</description>\n'+
+'						</query_result_type>\n'+
+'						<set_size>{{{prs_set_size}}}</set_size>\n'+
+'						<start_date>{{{prs_start_date}}}</start_date>\n'+
+'						<end_date>{{{prs_end_date}}}</end_date>\n'+
 '					</ns4:query_result_instance>\n'+
 '				</ns5:plugin_drag_drop>\n'+
 '			</work_xml>\n';
@@ -461,7 +487,7 @@ i2b2.WORK.cfg.msgs.renameChild = '<?xml version="1.0" encoding="UTF-8" standalon
 '		<receiving_facility>\n'+
 '			<facility_name>i2b2 Hive</facility_name>\n'+
 '		</receiving_facility>\n'+
-'		<datetime_of_message>2008-08-20T16:41:31.545-04:00</datetime_of_message>\n'+
+'		<datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
 '		<security>\n'+
 '			<domain>{{{sec_domain}}}</domain>\n'+
 '			<username>{{{sec_user}}}</username>\n'+
@@ -519,7 +545,7 @@ i2b2.WORK.cfg.msgs.annotateChild = '<?xml version="1.0" encoding="UTF-8" standal
 '		<receiving_facility>\n'+
 '			<facility_name>i2b2 Hive</facility_name>\n'+
 '		</receiving_facility>\n'+
-'		<datetime_of_message>2008-08-20T16:23:01.950-04:00</datetime_of_message>\n'+
+'		<datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
 '		<security>\n'+
 '			<domain>{{{sec_domain}}}</domain>\n'+
 '			<username>{{{sec_user}}}</username>\n'+
@@ -576,7 +602,7 @@ i2b2.WORK.cfg.msgs.deleteChild = '<?xml version="1.0" encoding="UTF-8" standalon
 '		<receiving_facility>\n'+
 '			<facility_name>i2b2 Hive</facility_name>\n'+
 '		</receiving_facility>\n'+
-'		<datetime_of_message>2008-08-20T16:57:54.390-04:00</datetime_of_message>\n'+
+'		<datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
 '		<security>\n'+
 '			<domain>{{{sec_domain}}}</domain>\n'+
 '			<username>{{{sec_user}}}</username>\n'+

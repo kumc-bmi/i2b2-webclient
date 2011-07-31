@@ -40,6 +40,7 @@ i2b2.ONT.view.main.selectTab = function(tabCode) {
 	}
 }
 
+
 // ================================================================================================== //
 i2b2.ONT.view.main.Resize = function(e) {
 	// this function provides the resize functionality needed for this screen
@@ -66,7 +67,7 @@ i2b2.ONT.view.main.Resize = function(e) {
 				
 				break;
 			case "Analysis":
-				w = parseInt(w/3);
+				w = parseInt(w/3) + 300;
 				ve.width = w-10;				
 				if (i2b2.WORK && i2b2.WORK.isLoaded) {
 					var z = parseInt((h - 321)/2) + 16;
@@ -76,7 +77,10 @@ i2b2.ONT.view.main.Resize = function(e) {
 				}
 				break;
 		}
-		$$('DIV#ontMainBox DIV#ontNavDisp')[0].style.width = (parseInt(ve.width)-20) + 'px';
+		$$('DIV#ontMainBox DIV#ontNavDisp')[0].style.width = (parseInt(ve.width)-20) + 'px';  // was -20
+		//$$('DIV#ontMainBox DIV#ontFindDisp')[0].style.width = (parseInt(ve.width)-20) + 'px';  // was -20
+		//$$('DIV#ontMainBox DIV#ontTopTabs')[0].style.width = (parseInt(ve.width)-330) + 'px'; 		
+		$$('DIV#ontMainBox DIV#ontFindFrameModifier')[0].style.width = (parseInt(ve.width)-14) + 'px';
 		$$('DIV#ontMainBox DIV#ontSearchNamesResults')[0].style.width = (parseInt(ve.width)-14) + 'px';
 		$$('DIV#ontMainBox DIV#ontSearchCodesResults')[0].style.width = (parseInt(ve.width)-14) + 'px';
 		if (viewObj.isZoomed) { ve.height = h-93; }
@@ -134,6 +138,7 @@ i2b2.ONT.view.main.hballoon = {
 	}
 }
 // ================================================================================================== //
+
 
 
 // This is done once the entire cell has been loaded

@@ -303,6 +303,10 @@ i2b2.ProjectRequest.excprsDropped = function(sdxData) {
 
 i2b2.ProjectRequest.conceptDropped = function(sdxData) {
 	sdxData = sdxData[0];	// only interested in first record
+	if (sdxData.origData.isModifier) {
+			alert("Modifier item being dropped is not supported.");
+			return false;	
+	}	
 		// save the info to our local data model
 	i2b2.ProjectRequest.model.concepts.push(sdxData);
 	// sort and display the concept list
@@ -313,6 +317,11 @@ i2b2.ProjectRequest.conceptDropped = function(sdxData) {
 
 i2b2.ProjectRequest.excconceptDropped = function(sdxData) {
 	sdxData = sdxData[0];	// only interested in first record
+	if (sdxData.origData.isModifier) {
+			alert("Modifier item being dropped is not supported.");
+			return false;	
+	}
+	
 		// save the info to our local data model
 	i2b2.ProjectRequest.model.excconcepts.push(sdxData);
 	// sort and display the concept list

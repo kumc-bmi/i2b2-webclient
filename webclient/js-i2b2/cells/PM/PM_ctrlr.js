@@ -81,12 +81,14 @@ i2b2.PM.doLogin = function() {
 		project: login_project
 	};
 	i2b2.PM.ajax.getUserAuth("PM:Login", parameters, callback, transportOptions);
+
 }
 
 
 // ================================================================================================== //
 i2b2.PM._processUserConfig = function (data) {
 	console.group("PROCESS Login XML");
+	console.debug(" === run the following command in Firebug to view message sniffer: i2b2.hive.MsgSniffer.show() ===");
 
 	// save the valid data that was passed into the PM cell's data model
 	i2b2.PM.model.login_username = data.msgParams.sec_user;
@@ -97,6 +99,10 @@ i2b2.PM._processUserConfig = function (data) {
 		console.error("Could not find returned password node in login XML");
 		i2b2.PM.model.login_password = "<password>"+data.msgParams.sec_pass+"</password>\n";
 	}	
+	try { 
+		var t = i2b2.h.XPath(data.refXML, '//user/full_name')[0];
+		i2b2.PM.model.login_fullname = i2b2.h.Xml2String(t);
+	} catch(e) {}	
 	i2b2.PM.model.login_domain = data.msgParams.sec_domain;
 	i2b2.PM.model.shrine_domain = Boolean.parseTo(data.msgParams.is_shrine);
 	i2b2.PM.model.login_project = data.msgParams.sec_project;
@@ -178,6 +184,7 @@ i2b2.PM._processUserConfig = function (data) {
 	} else if (projs.length == 1) {
 		// default to the only project the user has access to
 		i2b2.PM.model.login_project = i2b2.h.XPath(projs[0], 'attribute::id')[0].nodeValue;
+		i2b2.PM.model.login_projectname = i2b2.h.getXNodeVal(projs[0], "name");
 		try {
 			var announcement = i2b2.PM.model.projects[i2b2.PM.model.login_project].details.announcement;
 			if (announcement) {
@@ -190,6 +197,7 @@ i2b2.PM._processUserConfig = function (data) {
 		// display list of possible projects for the user to select
 		i2b2.PM.view.modal.projectDialog.showProjects();
 	}
+
 }
 
 
@@ -286,8 +294,10 @@ i2b2.PM.view.modal.projectDialog = {
 			// get the ID of the currently selected project in the dropdown
 			var p = $('loginProjs');
 			ProjId = p.options[p.selectedIndex].value;
+			ProjName = p.options[p.selectedIndex].text;
 		}
 		i2b2.PM.model.login_project = ProjId;
+		i2b2.PM.model.login_projectname = ProjName;
 		i2b2.PM.view.modal.projectDialog.yuiDialog.destroy();
 		try {
 			var announcement = i2b2.PM.model.projects[ProjId].details.announcement;
@@ -331,7 +341,7 @@ i2b2.PM.view.modal.announcementDialog = {
 	clickOK: function() {
 		this.hide();
 		if (!i2b2.hive.isLoaded) {
-			i2b2.PM._processLaunchFramework(i2b2.PM.view.modal.projectDialog.loginXML);
+			i2b2.PM._processLaunchFramework();
 		}
 	},
 	clickCancel: function(){
@@ -382,10 +392,16 @@ i2b2.PM._processLaunchFramework = function() {
 
 	// extract additional user/project information
 	i2b2.PM.model.userRoles = [];
-	var roles = i2b2.h.XPath(oXML, "//user/project/role/text()");
+	i2b2.PM.model.isObfuscated = true;
+	var roles = i2b2.h.XPath(oXML, "//user/project[@id='"+i2b2.PM.model.login_project+"']/role/text()");
 	var l = roles.length;
 	for (var i=0; i<l; i++) {
-		i2b2.PM.model.userRoles.push(roles[i].nodeValue);
+		if (i2b2.PM.model.userRoles.indexOf(roles[i].nodeValue) == -1)
+			i2b2.PM.model.userRoles.push(roles[i].nodeValue);
+			if (roles[i].nodeValue == "DATA_AGG")
+			{
+				i2b2.PM.model.isObfuscated = false;	
+			}
 	}
 
 	// process cell listing
@@ -500,6 +516,16 @@ i2b2.PM._processLaunchFramework = function() {
 
 
 i2b2.PM.trigger_WDT = function() {
+	console.warn('CHECKING FOR STUCK CELLS');
+	var foundStuckCells = false
+	for (var cellKey in i2b2.hive.cfg.LoadedCells) {
+		if (i2b2.hive.cfg.LoadedCells[cellKey] && !i2b2[cellKey].isLoaded) { 
+			// clear stuck module
+			console.error("FOUND STUCK CELL: "+cellKey);
+			foundStuckCells = true;
+		}
+	}
+	if (!foundStuckCells) { return true; }
 	if (confirm("Some modules are still attempted to load.\nDo you want to continue waiting?")) {
 		// reset WDT
 		if (i2b2.hive.cfg.loginTimeout) { 

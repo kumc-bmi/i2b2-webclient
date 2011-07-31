@@ -174,6 +174,7 @@ i2b2.WORK.view.main._generateTvNode = function(title, nodeData, parentNode){
 			i2b2.sdx.Master.AttachType(id, "QM", optDD);
 			i2b2.sdx.Master.AttachType(id, "PRC", optDD);
 			i2b2.sdx.Master.AttachType(id, "PRS", optDD);
+			i2b2.sdx.Master.AttachType(id, "ENS", optDD);
 			i2b2.sdx.Master.AttachType(id, "PR", optDD);
 			i2b2.sdx.Master.AttachType(id, "CONCPT", optDD);
 			i2b2.sdx.Master.AttachType(id, "QDEF", optDD);
@@ -184,6 +185,7 @@ i2b2.WORK.view.main._generateTvNode = function(title, nodeData, parentNode){
 			i2b2.sdx.Master.setHandlerCustom(id, "QM", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRC", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRS", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
+			i2b2.sdx.Master.setHandlerCustom(id, "ENS", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
 			i2b2.sdx.Master.setHandlerCustom(id, "PR", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
 			i2b2.sdx.Master.setHandlerCustom(id, "CONCPT", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
 			i2b2.sdx.Master.setHandlerCustom(id, "QDEF", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
@@ -194,6 +196,7 @@ i2b2.WORK.view.main._generateTvNode = function(title, nodeData, parentNode){
 			i2b2.sdx.Master.setHandlerCustom(id, "QM", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRC", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRS", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
+			i2b2.sdx.Master.setHandlerCustom(id, "ENS", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
 			i2b2.sdx.Master.setHandlerCustom(id, "PR", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
 			i2b2.sdx.Master.setHandlerCustom(id, "CONCPT", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
 			i2b2.sdx.Master.setHandlerCustom(id, "QDEF", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
@@ -204,6 +207,7 @@ i2b2.WORK.view.main._generateTvNode = function(title, nodeData, parentNode){
 			i2b2.sdx.Master.setHandlerCustom(id, "QM", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRC", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRS", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
+			i2b2.sdx.Master.setHandlerCustom(id, "ENS", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
 			i2b2.sdx.Master.setHandlerCustom(id, "PR", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
 			i2b2.sdx.Master.setHandlerCustom(id, "CONCPT", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
 			i2b2.sdx.Master.setHandlerCustom(id, "QDEF", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
@@ -228,6 +232,7 @@ i2b2.WORK.view.main._generateTvNode = function(title, nodeData, parentNode){
 			i2b2.sdx.Master.AttachType(id, "QM", optDD);
 			i2b2.sdx.Master.AttachType(id, "PRC", optDD);
 			i2b2.sdx.Master.AttachType(id, "PRS", optDD);
+			i2b2.sdx.Master.AttachType(id, "ENS", optDD);
 			i2b2.sdx.Master.AttachType(id, "PR", optDD);
 			i2b2.sdx.Master.AttachType(id, "CONCPT", optDD);
 			i2b2.sdx.Master.AttachType(id, "QDEF", optDD);
@@ -238,6 +243,7 @@ i2b2.WORK.view.main._generateTvNode = function(title, nodeData, parentNode){
 			i2b2.sdx.Master.setHandlerCustom(id, "QM", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRC", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRS", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
+			i2b2.sdx.Master.setHandlerCustom(id, "ENS", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
 			i2b2.sdx.Master.setHandlerCustom(id, "PR", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
 			i2b2.sdx.Master.setHandlerCustom(id, "CONCPT", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
 			i2b2.sdx.Master.setHandlerCustom(id, "QDEF", "DropHandler", i2b2.WORK.ctrlr.main.HandleDrop);
@@ -248,6 +254,7 @@ i2b2.WORK.view.main._generateTvNode = function(title, nodeData, parentNode){
 			i2b2.sdx.Master.setHandlerCustom(id, "QM", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRC", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRS", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
+			i2b2.sdx.Master.setHandlerCustom(id, "ENS", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
 			i2b2.sdx.Master.setHandlerCustom(id, "PR", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
 			i2b2.sdx.Master.setHandlerCustom(id, "CONCPT", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
 			i2b2.sdx.Master.setHandlerCustom(id, "QDEF", "onHoverOver", i2b2.WORK.view.main.ddHoverOver);
@@ -258,6 +265,7 @@ i2b2.WORK.view.main._generateTvNode = function(title, nodeData, parentNode){
 			i2b2.sdx.Master.setHandlerCustom(id, "QM", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRC", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
 			i2b2.sdx.Master.setHandlerCustom(id, "PRS", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
+			i2b2.sdx.Master.setHandlerCustom(id, "ENS", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
 			i2b2.sdx.Master.setHandlerCustom(id, "PR", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
 			i2b2.sdx.Master.setHandlerCustom(id, "CONCPT", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
 			i2b2.sdx.Master.setHandlerCustom(id, "QDEF", "onHoverOut", i2b2.WORK.view.main.ddHoverOut);
@@ -472,6 +480,7 @@ i2b2.events.afterLogin.subscribe((function(en, co){
         i2b2.sdx.Master.AttachType("wrkTreeview", "QI");
         i2b2.sdx.Master.AttachType("wrkTreeview", "PRC", optDD);
         i2b2.sdx.Master.AttachType("wrkTreeview", "PRS", optDD);
+        i2b2.sdx.Master.AttachType("wrkTreeview", "ENS", optDD);
         i2b2.sdx.Master.AttachType("wrkTreeview", "PR", optDD);
         i2b2.sdx.Master.AttachType("wrkTreeview", "CONCPT", optDD);
         i2b2.sdx.Master.AttachType("wrkTreeview", "QDEF", optDD);
@@ -485,6 +494,7 @@ i2b2.events.afterLogin.subscribe((function(en, co){
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "QM", "LoadChildrenFromTreeview", funcNull);
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "PRC", "LoadChildrenFromTreeview", funcNull);
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "PRS", "LoadChildrenFromTreeview", funcNull);
+        i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "ENS", "LoadChildrenFromTreeview", funcNull);
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "PR", "LoadChildrenFromTreeview", funcNull);
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "CONCPT", "LoadChildrenFromTreeview", funcNull);
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "QDEF", "LoadChildrenFromTreeview", funcNull);
@@ -495,6 +505,7 @@ i2b2.events.afterLogin.subscribe((function(en, co){
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "QM", "DropHandler", i2b2.WORK.view.main.DropHandler);
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "PRC", "DropHandler", i2b2.WORK.view.main.DropHandler);
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "PRS", "DropHandler", i2b2.WORK.view.main.DropHandler);
+        i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "ENS", "DropHandler", i2b2.WORK.view.main.DropHandler);
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "PR", "DropHandler", i2b2.WORK.view.main.DropHandler);
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "CONCPT", "DropHandler", i2b2.WORK.view.main.DropHandler);
         i2b2.sdx.Master.setHandlerCustom("wrkTreeview", "QDEF", "DropHandler", i2b2.WORK.view.main.DropHandler);
