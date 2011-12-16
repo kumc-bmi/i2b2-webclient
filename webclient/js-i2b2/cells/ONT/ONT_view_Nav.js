@@ -24,6 +24,7 @@ i2b2.ONT.view.nav.showOptions = function(subScreen) {
 				i2b2.ONT.view['nav'].params.max = parseInt($('ONTNAVMaxQryDisp').value,10);
 				i2b2.ONT.view['nav'].params.synonyms = $('ONTNAVshowSynonyms').checked;
 				i2b2.ONT.view['nav'].params.hiddens = $('ONTNAVshowHiddens').checked;
+				i2b2.ONT.view.nav.doRefreshAll();
 			}
 		}
 		var handleCancel = function() {
@@ -182,10 +183,68 @@ i2b2.events.afterCellInit.subscribe(
 					console.groupEnd();
 				})
 			);
+			
+
+i2b2.ONT.view.nav.ContextMenu = new YAHOO.widget.ContextMenu( 
+		"divContextMenu-Nav",  
+			{ lazyload: true,
+			trigger: $('ontNavDisp'), 
+			itemdata: [
+				{ text: "Refresh All",	onclick: { fn: i2b2.ONT.view.nav.doRefreshAll } }
+		] }  
+); 
+	i2b2.ONT.view.nav.ContextMenu.subscribe("triggerContextMenu",i2b2.ONT.view.nav.ContextMenuValidate); 
+			
 // ===================================================================
 		}
 	})
 );
+
+i2b2.ONT.view.nav.setChecked = function(here) {
+	//var oCheckedItem = here.parent.checkedItem;
+    if (here.cfg.getProperty("checked")) {//(oCheckedItem != here) {
+          here.cfg.setProperty("checked", false);
+         // here.parent.checkedItem = here;
+    } else {
+		   here.cfg.setProperty("checked", true);
+	}
+}
+
+
+i2b2.ONT.view.nav.doRefreshAll = function() { 
+	i2b2.ONT.view.nav.PopulateCategories();
+}
+
+
+
+
+i2b2.ONT.view.nav.ContextMenuValidate = function(p_oEvent) {
+	var clickId = null;
+	var currentNode = this.contextEventTarget;
+	while (!currentNode.id) {
+		if (currentNode.parentNode) {
+			currentNode = currentNode.parentNode;
+		} else {
+			// we have recursed up the tree to the window/document DOM... it's a bad click
+			this.cancel();
+			return;
+		}
+	}
+	clickId = currentNode.id;
+	// see if the ID maps back to a treenode with SDX data
+	var tvNode = i2b2.ONT.view.nav.yuiTree.getNodeByProperty('nodeid', clickId);
+	if (tvNode) {
+		if (tvNode.data.i2b2_SDX) {
+			if (tvNode.data.i2b2_SDX.sdxInfo.sdxType == "CONCPT") {
+				i2b2.ONT.view.nav.contextRecord = tvNode.data.i2b2_SDX;
+			} else {
+				this.cancel();
+				return;
+			}
+		}
+	}
+};
+
 
 
 i2b2.events.changedViewMode.subscribe((function(eventTypeName, newMode) {

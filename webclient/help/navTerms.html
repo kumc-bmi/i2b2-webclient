@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Untitled Document</title>
+<link href="i2b2Style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<h1><a name="ntView" id="ntView"></a>i2b2 Navigate Terms View</h1>
+<p>The Navigate Terms view is designed to display the i2b2 vocabulary concepts that are maintained in the <b>Ontology Management Cell</b> of the <b>i2b2 Hive</b>. These concepts are used in many of the i2b2 views and plug-ins, such as the <i>Query Tool view</i>.</p>
+<p></p>
+<h2><a name="ntIntro" id="ntIntro"></a>Introduction</h2>
+<p>This section describes the layout and contents of this view.</p>
+<p>&nbsp;</p>
+<h3><a name="ntLayout" id="ntLayout"></a>Layout of the Navigate Terms View</h3>
+<p>The <b>Navigate Terms view</b> displays the concepts listed in the metadata table. These concepts are grouped (categorized) with other similar items. These groupings are displayed in a hierarchal tree that can be expanded to view all the concepts in the associated category.</p>
+<p>&nbsp;</p>
+<p><img src="images/ntView.png" alt="ntView" width="301" height="172" /></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>As stated above, the <b>Navigate Terms view</b> is hierarchical display of the concepts in the metadata table. There are three main branches or compnents of the tree that displays.</p>
+<p>&nbsp;</p>
+<h4><a name="ntTableName" id="ntTableName"></a>Table Name</h4>
+<p>The highest level is the <b>name</b> of the metadata table that stores the vocabulary. This level cannot be used when creating a query.</p>
+<p>&nbsp;</p>
+<h4><a name="ntFolders" id="ntFolders"></a>Folders</h4>
+<p>A <b>folder</b> <span style="color:#CCCCCC">(<img src="images/folder.png" width="16" height="18" alt="folder" />)</span> contains other folders and/or concepts. It can be expanded and collapsed by clicking on the <i>plus sign</i> <span style="color:#CCCCCC">(<img src="images/plusSign.png" alt="plusSign" width="11" height="11" />) </span>or <i>minus sign</i> <span style="color:#CCCCCC">(<img src="images/minusSign.png" alt="minusSign" width="9" height="9" />)</span> next to it. It can also be dragged to other views.</p>
+<p>&nbsp;</p>
+<h4><a name="ntConcepts" id="ntConcepts"></a>Concepts</h4>
+<p>The <b>concept</b> <span style="color:#CCCCCC">(<img src="images/leaf.png" alt="leaf" width="16" height="17" />)</span> is the lowest level of the ierarchy and cannot be expanded further.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="ntNavigation" id="ntNavigation"></a>Navigation</h2>
+<p>&nbsp;</p>
+<h3><a name="ntExpCollFolder" id="ntExpCollFolder"></a>Expand / Collapse a Folder</h3>
+<p>Users can expand or collapse a folder by clicking on the plus sign <span style="color:#CCCCCC">(<img src="images/plusSign.png" alt="plusSign" />)</span> or negative sign <span style="color:#CCCCCC">(<img src="images/minusSign.png" alt="minusSign" />)</span> next to the folder icon.</p>
+<p>&nbsp;</p>
+<h4><a name="ntExpFolder" id="ntExpFolder"></a>Expand (Open) a Folder</h4>
+<ol>
+  <li>Click on the <b>plus sign</b> <span style="color:#CCCCCC">(<img src="images/plusSign.png" alt="plusSign" />)</span> next to the folder in the results section of <i>Find Terms view.</i></li>
+  <li>The folder will open and all the items in the folder will display.</li>
+</ol>
+<p>&nbsp;</p>
+<h4><a name="ntCollFolder" id="ntCollFolder"></a>Collapse (Close) a Folder</h4>
+<ol>
+  <li>Click on the <b>negative sign</b> <span style="color:#CCCCCC">(<img src="images/minusSign.png" alt="minusSign" />)</span> next to the folder in the results section of <i>Find Terms view.</i></li>
+  <li>The folder will open and all the items in the folder will display.</li>
+</ol>
+<p></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3><a name="ntOptions" id="ntOptions"></a>Options</h3>
+<p>Users can define how many concepts to display and whether or not to show hidden terms and/or synonyms. The display options are set in the Navigate Terms Options dialog window, which can be accessed by clicking on the <b>Show Options button</b> <span style="color:#CCCCCC">(<img src="images/options.png" alt="options" />)</span>.</p>
+<p>&nbsp;</p>
+<p><img src="images/ntOptionsWeb.png" alt="ntOptions" width="402" height="185" /></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4><a name="ntDisplayMax" id="ntDisplayMax"></a>Maximum to Display</h4>
+<p>The <b>Maximum number of children to display</b> is used when retrieving the search results to be displayed in the results section of the <b>Navigate Terms view</b>. Once the maximum number is reaced a message will appear informing you that you have reached the maximum and continued to retrieve all the concepts in the list may affect performance. You will have the option to continue or to cancel the action.</p>
+<p>&nbsp;</p>
+<p><img src="images/ntMaxExceedMsg.png" alt="ntMaxExceed" width="510" height="126" /></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4><a name="ntShowHidden" id="ntShowHidden"></a>Show Hiddens</h4>
+<p>In the metadata table, an attribute is set to determine whether or not a concept is active, inactive or hidden. If a concept is marked as hidden it will not appear in the list of terms. Selecting <b>Show Hiddens</b> will display those concepts marked to be hidden. For easy identification, hidden terms will be <span style="color:#FF0000">red</span> when displayed in the results list.</p>
+<p>&nbsp;</p>
+<h4><a name="ntShowSynonym" id="ntShowSynonym"></a>Show Synonyms</h4>
+<p>Some concepts may be flagged in the metadata table as a synonym of another concept. Selecting <b>Show Synonyms</b> will display both the original concept and the synonym in the Navigate Terms view. For easy identification, synonym terms will be <span style="color:#000099">blue</span> when displayed in the results list.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><a name="ntUseTerms" id="ntUseTerms"></a>Using Terms</h2>
+<p>This section describes how to use a concept or group of concepts.</p>
+<p>&nbsp;</p>
+<h3><a name="ntDragItems" id="ntDragItems"></a>Draggable Items</h3>
+<p>Individual as well as groups of concepts can be dragged and dropped (copied) from the Navigate Terms view to other views in the i2b2 Web Client.</p>
+<p>&nbsp;</p>
+<ol>
+  <li>Folder</li>
+  <p>A <b>folder</b> <span style="color:#CCCCCC">(<img src="images/folder.png" width="16" height="18" alt="folder" />)</span> and all its concepts (children) can be added to other views by dragging the folder name from <b>Navigate Terms</b> to one of the following views.</p>
+  <p>&nbsp;</p>
+  <ul>
+    <li><b>Query Tool view;</b> drop in the <i>panel</i>.</li>
+    <li><b>Workplace view;</b> drop in a <i>user</i> or <i>shared folder</i></li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <li>Concept</li>
+  <p> A <b>concept</b> <span style="color:#CCCCCC">(<img src="images/leaf.png" alt="leaf" width="16" height="17" />)</span> can be added to other views by dragging the name of the concept from <b>Navigate Terms</b> to one of the following views.</p>
+  <p>&nbsp;</p>
+  <ul>
+    <li><b>Query Tool view;</b> drop in the <i>panel</i>.</li>
+    <li><b>Workplace view;</b> drop in a <i>user</i> or <i>shared folder</i></li>
+  </ul>
+</ol>
+<p>&nbsp;</p>
+<h3><a name="ntAddToQt" id="ntAddToQt"></a>Add to Query Tool View</h3>
+<p>A folder or individual concept can be added to the query too view by simply dragging the item from <b>Find Terms view</b> and dropping it into one of the panels in the <b>Query Tool view</b>.</p>
+<h4><a name="ntAddFolderToQt" id="ntAddFolderToQt"></a>Add Folder to Query Tool View</h4>
+<ol>
+  <li>Highlight the <b>folder</b> <span style="color:#CCCCCC">(<img src="images/folder.png" width="16" height="18" alt="folder" />)</span> by clicking on the name of the folder.</li>
+  <li>While holding the <i>left mouse button</i> down, drag the folder over to the <b>Query Tool view</b>.</li>
+  <li>Drop the folder into the <b>panel</b> labeled <b>Group 1</b>.</li>
+  <p>&nbsp;</p>
+  <p><img src="images/qtDragFolderMI.png" alt="qtDragFolderMI" width="526" height="362" /></p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <li>The folder will now display in the panel for Group 1.</li>
+  <p>&nbsp;</p>
+  <p><img src="images/qtDropFolderMI.png" alt="qtDropFolderMI" width="172" height="232" /></p>
+</ol>
+<p>&nbsp;</p>
+<h4><a name="ntAddConceptToQt" id="ntAddConceptToQt"></a>Add Concept to Query Tool View</h4>
+<ol>
+  <li>Highlight the <b>concept</b> <span style="color:#CCCCCC">(<img src="images/leaf.png" alt="leaf" width="16" height="17" />)</span> by clicking on the name of the folder.</li>
+  <li>While holding the <i>left mouse button</i> down, drag the concept over to the <b>Query Tool view</b>.</li>
+  <li>Drop the folder into the <b>panel</b> labeled <b>Group 1</b>.</li>
+  <p>&nbsp;</p>
+  <p><img src="images/qtDragConceptMI.png" alt="qtDragConceptMI" width="524" height="359" /></p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <li>The concept will now display in the panel for Group 1.</li>
+  <p>&nbsp;</p>
+  <p><img src="images/qtDropConceptMI.png" alt="qtDropConceptMI" width="172" height="232" /></p>
+</ol>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3><a name="ntAddToWp" id="ntAddToWp"></a>Add to Workplace View</h3>
+<p>Information in the workplace is related to the most common concepts and queries that an individual uses and in essence becomes their personal workplace.</p>
+<p>&nbsp;</p>
+<p><img src="images/wpView.png" alt="wpView" width="296" height="164" /></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4><a name="ntAddFolderToWp" id="ntAddFolderToWp"></a>Add Folder to Workplace View</h4>
+<ol>
+  <li>Highlight the <b>folder</b> <span style="color:#CCCCCC">(<img src="images/folder.png" width="16" height="18" alt="folder" />)</span> by clicking on the name of the folder.</li>
+  <li>While holding the <i>left mouse button</i> down, drag the folder over to the <b>Workplace view</b>.</li>
+  <li>Drop the folder into either your workplace folder or the shared folder.</li>
+  <p>&nbsp;</p>
+  <p><img src="images/wpDragFolder.png" alt="wpDragFolder" width="303" height="170" /></p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <li>The folder will now display in the <b>Workplace view</b> with the same name.</li>
+  <p>&nbsp;</p>
+  <p><img src="images/wpDropFolder.png" alt="wpDropFolder" width="304" height="171" /></p>
+</ol>
+<p>&nbsp;</p>
+<h4><a name="ntAddConceptToWp" id="ntAddConceptToWp"></a>Add Concept to Workplace View</h4>
+<ol>
+  <li>Highlight the <b>concept</b> <span style="color:#CCCCCC">(<img src="images/leaf.png" alt="leaf" />)</span> by clicking on the name of the concept.</li>
+  <li>While holding the <i>left mouse button</i> down, drag the folder over to the <b>Workplace view</b>.</li>
+  <li>Drop the concept into either your workplace folder or the shared folder.</li>
+  <p>&nbsp;</p>
+  <p><img src="images/wpDragConcept.png" alt="wpDragConcept" width="303" height="170" /></p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <li>The concept will now display in the <b>Workplace view</b> with the same name.</li>
+  <p>&nbsp;</p>
+  <p><img src="images/wpDropConcept.png" alt="wpDropConcept" width="303" height="170" /></p>
+</ol>
+</body>
+</html>

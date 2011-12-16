@@ -117,6 +117,33 @@ i2b2.CRC.ctrlr.history = {
 		}
 	},
 	
+	queryDeleteNoPrompt: function(qmID) {
+		// function requires a Query Master ID
+			// create a scoped callback message 
+			var scopeCB = new i2b2_scopedCallback();
+			scopeCB.scope = i2b2.CRC.model.QueryMasters;
+			scopeCB.callback = function(i2b2CellMsg) {
+				// define the XML processing function
+				console.group("CALLBACK Processing AJAX i2b2CellMsg");
+				console.dir(i2b2CellMsg);
+				i2b2.CRC.view.history.queryResponse = i2b2CellMsg.msgResponse;
+				i2b2.CRC.view.history.queryRequest = i2b2CellMsg.msgRequest;
+				i2b2.CRC.view.history.queryUrl = i2b2CellMsg.msgUrl;
+				if (i2b2CellMsg.error) {		
+					alert("An error has occurred in the Cell's AJAX library.\n Press F12 for more information");
+				}
+				// refresh the Query History data
+				i2b2.CRC.ctrlr.history.Refresh();
+			};
+			
+			// fire the AJAX call
+			var options = {
+				result_wait_time: 180,
+				qm_key_value: qmID
+			};
+			i2b2.CRC.ajax.deleteQueryMaster("CRC:History", options, scopeCB);
+	},
+	
 // ================================================================================================== //
 	queryRename: function(qmID, newQueryName, sdxPackage) {
 		this.queryNewName = newQueryName || false;

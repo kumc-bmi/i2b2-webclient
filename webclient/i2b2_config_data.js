@@ -4,15 +4,14 @@
 	//-------------------------------------------------------------------------------------------
 	// THESE ARE ALL THE DOMAINS A USER CAN LOGIN TO
 	lstDomains: [
-		{ name: "localhost",
-		  domain: "i2b2demo",
-		  debug: true,
-		  urlCellPM: "http://localhost:9090/i2b2/rest/PMService/"
-		},
-		{ name: "i2b2.org",
-		  domain: "HarvardDemo",
-		  debug: true,
-		  urlCellPM: "http://webservices.i2b2.org/i2b2/rest/PMService/"
+		{ 
+		  domain: "i2b2demodata",
+		  name: "i2b2demodata",
+		  urlCellPM: "http://127.0.0.1/PM/rest/PMService/",
+		  allowAnalysis: true,
+		  adminOnly: true,
+		  debug: false,
+		  isSHRINE: true
 		}
 	]
 	//-------------------------------------------------------------------------------------------

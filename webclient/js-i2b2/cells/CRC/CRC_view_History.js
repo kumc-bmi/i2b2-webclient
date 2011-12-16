@@ -282,6 +282,7 @@ i2b2.events.afterCellInit.subscribe(
 				// register the treeview with the SDX subsystem to be a container for QM, QI, PRS, PRC objects
 				i2b2.sdx.Master.AttachType("crcHistoryData","QM");
 				i2b2.sdx.Master.AttachType("crcHistoryData","QI");
+				i2b2.sdx.Master.AttachType("crcHistoryData","ENS");
 				i2b2.sdx.Master.AttachType("crcHistoryData","PRC");
 				i2b2.sdx.Master.AttachType("crcHistoryData","PRS");
 				i2b2.sdx.Master.AttachType("crcHistoryData","PR");

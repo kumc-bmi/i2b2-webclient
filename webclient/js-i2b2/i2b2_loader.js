@@ -58,6 +58,11 @@ i2b2.hive.tempCellsList = [
 		   forceConfigMsg: { params: [] },
 		   forceDir: "cells/plugins/examples"
 		},
+                { code: "ProjectRequest",
+                   forceLoading: true,
+                   forceConfigMsg: { params: [] },
+                   forceDir: "cells/plugins/standard"
+                },
 		{ code:	"Dem1Set",
 		   forceLoading: true,
 		   forceConfigMsg: { params: [] },

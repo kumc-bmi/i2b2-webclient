@@ -70,6 +70,10 @@ i2b2.Timeline.prsDropped = function(sdxData) {
 
 i2b2.Timeline.conceptDropped = function(sdxData) {
 	sdxData = sdxData[0];	// only interested in first record
+	if (sdxData.origData.isModifier) {
+			alert("Modifier item being dropped is not supported.");
+			return false;	
+	}
 	// save the info to our local data model
 	i2b2.Timeline.model.concepts.push(sdxData);
 	// sort and display the concept list
@@ -327,7 +331,7 @@ i2b2.Timeline.getResults = function() {
 			// get all the observations
 			var first_date = new Date('1/1/2500');
 			var last_date = new Date('1/1/1500');
-			var osData = i2b2.h.XPath(results.refXML, '//observation/..');
+			var osData = i2b2.h.XPath(results.refXML, '//*[local-name() = "observation_set"]');
 			for (var i1=0; i1<osData.length; i1++) {
 				var oData = i2b2.h.XPath(osData[i1], 'descendant::observation');
 				for (var i2=0; i2<oData.length; i2++) {

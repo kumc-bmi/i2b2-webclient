@@ -283,10 +283,24 @@ i2b2.sdx.TypeControllers.PRS.getChildRecords = function(sdxParentNode, onComplet
 			var o = new Object;
 			o.xmlOrig = ps[i1];
 			o.patient_id = i2b2.h.getXNodeVal(ps[i1],'patient_id');
-			o.vital_status = i2b2.h.XPath(ps[i1],'param[@name="vital_status_cd"]/text()')[0].nodeValue;
-			o.age = i2b2.h.XPath(ps[i1],'param[@name="age_in_years_num"]/text()')[0].nodeValue;
-			o.sex = i2b2.h.XPath(ps[i1],'param[@name="sex_cd"]/text()')[0].nodeValue;
-			o.race = i2b2.h.XPath(ps[i1],'param[@name="race_cd"]/text()')[0].nodeValue;
+//			if (!Object.isUndefined(i2b2.h.XPath(ps[i1],'param[@name="vital_status_cd"]/text()')[0])) {
+//				o.vital_status = i2b2.h.XPath(ps[i1],'param[@name="vital_status_cd"]/text()')[0].nodeValue;
+//			}
+			if ((i2b2.h.XPath(ps[i1],'param[@name="age_in_years_num"]/text()')[0]) != null) {
+				o.age = i2b2.h.XPath(ps[i1],'param[@name="age_in_years_num"]/text()')[0].nodeValue;
+			} else {
+				o.age = "NA";
+			}
+			if ((i2b2.h.XPath(ps[i1],'param[@name="sex_cd"]/text()')[0]) != null) {
+				o.sex = i2b2.h.XPath(ps[i1],'param[@name="sex_cd"]/text()')[0].nodeValue;
+			} else {
+				o.sex = "NA";
+			}
+			if ((i2b2.h.XPath(ps[i1],'param[@name="race_cd"]/text()')[0]) != null) {
+				o.race = i2b2.h.XPath(ps[i1],'param[@name="race_cd"]/text()')[0].nodeValue;
+			} else {
+				o.race = "NA";
+			}
 			o.title = o.patient_id+" ["+o.age+" y/o "+ o.sex+" "+o.race+"]";
 			var sdxDataNode = i2b2.sdx.Master.EncapsulateData('PR',o);
 			// save record in the SDX system

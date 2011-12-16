@@ -67,6 +67,325 @@ i2b2.PM.ajax._addFunctionCall("getUserAuth","{{{URL}}}getServices", i2b2.PM.cfg.
 
 
 
+
+// ================================================================================================== //
+i2b2.PM.cfg.msgs.setProjectRequest = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
+'<i2b2:request xmlns:i2b2="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:pm="http://www.i2b2.org/xsd/cell/pm/1.1/">\n'+
+'    <message_header>\n'+
+'        {{{proxy_info}}}\n'+
+'        <i2b2_version_compatible>1.1</i2b2_version_compatible>\n'+
+'        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
+'        <sending_application>\n'+
+'            <application_name>i2b2 Project Management</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </sending_application>\n'+
+'        <sending_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </sending_facility>\n'+
+'        <receiving_application>\n'+
+'            <application_name>Project Management Cell</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </receiving_application>\n'+
+'        <receiving_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </receiving_facility>\n'+
+'        <datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
+'		<security>\n'+
+'			<domain>{{{sec_domain}}}</domain>\n'+
+'			<username>{{{sec_user}}}</username>\n'+
+'			{{{sec_pass_node}}}\n'+
+'		</security>\n'+
+'        <message_control_id>\n'+
+'            <message_num>{{{header_msg_id}}}</message_num>\n'+
+'            <instance_num>0</instance_num>\n'+
+'        </message_control_id>\n'+
+'        <processing_id>\n'+
+'            <processing_id>P</processing_id>\n'+
+'            <processing_mode>I</processing_mode>\n'+
+'        </processing_id>\n'+
+'        <accept_acknowledgement_type>AL</accept_acknowledgement_type>\n'+
+'        <application_acknowledgement_type>AL</application_acknowledgement_type>\n'+
+'        <country_code>US</country_code>\n'+
+'        <project_id>{{{sec_project}}}</project_id>\n'+
+'    </message_header>\n'+
+'    <request_header>\n'+
+'        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
+'    </request_header>\n'+
+'    <message_body>\n'+
+'        <pm:set_project_request>\n' +
+'                <title>{{{title}}}</title>\n' +
+'                <request_xml>{{{Project_Request}}}</request_xml>\n' +
+'        </pm:set_project_request>\n' +
+'    </message_body>\n'+
+'</i2b2:request>';
+i2b2.PM.cfg.parsers.setProjectRequest = function() {
+	if (!this.error) {
+		this.model = [];		
+		// extract records from XML msg
+		var c = this.refXML.getElementsByTagName('project');
+		var l = c.length;
+		for (var i=0; i<l; i++) {
+			var tmpRec = {};
+			tmpRec.id = i2b2.h.XPath(c[i], "attribute::id")[0].nodeValue;
+			tmpRec.name = i2b2.h.getXNodeVal(c[i], "name");
+			tmpRec.key = i2b2.h.getXNodeVal(c[i], "key");
+			tmpRec.wiki = i2b2.h.getXNodeVal(c[i], "wiki");
+			tmpRec.description = i2b2.h.getXNodeVal(c[i], "description");
+			tmpRec.path = i2b2.h.getXNodeVal(c[i],"path");
+			this.model.push(tmpRec);
+		}
+	} else {
+		this.model = false;
+		console.error("[setProjectRequest] Could not parse() data!");
+	}
+	return this;
+};
+i2b2.PM.ajax._addFunctionCall("setProjectRequest", "{{{URL}}}getServices", i2b2.PM.cfg.msgs.setProjectRequest, null, i2b2.PM.cfg.parsers.setProjectRequest);
+
+
+
+
+// ================================================================================================== //
+i2b2.PM.cfg.msgs.getAllProjectRequest = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
+'<i2b2:request xmlns:i2b2="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:pm="http://www.i2b2.org/xsd/cell/pm/1.1/">\n'+
+'    <message_header>\n'+
+'        {{{proxy_info}}}\n'+
+'        <i2b2_version_compatible>1.1</i2b2_version_compatible>\n'+
+'        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
+'        <sending_application>\n'+
+'            <application_name>i2b2 Project Management</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </sending_application>\n'+
+'        <sending_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </sending_facility>\n'+
+'        <receiving_application>\n'+
+'            <application_name>Project Management Cell</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </receiving_application>\n'+
+'        <receiving_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </receiving_facility>\n'+
+'        <datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
+'		<security>\n'+
+'			<domain>{{{sec_domain}}}</domain>\n'+
+'			<username>{{{sec_user}}}</username>\n'+
+'			{{{sec_pass_node}}}\n'+
+'		</security>\n'+
+'        <message_control_id>\n'+
+'            <message_num>{{{header_msg_id}}}</message_num>\n'+
+'            <instance_num>0</instance_num>\n'+
+'        </message_control_id>\n'+
+'        <processing_id>\n'+
+'            <processing_id>P</processing_id>\n'+
+'            <processing_mode>I</processing_mode>\n'+
+'        </processing_id>\n'+
+'        <accept_acknowledgement_type>AL</accept_acknowledgement_type>\n'+
+'        <application_acknowledgement_type>AL</application_acknowledgement_type>\n'+
+'        <country_code>US</country_code>\n'+
+'        <project_id>{{{sec_project}}}</project_id>\n'+
+'    </message_header>\n'+
+'    <request_header>\n'+
+'        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
+'    </request_header>\n'+
+'    <message_body>\n'+
+'        <pm:get_all_project_request>\n'+
+'        </pm:get_all_project_request>\n'+
+'    </message_body>\n'+
+'</i2b2:request>';
+i2b2.PM.cfg.parsers.getAllProjectRequest = function() {
+	if (!this.error) {
+		this.model = [];		
+		// extract records from XML msg
+		var c = this.refXML.getElementsByTagName('project_request');
+		var l = c.length;
+		for (var i=0; i<l; i++) {
+			var tmpRec = {};
+			tmpRec.id = i2b2.h.XPath(c[i], "attribute::id")[0].nodeValue;
+			tmpRec.project_id = i2b2.h.getXNodeVal(c[i], "project_id");
+			tmpRec.request_xml = i2b2.h.getXNodeVal(c[i], "request_xml");
+			tmpRec.submit_char = i2b2.h.getXNodeVal(c[i], "submit_char");
+			tmpRec.entry_date = i2b2.h.getXNodeVal(c[i], "entry_date");
+			if (!Object.isUndefined(tmpRec.entry_date))
+			{
+				tmpRec.entry_date = (tmpRec.entry_date).substring(0,10);
+			}
+			tmpRec.title = i2b2.h.getXNodeVal(c[i], "title");
+			this.model.push(tmpRec);
+		}
+	} else {
+		this.model = false;
+		console.error("[getAllProjectRequest] Could not parse() data!");
+	}
+	return this;
+};
+i2b2.PM.ajax._addFunctionCall("getAllProjectRequest","{{{URL}}}getServices", i2b2.PM.cfg.msgs.getAllProjectRequest, null, i2b2.PM.cfg.parsers.getAllProjectRequest);
+
+
+// ================================================================================================== //
+i2b2.PM.cfg.msgs.getProjectRequest = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
+'<i2b2:request xmlns:i2b2="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:pm="http://www.i2b2.org/xsd/cell/pm/1.1/">\n'+
+'    <message_header>\n'+
+'        {{{proxy_info}}}\n'+
+'        <i2b2_version_compatible>1.1</i2b2_version_compatible>\n'+
+'        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
+'        <sending_application>\n'+
+'            <application_name>i2b2 Project Management</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </sending_application>\n'+
+'        <sending_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </sending_facility>\n'+
+'        <receiving_application>\n'+
+'            <application_name>Project Management Cell</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </receiving_application>\n'+
+'        <receiving_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </receiving_facility>\n'+
+'        <datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
+'		<security>\n'+
+'			<domain>{{{sec_domain}}}</domain>\n'+
+'			<username>{{{sec_user}}}</username>\n'+
+'			{{{sec_pass_node}}}\n'+
+'		</security>\n'+
+'        <message_control_id>\n'+
+'            <message_num>{{{header_msg_id}}}</message_num>\n'+
+'            <instance_num>0</instance_num>\n'+
+'        </message_control_id>\n'+
+'        <processing_id>\n'+
+'            <processing_id>P</processing_id>\n'+
+'            <processing_mode>I</processing_mode>\n'+
+'        </processing_id>\n'+
+'        <accept_acknowledgement_type>AL</accept_acknowledgement_type>\n'+
+'        <application_acknowledgement_type>AL</application_acknowledgement_type>\n'+
+'        <country_code>US</country_code>\n'+
+'        <project_id>{{{sec_project}}}</project_id>\n'+
+'    </message_header>\n'+
+'    <request_header>\n'+
+'        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
+'    </request_header>\n'+
+'    <message_body>\n'+
+'        <pm:get_project_request id="{{{id}}}">\n'+
+'        </pm:get_project_request>\n'+
+'    </message_body>\n'+
+'</i2b2:request>';
+i2b2.PM.cfg.parsers.getProjectRequest = function() {
+	if (!this.error) {
+		this.model = [];		
+		// extract records from XML msg
+		var c = this.refXML.getElementsByTagName('project_request');
+		var l = c.length;
+		for (var i=0; i<l; i++) {
+			var tmpRec = {};
+			tmpRec.id = i2b2.h.XPath(c[i], "attribute::id")[0].nodeValue;
+			tmpRec.project_id = i2b2.h.getXNodeVal(c[i], "project_id");
+			tmpRec.request_xml = i2b2.h.getXNodeVal(c[i], "request_xml");
+			tmpRec.submit_char = i2b2.h.getXNodeVal(c[i], "submit_char");
+			tmpRec.entry_date = i2b2.h.getXNodeVal(c[i], "entry_date");
+			if (!Object.isUndefined(tmpRec.entry_date))
+			{
+				tmpRec.entry_date = (tmpRec.entry_date).substring(0,10);
+			}
+			tmpRec.title = i2b2.h.getXNodeVal(c[i], "title");
+			this.model.push(tmpRec);
+		}
+	} else {
+		this.model = false;
+		console.error("[getAllProjectRequest] Could not parse() data!");
+	}
+	return this;
+};
+i2b2.PM.ajax._addFunctionCall("getProjectRequest","{{{URL}}}getServices", i2b2.PM.cfg.msgs.getProjectRequest, null, i2b2.PM.cfg.parsers.getProjectRequest);
+
+
+
+
+
+// ================================================================================================== //
+i2b2.PM.cfg.msgs.getApproval = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
+'<i2b2:request xmlns:i2b2="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:pm="http://www.i2b2.org/xsd/cell/pm/1.1/">\n'+
+'    <message_header>\n'+
+'        {{{proxy_info}}}\n'+
+'        <i2b2_version_compatible>1.1</i2b2_version_compatible>\n'+
+'        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
+'        <sending_application>\n'+
+'            <application_name>i2b2 Project Management</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </sending_application>\n'+
+'        <sending_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </sending_facility>\n'+
+'        <receiving_application>\n'+
+'            <application_name>Project Management Cell</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </receiving_application>\n'+
+'        <receiving_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </receiving_facility>\n'+
+'        <datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
+'		<security>\n'+
+'			<domain>{{{sec_domain}}}</domain>\n'+
+'			<username>{{{sec_user}}}</username>\n'+
+'			{{{sec_pass_node}}}\n'+
+'		</security>\n'+
+'        <message_control_id>\n'+
+'            <message_num>{{{header_msg_id}}}</message_num>\n'+
+'            <instance_num>0</instance_num>\n'+
+'        </message_control_id>\n'+
+'        <processing_id>\n'+
+'            <processing_id>P</processing_id>\n'+
+'            <processing_mode>I</processing_mode>\n'+
+'        </processing_id>\n'+
+'        <accept_acknowledgement_type>AL</accept_acknowledgement_type>\n'+
+'        <application_acknowledgement_type>AL</application_acknowledgement_type>\n'+
+'        <country_code>US</country_code>\n'+
+'        <project_id>{{{sec_project}}}</project_id>\n'+
+'    </message_header>\n'+
+'    <request_header>\n'+
+'        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
+'    </request_header>\n'+
+'    <message_body>\n'+
+'        <pm:get_approval id="{{{id}}}">\n'+
+//'            <search by="user">{{{sec_user}}}</search>\n'+
+'        </pm:get_approval>\n'+
+'    </message_body>\n'+
+'</i2b2:request>';
+i2b2.PM.cfg.parsers.getApproval = function() {
+	if (!this.error) {
+		this.model = [];		
+		// extract records from XML msg
+		var c = this.refXML.getElementsByTagName('approval');
+		var l = c.length;
+		for (var i=0; i<l; i++) {
+			var tmpRec = {};
+			tmpRec.id = i2b2.h.XPath(c[i], "attribute::id")[0].nodeValue;
+			tmpRec.name = i2b2.h.getXNodeVal(c[i], "name");
+			tmpRec.description = i2b2.h.getXNodeVal(c[i], "description");
+			tmpRec.activation_date = i2b2.h.getXNodeVal(c[i], "activation_date");
+			if (!Object.isUndefined(tmpRec.activation_date))
+			{
+				tmpRec.activation_date = (tmpRec.activation_date).substring(0,10);
+			}
+			tmpRec.expiration_date = i2b2.h.getXNodeVal(c[i], "expiration_date");
+			if (!Object.isUndefined(tmpRec.expiration_date))
+			{
+				tmpRec.expiration_date = (tmpRec.expiration_date).substring(0,10);
+			}
+			
+			this.model.push(tmpRec);
+		}
+	} else {
+		this.model = false;
+		console.error("[getApproval] Could not parse() data!");
+	}
+	return this;
+};
+i2b2.PM.ajax._addFunctionCall("getApproval","{{{URL}}}getServices", i2b2.PM.cfg.msgs.getApproval, null, i2b2.PM.cfg.parsers.getApproval);
+
+
+
+
 // ================================================================================================== //
 i2b2.PM.cfg.msgs.getAllHive = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
 '<i2b2:request xmlns:i2b2="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:pm="http://www.i2b2.org/xsd/cell/pm/1.1/">\n'+
@@ -185,7 +504,7 @@ i2b2.PM.cfg.msgs.getAllParam = '<?xml version="1.0" encoding="UTF-8" standalone=
 '        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
 '    </request_header>\n'+
 '    <message_body>\n'+
-'        <pm:get_all_{{{table}}}_param {{{param_xml}}}>{{{id_xml}}}</pm:get_all_{{{table}}}_param>\n'+
+'        <pm:get_all_{{{table}}} {{{param_xml}}}>{{{id_xml}}}</pm:get_all_{{{table}}}>\n'+
 '    </message_body>\n'+
 '</i2b2:request>';
 i2b2.PM.cfg.parsers.getAllParam = function(username) {
@@ -193,7 +512,7 @@ i2b2.PM.cfg.parsers.getAllParam = function(username) {
 		this.model = [];		
 		// extract records from XML msg (filter by username if given)
 		if (Object.isUndefined(username)) {
-			var c = i2b2.h.XPath(this.refXML, "//user/param");
+			var c = i2b2.h.XPath(this.refXML,  "//message_body/descendant::param[@name]");
 		} else {
 			var c = i2b2.h.XPath(this.refXML, "//user[user_name/text()='"+username+"']/param");
 		}
@@ -203,6 +522,7 @@ i2b2.PM.cfg.parsers.getAllParam = function(username) {
 				var tmpRec = {};
 				tmpRec.name = i2b2.h.XPath(c[i], "attribute::name")[0].nodeValue;
 				tmpRec.id = i2b2.h.XPath(c[i], "attribute::id")[0].nodeValue;
+				tmpRec.datatype = i2b2.h.XPath(c[i], "attribute::datatype")[0].nodeValue;
 				tmpRec.value = i2b2.h.XPath(c[i], "text()")[0].nodeValue;
 				this.model.push(tmpRec);
 			} catch(e) {}
@@ -416,7 +736,100 @@ i2b2.PM.cfg.msgs.getAllRole = '<?xml version="1.0" encoding="UTF-8" standalone="
 '        </pm:get_all_role>\n'+
 '    </message_body>\n'+
 '</i2b2:request>';
-i2b2.PM.ajax._addFunctionCall("getAllRole","{{{URL}}}getServices", i2b2.PM.cfg.msgs.getAllRole,null);
+i2b2.PM.cfg.parsers.getAllRole = function() {
+	if (!this.error) {
+		this.model = [];		
+		// extract records from XML msg
+		var c = this.refXML.getElementsByTagName('role');
+		var l = c.length;
+		for (var i=0; i<l; i++) {
+			var tmpRec = {};
+			//tmpRec.id = i2b2.h.XPath(c[i], "attribute::id")[0].nodeValue;
+			tmpRec.projectid = i2b2.h.getXNodeVal(c[i], "project_id");
+			tmpRec.username = i2b2.h.getXNodeVal(c[i], "user_name");
+			tmpRec.role = i2b2.h.getXNodeVal(c[i], "role");
+			this.model.push(tmpRec);
+		}
+	} else {
+		this.model = false;
+		console.error("[getAllRole] Could not parse() data!");
+	}
+	return this;
+};
+i2b2.PM.ajax._addFunctionCall("getAllRole","{{{URL}}}getServices", i2b2.PM.cfg.msgs.getAllRole,null,i2b2.PM.cfg.parsers.getAllRole)	;
+
+
+// ================================================================================================== //
+i2b2.PM.cfg.msgs.getAllRoleUser = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
+'<i2b2:request xmlns:i2b2="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:pm="http://www.i2b2.org/xsd/cell/pm/1.1/">\n'+
+'    <message_header>\n'+
+'        {{{proxy_info}}}\n'+
+'        <i2b2_version_compatible>1.1</i2b2_version_compatible>\n'+
+'        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
+'        <sending_application>\n'+
+'            <application_name>i2b2 Project Management</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </sending_application>\n'+
+'        <sending_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </sending_facility>\n'+
+'        <receiving_application>\n'+
+'            <application_name>Project Management Cell</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </receiving_application>\n'+
+'        <receiving_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </receiving_facility>\n'+
+'        <datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
+'		<security>\n'+
+'			<domain>{{{sec_domain}}}</domain>\n'+
+'			<username>{{{sec_user}}}</username>\n'+
+'			{{{sec_pass_node}}}\n'+
+'		</security>\n'+
+'        <message_control_id>\n'+
+'            <message_num>{{{header_msg_id}}}</message_num>\n'+
+'            <instance_num>0</instance_num>\n'+
+'        </message_control_id>\n'+
+'        <processing_id>\n'+
+'            <processing_id>P</processing_id>\n'+
+'            <processing_mode>I</processing_mode>\n'+
+'        </processing_id>\n'+
+'        <accept_acknowledgement_type>AL</accept_acknowledgement_type>\n'+
+'        <application_acknowledgement_type>AL</application_acknowledgement_type>\n'+
+'        <country_code>US</country_code>\n'+
+'        <project_id>{{{sec_project}}}</project_id>\n'+
+'    </message_header>\n'+
+'    <request_header>\n'+
+'        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
+'    </request_header>\n'+
+'    <message_body>\n'+
+'        <pm:get_all_role>\n'+
+'            <user_name>{{{username}}}</user_name>\n'+
+'            <project_id>{{{id}}}</project_id>\n'+
+'        </pm:get_all_role>\n'+
+'    </message_body>\n'+
+'</i2b2:request>';
+i2b2.PM.cfg.parsers.getAllRoleUser = function() {
+	if (!this.error) {
+		this.model = [];		
+		// extract records from XML msg
+		var c = this.refXML.getElementsByTagName('role');
+		var l = c.length;
+		for (var i=0; i<l; i++) {
+			var tmpRec = {};
+			//tmpRec.id = i2b2.h.XPath(c[i], "attribute::id")[0].nodeValue;
+			tmpRec.projectid = i2b2.h.getXNodeVal(c[i], "project_id");
+			tmpRec.username = i2b2.h.getXNodeVal(c[i], "user_name");
+			tmpRec.role = i2b2.h.getXNodeVal(c[i], "role");
+			this.model.push(tmpRec);
+		}
+	} else {
+		this.model = false;
+		console.error("[getAllRole] Could not parse() data!");
+	}
+	return this;
+};
+i2b2.PM.ajax._addFunctionCall("getAllRoleUser","{{{URL}}}getServices", i2b2.PM.cfg.msgs.getAllRoleUser,null,i2b2.PM.cfg.parsers.getAllRoleUser)	;
 
 
 
@@ -489,6 +902,88 @@ i2b2.PM.cfg.parsers.getAllUser = function() {
 	return this;
 };
 i2b2.PM.ajax._addFunctionCall("getAllUser","{{{URL}}}getServices", i2b2.PM.cfg.msgs.getAllUser, null, i2b2.PM.cfg.parsers.getAllUser);
+
+
+
+// ================================================================================================== //
+i2b2.PM.cfg.msgs.getAllApproval = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
+'<i2b2:request xmlns:i2b2="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:pm="http://www.i2b2.org/xsd/cell/pm/1.1/">\n'+
+'    <message_header>\n'+
+'        {{{proxy_info}}}\n'+
+'        <i2b2_version_compatible>1.1</i2b2_version_compatible>\n'+
+'        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
+'        <sending_application>\n'+
+'            <application_name>i2b2 Project Management</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </sending_application>\n'+
+'        <sending_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </sending_facility>\n'+
+'        <receiving_application>\n'+
+'            <application_name>Project Management Cell</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </receiving_application>\n'+
+'        <receiving_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </receiving_facility>\n'+
+'        <datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
+'		<security>\n'+
+'			<domain>{{{sec_domain}}}</domain>\n'+
+'			<username>{{{sec_user}}}</username>\n'+
+'			{{{sec_pass_node}}}\n'+
+'		</security>\n'+
+'        <message_control_id>\n'+
+'            <message_num>{{{header_msg_id}}}</message_num>\n'+
+'            <instance_num>0</instance_num>\n'+
+'        </message_control_id>\n'+
+'        <processing_id>\n'+
+'            <processing_id>P</processing_id>\n'+
+'            <processing_mode>I</processing_mode>\n'+
+'        </processing_id>\n'+
+'        <accept_acknowledgement_type>AL</accept_acknowledgement_type>\n'+
+'        <application_acknowledgement_type>AL</application_acknowledgement_type>\n'+
+'        <country_code>US</country_code>\n'+
+'        <project_id>{{{sec_project}}}</project_id>\n'+
+'    </message_header>\n'+
+'    <request_header>\n'+
+'        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
+'    </request_header>\n'+
+'    <message_body>\n'+
+'        <pm:get_all_approval>\n'+
+'        </pm:get_all_approval>\n'+
+'    </message_body>\n'+
+'</i2b2:request>';
+i2b2.PM.cfg.parsers.getAllApproval = function() {
+	if (!this.error) {
+		this.model = [];		
+		// extract records from XML msg
+		var c = this.refXML.getElementsByTagName('approval');
+		var l = c.length;
+		for (var i=0; i<l; i++) {
+			var tmpRec = {};
+			tmpRec.id = i2b2.h.XPath(c[i], "attribute::id")[0].nodeValue;
+			tmpRec.name = i2b2.h.getXNodeVal(c[i], "name");
+			tmpRec.description = i2b2.h.getXNodeVal(c[i], "description");
+			tmpRec.activation_date = i2b2.h.getXNodeVal(c[i], "activation_date");
+			if (!Object.isUndefined(tmpRec.activation_date))
+			{
+				tmpRec.activation_date = (tmpRec.activation_date).substring(0,10);
+			}
+			tmpRec.expiration_date = i2b2.h.getXNodeVal(c[i], "expiration_date");
+			if (!Object.isUndefined(tmpRec.expiration_date))
+			{
+				tmpRec.expiration_date = (tmpRec.expiration_date).substring(0,10);
+			}
+			this.model.push(tmpRec);
+		}
+	} else {
+		this.model = false;
+		console.error("[getAllApproval] Could not parse() data!");
+	}
+	return this;
+};
+i2b2.PM.ajax._addFunctionCall("getAllApproval","{{{URL}}}getServices", i2b2.PM.cfg.msgs.getAllApproval, null, i2b2.PM.cfg.parsers.getAllApproval);
+
 
 
 
@@ -610,8 +1105,98 @@ i2b2.PM.cfg.msgs.getUser = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '        <pm:get_user>{{{user_id}}}</pm:get_user>\n'+
 '    </message_body>\n'+
 '</i2b2:request>';
-i2b2.PM.ajax._addFunctionCall("getUser","{{{URL}}}getServices", i2b2.PM.cfg.msgs.getUser, null, i2b2.PM.cfg.parsers.getAllUser);
+i2b2.PM.cfg.parsers.getUser = function() {
+	if (!this.error) {
+		this.model = [];		
+		// extract records from XML msg
+		var c = this.refXML.getElementsByTagName('ns4:user');
+		var l = c.length;
+		for (var i=0; i<l; i++) {
+			var tmpRec = {};
+			tmpRec.full_name = i2b2.h.getXNodeVal(c[i], "full_name");
+			tmpRec.user_name = i2b2.h.getXNodeVal(c[i], "user_name");
+			tmpRec.email = i2b2.h.getXNodeVal(c[i], "email");
+			tmpRec.password = i2b2.h.getXNodeVal(c[i], "password");
+			this.model.push(tmpRec);
+		}
+	} else {
+		this.model = false;
+		console.error("[getAllUser] Could not parse() data!");
+	}
+	return this;
+};
+i2b2.PM.ajax._addFunctionCall("getUser","{{{URL}}}getServices", i2b2.PM.cfg.msgs.getUser, null, i2b2.PM.cfg.parsers.getUser);
 
+
+i2b2.PM.cfg.msgs.getCell = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
+'<i2b2:request xmlns:i2b2="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:pm="http://www.i2b2.org/xsd/cell/pm/1.1/">\n'+
+'    <message_header>\n'+
+'        {{{proxy_info}}}\n'+
+'        <i2b2_version_compatible>1.1</i2b2_version_compatible>\n'+
+'        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
+'        <sending_application>\n'+
+'            <application_name>i2b2 Project Management</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </sending_application>\n'+
+'        <sending_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </sending_facility>\n'+
+'        <receiving_application>\n'+
+'            <application_name>Project Management Cell</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </receiving_application>\n'+
+'        <receiving_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </receiving_facility>\n'+
+'        <datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
+'		<security>\n'+
+'			<domain>{{{sec_domain}}}</domain>\n'+
+'			<username>{{{sec_user}}}</username>\n'+
+'			{{{sec_pass_node}}}\n'+
+'		</security>\n'+
+'        <message_control_id>\n'+
+'            <message_num>{{{header_msg_id}}}</message_num>\n'+
+'            <instance_num>0</instance_num>\n'+
+'        </message_control_id>\n'+
+'        <processing_id>\n'+
+'            <processing_id>P</processing_id>\n'+
+'            <processing_mode>I</processing_mode>\n'+
+'        </processing_id>\n'+
+'        <accept_acknowledgement_type>AL</accept_acknowledgement_type>\n'+
+'        <application_acknowledgement_type>AL</application_acknowledgement_type>\n'+
+'        <country_code>US</country_code>\n'+
+'        <project_id>{{{sec_project}}}</project_id>\n'+
+'    </message_header>\n'+
+'    <request_header>\n'+
+'        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
+'    </request_header>\n'+
+'    <message_body>\n'+
+'        <pm:get_cell id="{{{cell_id}}}"><project_path>{{{proj_path}}}</project_path></pm:get_cell>\n'+
+'    </message_body>\n'+
+'</i2b2:request>';
+i2b2.PM.cfg.parsers.getCell = function() {
+	if (!this.error) {
+		this.model = [];		
+		// extract records from XML msg
+		var c = this.refXML.getElementsByTagName('ns4:cell');
+		var l = c.length;
+		for (var i=0; i<l; i++) {
+			var tmpRec = {};	
+			tmpRec.id = i2b2.h.XPath(c[i], "attribute::id")[0].nodeValue;
+			tmpRec.name = i2b2.h.getXNodeVal(c[i], "name");
+			tmpRec.url = i2b2.h.getXNodeVal(c[i], "url");
+			tmpRec.project_path = i2b2.h.getXNodeVal(c[i], "project_path");
+			tmpRec.method = i2b2.h.getXNodeVal(c[i], "method");
+			tmpRec.can_override = i2b2.h.getXNodeVal(c[i], "can_override");
+			this.model.push(tmpRec);
+		}
+	} else {
+		this.model = false;
+		console.error("[getAllUser] Could not parse() data!");
+	}
+	return this;
+};
+i2b2.PM.ajax._addFunctionCall("getCell","{{{URL}}}getServices", i2b2.PM.cfg.msgs.getCell, null, i2b2.PM.cfg.parsers.getCell);
 
 
 // ================================================================================================== //
@@ -658,26 +1243,23 @@ i2b2.PM.cfg.msgs.getParam = '<?xml version="1.0" encoding="UTF-8" standalone="ye
 '        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
 '    </request_header>\n'+
 '    <message_body>\n'+
-'        <pm:get_{{{table}}}_param {{{id_param}}}>{{{id_xml}}}</pm:get_{{{table}}}_param>\n'+
+'        <pm:get_{{{table}}} {{{id_param}}}>{{{id_xml}}}</pm:get_{{{table}}}>\n'+
 '    </message_body>\n'+
 '</i2b2:request>';
-/*
+
 i2b2.PM.cfg.parsers.getParam = function() {
-alert("finish me!");
-debugger;
-	if (!this.error) {
+if (!this.error) {
 		this.model = [];		
 		// extract records from XML msg
-		var c = this.refXML.getElementsByTagName('hive');
-		debugger;
+		var c = this.refXML.getElementsByTagName('ns4:param');
+//		var c = i2b2.h.XPath(this.refXML, "//message_body/descendant::param[@name]");
 		var l = c.length;
 		for (var i=0; i<l; i++) {
 			var tmpRec = {};
-			tmpRec.environment = i2b2.h.getXNodeVal(c[i], "environment");
-			tmpRec.helpURL = i2b2.h.getXNodeVal(c[i], "helpURL");
-			tmpRec.domain_name = i2b2.h.getXNodeVal(c[i], "domain_name");
-			tmpRec.domain_id = i2b2.h.getXNodeVal(c[i], "domain_id");
-			tmpRec.active = i2b2.h.getXNodeVal(c[i], "active");
+			tmpRec.name = i2b2.h.XPath(c[i], "attribute::name")[0].nodeValue;
+			tmpRec.id = i2b2.h.XPath(c[i], "attribute::id")[0].nodeValue;
+			tmpRec.dataType = i2b2.h.XPath(c[i], "attribute::datatype")[0].nodeValue;
+			tmpRec.value = i2b2.h.XPath(c[i], "text()")[0].nodeValue;
 			this.model.push(tmpRec);
 		}
 	} else {
@@ -687,8 +1269,79 @@ debugger;
 	return this;
 };
 i2b2.PM.ajax._addFunctionCall("getParam", "{{{URL}}}getServices", i2b2.PM.cfg.msgs.getParam, ["id_xml"], i2b2.PM.cfg.parsers.getParam);
-*/
-i2b2.PM.ajax._addFunctionCall("getParam", "{{{URL}}}getServices", i2b2.PM.cfg.msgs.getParam, ["id_xml"]);
+
+
+
+// ================================================================================================== //
+i2b2.PM.cfg.msgs.getGlobal = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
+'<i2b2:request xmlns:i2b2="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:pm="http://www.i2b2.org/xsd/cell/pm/1.1/">\n'+
+'    <message_header>\n'+
+'        {{{proxy_info}}}\n'+
+'        <i2b2_version_compatible>1.1</i2b2_version_compatible>\n'+
+'        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
+'        <sending_application>\n'+
+'            <application_name>i2b2 Project Management</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </sending_application>\n'+
+'        <sending_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </sending_facility>\n'+
+'        <receiving_application>\n'+
+'            <application_name>Project Management Cell</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </receiving_application>\n'+
+'        <receiving_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </receiving_facility>\n'+
+'        <datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
+'		<security>\n'+
+'			<domain>{{{sec_domain}}}</domain>\n'+
+'			<username>{{{sec_user}}}</username>\n'+
+'			{{{sec_pass_node}}}\n'+
+'		</security>\n'+
+'        <message_control_id>\n'+
+'            <message_num>{{{header_msg_id}}}</message_num>\n'+
+'            <instance_num>0</instance_num>\n'+
+'        </message_control_id>\n'+
+'        <processing_id>\n'+
+'            <processing_id>P</processing_id>\n'+
+'            <processing_mode>I</processing_mode>\n'+
+'        </processing_id>\n'+
+'        <accept_acknowledgement_type>AL</accept_acknowledgement_type>\n'+
+'        <application_acknowledgement_type>AL</application_acknowledgement_type>\n'+
+'        <country_code>US</country_code>\n'+
+'        <project_id>{{{sec_project}}}</project_id>\n'+
+'    </message_header>\n'+
+'    <request_header>\n'+
+'        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
+'    </request_header>\n'+
+'    <message_body>\n'+
+'        <pm:get_{{{table}}} {{{id_param}}}>{{{id_xml}}}</pm:get_{{{table}}}>\n'+
+'    </message_body>\n'+
+'</i2b2:request>';
+
+i2b2.PM.cfg.parsers.getGlobal = function() {
+if (!this.error) {
+		this.model = [];		
+		// extract records from XML msg
+		var c = this.refXML.getElementsByTagName('param');
+//		var c = i2b2.h.XPath(this.refXML, "//message_body/descendant::param[@name]");
+		var l = c.length;
+		for (var i=0; i<l; i++) {
+			var tmpRec = {};
+			tmpRec.name = i2b2.h.XPath(c[i], "attribute::name")[0].nodeValue;
+			tmpRec.id = i2b2.h.XPath(c[i], "attribute::id")[0].nodeValue;
+			tmpRec.dataType = i2b2.h.XPath(c[i], "attribute::datatype")[0].nodeValue;
+			tmpRec.value = i2b2.h.XPath(c[i], "text()")[0].nodeValue;
+			this.model.push(tmpRec);
+		}
+	} else {
+		this.model = false;
+		console.error("[GetHives] Could not parse() data!");
+	}
+	return this;
+};
+i2b2.PM.ajax._addFunctionCall("getGlobal", "{{{URL}}}getServices", i2b2.PM.cfg.msgs.getGlobal, ["id_xml"], i2b2.PM.cfg.parsers.getGlobal);
 
 
 
@@ -744,7 +1397,7 @@ i2b2.PM.cfg.parsers.getProject = function() {
 	if (!this.error) {
 		this.model = [];		
 		// extract records from XML msg
-		var c = i2b2.h.XPath(this.refXML, '//wiki/..');
+		var c = i2b2.h.XPath(this.refXML, '//name/..');
 		var l = c.length;
 		for (var i=0; i<l; i++) {
 			var tmpRec = {};
@@ -888,7 +1541,7 @@ i2b2.PM.cfg.msgs.setHive = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '			<environment>{{{environment}}}</environment>\n'+
 '			<domain_name>{{{domain_name}}}</domain_name>\n'+
 '			<helpURL>{{{helpURL}}}</helpURL>\n'+
-'                    <active>0</active>\n'+
+'                    <active>true</active>\n'+
 '        </pm:set_hive>\n'+
 '    </message_body>\n'+
 '</i2b2:request>';
@@ -994,12 +1647,12 @@ i2b2.PM.cfg.msgs.setParam = '<?xml version="1.0" encoding="UTF-8" standalone="ye
 '        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
 '    </request_header>\n'+
 '    <message_body>\n'+
-'        <pm:set_{{{table}}}_param {{{msg_attrib}}}>\n'+
+'        <pm:set_{{{table}}} {{{msg_attrib}}}>\n'+
 '{{{msg_xml}}}'+
 //'			<{{{table}}} id="{{{id}}}">\n'+
 //'            <param name="{{{name}}}">{{{param}}}</param>\n'+
 //'			</{{{table}}}>\n'+
-'        </pm:set_{{{table}}}_param>\n'+
+'        </pm:set_{{{table}}}>\n'+
 '    </message_body>\n'+
 '</i2b2:request>';
 i2b2.PM.ajax._addFunctionCall("setParam","{{{URL}}}getServices", i2b2.PM.cfg.msgs.setParam,["msg_xml"]);
@@ -1173,6 +1826,64 @@ i2b2.PM.cfg.msgs.setUser = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '    </message_body>\n'+
 '</i2b2:request>';
 i2b2.PM.ajax._addFunctionCall("setUser","{{{URL}}}getServices", i2b2.PM.cfg.msgs.setUser, ["password"]);
+
+
+
+
+// ================================================================================================== //
+i2b2.PM.cfg.msgs.setApproval = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
+'<i2b2:request xmlns:i2b2="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:pm="http://www.i2b2.org/xsd/cell/pm/1.1/">\n'+
+'    <message_header>\n'+
+'        {{{proxy_info}}}\n'+
+'        <i2b2_version_compatible>1.1</i2b2_version_compatible>\n'+
+'        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
+'        <sending_application>\n'+
+'            <application_name>i2b2 Project Management</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </sending_application>\n'+
+'        <sending_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </sending_facility>\n'+
+'        <receiving_application>\n'+
+'            <application_name>Project Management Cell</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </receiving_application>\n'+
+'        <receiving_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </receiving_facility>\n'+
+'        <datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
+'		<security>\n'+
+'			<domain>{{{sec_domain}}}</domain>\n'+
+'			<username>{{{sec_user}}}</username>\n'+
+'			{{{sec_pass_node}}}\n'+
+'		</security>\n'+
+'        <message_control_id>\n'+
+'            <message_num>{{{header_msg_id}}}</message_num>\n'+
+'            <instance_num>0</instance_num>\n'+
+'        </message_control_id>\n'+
+'        <processing_id>\n'+
+'            <processing_id>P</processing_id>\n'+
+'            <processing_mode>I</processing_mode>\n'+
+'        </processing_id>\n'+
+'        <accept_acknowledgement_type>AL</accept_acknowledgement_type>\n'+
+'        <application_acknowledgement_type>AL</application_acknowledgement_type>\n'+
+'        <country_code>US</country_code>\n'+
+'        <project_id>{{{sec_project}}}</project_id>\n'+
+'    </message_header>\n'+
+'    <request_header>\n'+
+'        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
+'    </request_header>\n'+
+'    <message_body>\n'+
+'        <pm:set_approval id="{{{id}}}">\n'+
+'            <name>{{{name}}}</name>\n'+
+'            <description>{{{description}}}</description>\n'+
+'            <object_cd>APPROVAL</object_cd>\n'+
+'			 <activation_date>{{{activation_date}}}</activation_date>\n'+
+'			<expiration_date>{{{expiration_date}}}</expiration_date>\n'+
+'        </pm:set_approval>\n'+
+'    </message_body>\n'+
+'</i2b2:request>';
+i2b2.PM.ajax._addFunctionCall("setApproval","{{{URL}}}getServices", i2b2.PM.cfg.msgs.setApproval, null);
 
 
 
@@ -1487,6 +2198,55 @@ i2b2.PM.cfg.msgs.deleteUser = '<?xml version="1.0" encoding="UTF-8" standalone="
 i2b2.PM.ajax._addFunctionCall("deleteUser","{{{URL}}}getServices", i2b2.PM.cfg.msgs.deleteUser,null);
 
 
+// ================================================================================================== //
+i2b2.PM.cfg.msgs.deleteApproval = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
+'<i2b2:request xmlns:i2b2="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:pm="http://www.i2b2.org/xsd/cell/pm/1.1/">\n'+
+'    <message_header>\n'+
+'        {{{proxy_info}}}\n'+
+'        <i2b2_version_compatible>1.1</i2b2_version_compatible>\n'+
+'        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
+'        <sending_application>\n'+
+'            <application_name>i2b2 Project Management</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </sending_application>\n'+
+'        <sending_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </sending_facility>\n'+
+'        <receiving_application>\n'+
+'            <application_name>Project Management Cell</application_name>\n'+
+'            <application_version>1.1</application_version>\n'+
+'        </receiving_application>\n'+
+'        <receiving_facility>\n'+
+'            <facility_name>i2b2 Hive</facility_name>\n'+
+'        </receiving_facility>\n'+
+'        <datetime_of_message>{{{header_msg_datetime}}}</datetime_of_message>\n'+
+'		<security>\n'+
+'			<domain>{{{sec_domain}}}</domain>\n'+
+'			<username>{{{sec_user}}}</username>\n'+
+'			{{{sec_pass_node}}}\n'+
+'		</security>\n'+
+'        <message_control_id>\n'+
+'            <message_num>{{{header_msg_id}}}</message_num>\n'+
+'            <instance_num>0</instance_num>\n'+
+'        </message_control_id>\n'+
+'        <processing_id>\n'+
+'            <processing_id>P</processing_id>\n'+
+'            <processing_mode>I</processing_mode>\n'+
+'        </processing_id>\n'+
+'        <accept_acknowledgement_type>AL</accept_acknowledgement_type>\n'+
+'        <application_acknowledgement_type>AL</application_acknowledgement_type>\n'+
+'        <country_code>US</country_code>\n'+
+'        <project_id>{{{sec_project}}}</project_id>\n'+
+'    </message_header>\n'+
+'    <request_header>\n'+
+'        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
+'    </request_header>\n'+
+'    <message_body>\n'+
+'        <pm:delete_approval id="{{{id}}}"></pm:delete_approval>\n'+
+'    </message_body>\n'+
+'</i2b2:request>';
+i2b2.PM.ajax._addFunctionCall("deleteApproval","{{{URL}}}getServices", i2b2.PM.cfg.msgs.deleteApproval,null);
+
 
 // ================================================================================================== //
 i2b2.PM.cfg.msgs.deleteParam = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'+
@@ -1532,9 +2292,9 @@ i2b2.PM.cfg.msgs.deleteParam = '<?xml version="1.0" encoding="UTF-8" standalone=
 '        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
 '    </request_header>\n'+
 '    <message_body>\n'+
-'        <pm:delete_{{{table}}}_param {{{msg_attrib}}}>\n'+
+'        <pm:delete_{{{table}}} {{{msg_attrib}}}>\n'+
 '{{{msg_xml}}}'+
-'        </pm:delete_{{{table}}}_param>\n'+
+'        </pm:delete_{{{table}}}>\n'+
 '    </message_body>\n'+
 '</i2b2:request>';
 i2b2.PM.ajax._addFunctionCall("deleteParam","{{{URL}}}getServices", i2b2.PM.cfg.msgs.deleteParam,["msg_xml"]);

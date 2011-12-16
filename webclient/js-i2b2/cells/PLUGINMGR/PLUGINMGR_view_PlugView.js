@@ -30,8 +30,6 @@ i2b2.PLUGINMGR.view.PlugView.Resize = function(e) {
 		ve.show();
 		// resize our visual components
 		switch(i2b2.hive.MasterView.getViewMode()) {
-			case "Admin":
-				break;
 			case "Analysis":
 				ve.show();
 				w = w - 18;
@@ -146,9 +144,6 @@ i2b2.events.changedViewMode.subscribe((function(eventTypeName, newMode) {
 	newMode = newMode[0];
 	this.viewMode = newMode;
 	switch(newMode) {
-	//	case "Admin":
-	//		this.view.PlugView.hide();
-	//		break;
 		case "AnalysisZoomed":
 		case "Analysis":
 			// check if other windows are zoomed and blocking us

@@ -69,6 +69,12 @@ i2b2.sdx.TypeControllers.CONCPT.RenderHTML= function(sdxData, options, targetDiv
 		icon = 'branch';
 		bCanExp = true;
 		//var sCanExpand = ' canExpand="Y"';
+	} else if (sdxData.origData.hasChildren == 'DA') {
+		// render as possibly having children
+		icon = 'branch';
+		bCanExp = true;
+		//var sCanExpand = ' canExpand="Y"';
+
 	} else {
 		// render as not having children
 		var icon = 'leaf';
@@ -115,8 +121,32 @@ i2b2.sdx.TypeControllers.CONCPT.RenderHTML= function(sdxData, options, targetDiv
 			sMainEvents += ' oncontextmenu="return false" ';
 	}
 
+	//Added to provide tooltip information for concepts/terms
+	var v_tooltip = '';
+	
+	try{
+		if (($('ONTNAVshowShortTooltips').checked) || ($('ONTFINDshowShortTooltips').checked) )
+		{
+			v_tooltip += 'title="'+ sdxData.origData.name;
+		} else 
+		{
+			v_tooltip += 'title="'+ sdxData.origData.tooltip;			
+		}
+		
+		if ((($('ONTNAVshowCodeTooltips').checked) || ($('ONTFINDshowCodeTooltips').checked) )
+ && !Object.isUndefined(sdxData.origData.basecode))
+		{
+			v_tooltip += " - " + sdxData.origData.basecode;
+		}
+		
+		v_tooltip += '" ';
+	}
+	catch(e){
+		v_tooltip = '';
+	}
+	
 	// **** Render the HTML ***
-	var retHtml = '<DIV id="' + id + '" ' + sMainEvents + ' style="white-space:nowrap;cursor:pointer;">';
+	var retHtml = '<DIV id="' + id + '" '+ v_tooltip + sMainEvents + ' style="white-space:nowrap;cursor:pointer;">';
 	retHtml += '<DIV ';
 	if (Object.isString(options.cssClass)) {
 		retHtml += ' class="'+options.cssClass+'" ';
@@ -126,6 +156,10 @@ i2b2.sdx.TypeControllers.CONCPT.RenderHTML= function(sdxData, options, targetDiv
 	retHtml += sImgEvents;
 	retHtml += '>';
 	retHtml += '<IMG src="'+render.icon+'"/>'; 
+	if ($('ONTNAVshowPatientCounts').checked && sdxData.origData.total_num == 0)
+	{
+		retHtml += "[";
+	}
 	if (!Object.isUndefined(options.title)) {
 		// BUG FIX: Partners uses "zz " to move items to the bottom of lists, java client removes the "zz " prefix.
 		if (options.title.substr(0,3) == "zz ") { options.title = options.title.substr(3); }
@@ -133,6 +167,16 @@ i2b2.sdx.TypeControllers.CONCPT.RenderHTML= function(sdxData, options, targetDiv
 	} else {
 		console.warn('[SDX RenderHTML] no title was given in the creation options for an ONT>CONCPT node!');
 		retHtml += ' CONCPT '+id;
+	}
+	if ($('ONTNAVshowPatientCounts').checked)
+	{
+		if (!Object.isUndefined(sdxData.origData.total_num)) {
+			retHtml += " - " + sdxData.origData.total_num;
+		}
+		if (sdxData.origData.total_num == 0)
+		{
+			retHtml += "]";
+		}
 	}
 	retHtml += '</DIV></DIV>';
 	render.html = retHtml;
@@ -193,6 +237,15 @@ i2b2.sdx.TypeControllers.CONCPT.AppendTreeNode = function(yuiTree, yuiRootNode, 
 //	GET CHILD RECORDS (DEFAULT HANDELER)
 // *********************************************************************************
 i2b2.sdx.TypeControllers.CONCPT.LoadChildrenFromTreeview = function(node, onCompleteCallback) {
+	 if (!$('ONTNAVdisableModifiers').checked && node.tree.id == 'ontNavResults') {
+		i2b2.sdx.TypeControllers.CONCPT.LoadModifiers(node, onCompleteCallback, true);
+ 	 } else {
+			i2b2.sdx.TypeControllers.CONCPT.LoadConcepts(node, onCompleteCallback, false);
+	 }
+}
+
+
+i2b2.sdx.TypeControllers.CONCPT.LoadConcepts = function(node, onCompleteCallback, modifier) {
 	var scopedCallback = new i2b2_scopedCallback();
 	scopedCallback.scope = node.data.i2b2_SDX;
 	scopedCallback.callback = function(results){
@@ -251,34 +304,70 @@ i2b2.sdx.TypeControllers.CONCPT.LoadChildrenFromTreeview = function(node, onComp
 			img.src = node.data.i2b2_SDX.renderData.icon;
 			return false;
 		}
-		var c = results.refXML.getElementsByTagName('concept');
+		if (modifier) {	
+			var c = results.refXML.getElementsByTagName('modifier');
+		} else {
+			var c = results.refXML.getElementsByTagName('concept');			
+		}
 		for(var i=0; i<1*c.length; i++) {
 			var o = new Object;
 			o.xmlOrig = c[i];
+			o.parent = this.origData;
+			if (modifier) {	
+				o.isModifier = true;
+				o.applied_path = i2b2.h.getXNodeVal(c[i],'applied_path');
+			} else {
+				o.isModifier = false;				
+			}
 			o.name = i2b2.h.getXNodeVal(c[i],'name');
-			o.hasChildren = i2b2.h.getXNodeVal(c[i],'visualattributes').substring(0,2);
+			//o.hasChildren = i2b2.h.getXNodeVal(c[i],'visualattributes').substring(0,2);
+			o.hasChildren = YAHOO.lang.trim(i2b2.h.getXNodeVal(c[i],'visualattributes').substring(0,3)); 
 			o.level = i2b2.h.getXNodeVal(c[i],'level');
 			o.key = i2b2.h.getXNodeVal(c[i],'key');
-			o.tooltip = i2b2.h.getXNodeVal(c[i],'tooltip');
+			if (cl_options.ont_short_tooltip) {
+				o.tooltip = o.name;
+			} else {
+				o.tooltip = i2b2.h.getXNodeVal(c[i],'tooltip');
+			}
 			o.icd9 = '';
 			o.table_name = i2b2.h.getXNodeVal(c[i],'tablename');
 			o.column_name = i2b2.h.getXNodeVal(c[i],'columnname');
 			o.operator = i2b2.h.getXNodeVal(c[i],'operator');
+			o.total_num = i2b2.h.getXNodeVal(c[i],'totalnum');
 			o.dim_code = i2b2.h.getXNodeVal(c[i],'dimcode');
+			o.basecode = i2b2.h.getXNodeVal(c[i],'basecode');
+			if (cl_options.ont_show_concept_code && o.basecode != undefined) {
+				o.tooltip  += "(" + o.basecode + ")";
+			}
 			// append the data node
 			var sdxDataNode = i2b2.sdx.Master.EncapsulateData('CONCPT',o);
-			var renderOptions = {
-				title: o.name,
-				dragdrop: "i2b2.sdx.TypeControllers.CONCPT.AttachDrag2Data",
-				dblclick: "i2b2.ONT.view.nav.ToggleNode(this,'"+cl_node.tree.id+"')",
-				icon: {
-					root: "sdx_ONT_CONCPT_root.gif",
-					rootExp: "sdx_ONT_CONCPT_root-exp.gif",
-					branch: "sdx_ONT_CONCPT_branch.gif",
-					branchExp: "sdx_ONT_CONCPT_branch-exp.gif",
-					leaf: "sdx_ONT_CONCPT_leaf.gif"
-				}
-			};
+			if (modifier) {				
+				var renderOptions = {
+					title: o.name,
+					dragdrop: "i2b2.sdx.TypeControllers.CONCPT.AttachDrag2Data",
+					dblclick: "i2b2.ONT.view.nav.ToggleNode(this,'"+cl_node.tree.id+"')",
+					icon: {
+						root: "sdx_ONT_MODIFIER_root.gif",
+						rootExp: "sdx_ONT_MODIFIER_root-exp.gif",
+						branch: "sdx_ONT_MODIFIER_branch.gif",
+						branchExp: "sdx_ONT_MODIFIER_branch-exp.gif",
+						leaf: "sdx_ONT_MODIFIER_leaf.gif"
+					}
+				};
+			} else {
+				var renderOptions = {
+					title: o.name,
+					dragdrop: "i2b2.sdx.TypeControllers.CONCPT.AttachDrag2Data",
+					dblclick: "i2b2.ONT.view.nav.ToggleNode(this,'"+cl_node.tree.id+"')",
+					icon: {
+						root: "sdx_ONT_CONCPT_root.gif",
+						rootExp: "sdx_ONT_CONCPT_root-exp.gif",
+						branch: "sdx_ONT_CONCPT_branch.gif",
+						branchExp: "sdx_ONT_CONCPT_branch-exp.gif",
+						leaf: "sdx_ONT_CONCPT_leaf.gif"
+					}
+				};				
+			}
 
 			var sdxRenderData = i2b2.sdx.Master.RenderHTML(cl_node.tree.id, sdxDataNode, renderOptions);
 			i2b2.sdx.Master.AppendTreeNode(cl_node.tree, cl_node, sdxRenderData);
@@ -293,7 +382,13 @@ i2b2.sdx.TypeControllers.CONCPT.LoadChildrenFromTreeview = function(node, onComp
 		case "ontNavResults":
 			var t = i2b2.ONT.view.nav.params;
 			break;
-		case "ontSearchCodesResults", "ontSearchNamesResults":
+		case "ontSearchCodesResults":
+			var t = i2b2.ONT.view.find.params;
+			break;
+		case "ontSearchModifiersResults":
+			var t = i2b2.ONT.view.find.params;
+			break;
+		case "ontSearchNamesResults":
 			var t = i2b2.ONT.view.find.params;
 			break;
 		default:
@@ -302,8 +397,176 @@ i2b2.sdx.TypeControllers.CONCPT.LoadChildrenFromTreeview = function(node, onComp
 	options.ont_hidden_records = t.hiddens;
 	options.ont_max_records = "max='"+t.max+"' ";
 	options.ont_synonym_records = t.synonyms;
+	options.ont_patient_count = t.patientCount;
+	options.ont_short_tooltip = t.shortTooltip;
+	options.ont_show_concept_code = t.showConceptCode;
 	options.concept_key_value = key;
-	i2b2.ONT.ajax.GetChildConcepts("ONT:SDX:Concept", options, scopedCallback );
+	i2b2.ONT.ajax.GetChildConcepts("ONT:SDX:Concept", options, scopedCallback );		
+	
+}
+
+
+i2b2.sdx.TypeControllers.CONCPT.LoadModifiers = function(node, onCompleteCallback, modifier) {
+	var scopedCallback = new i2b2_scopedCallback();
+	scopedCallback.scope = node.data.i2b2_SDX;
+	scopedCallback.callback = function(results){
+		var cl_node = node;
+		var cl_key = key;
+		var cl_onCompleteCB = onCompleteCallback;
+		var cl_options = options;
+		// THIS function is used to process the AJAX results of the getChild call
+		//		results data object contains the following attributes:
+		//			refXML: xmlDomObject <--- for data processing
+		//			msgRequest: xml (string)
+		//			msgResponse: xml (string)
+		//			error: boolean
+		//			errorStatus: string [only with error=true]
+		//			errorMsg: string [only with error=true]
+		
+// TODO: REFACTOR THIS! (Roll into COMM message sniffer?)
+		try {
+			i2b2.ONT.view[i2b2.ONT.view.main.currentTab].queryRequest = results.msgRequest;
+			i2b2.ONT.view[i2b2.ONT.view.main.currentTab].queryResponse = results.msgResponse;
+		} catch(e) {}
+
+		// handle any errors in the message
+		if (results.error) {
+			// process the specific error
+			var errorCode = results.refXML.getElementsByTagName('status')[0].firstChild.nodeValue;
+			if (errorCode == "MAX_EXCEEDED") {
+				var eaction = confirm("The number of children in this node exceeds the maximum number you specified in options.\n Displaying all children may take a long time to do.");
+			}
+			else {
+				alert("The following error has occurred:\n" + errorCode);
+			}
+			// re-fire the call with no max limit if the user requested so
+			if (eaction) {
+				// TODO: Implement param routing from node's container
+				var mod_options = Object.clone(cl_options);
+				delete mod_options.ont_max_records;
+				i2b2.ONT.ajax.GetChildConcepts("ONT:SDX:Concept", mod_options, scopedCallback );
+				return true;
+			}
+			// ROLLBACK the tree changes
+			cl_onCompleteCB();
+			// reset dynamic load state for the node (total hack of YUI Treeview)
+			node.collapse();
+			node.dynamicLoadComplete = false;
+			node.expanded = false;
+			node.childrenRendered = false;
+			node._dynLoad = true;
+			// uber-elite code (fix the style settings)
+			var tc = node.getToggleEl().className;
+			tc = tc.substring(0, tc.length - 1) + 'p';
+			node.getToggleEl().className = tc;
+			// fix the icon image
+			var img = node.getContentEl();
+			img = Element.select(img, 'img')[0];
+			img.src = node.data.i2b2_SDX.renderData.icon;
+			return false;
+		}
+			var c = results.refXML.getElementsByTagName('modifier');
+			for(var i=0; i<1*c.length; i++) {
+			var o = new Object;
+			o.xmlOrig = c[i];
+			o.parent = this.origData;
+					o.isModifier = true;
+				o.applied_path = i2b2.h.getXNodeVal(c[i],'applied_path');
+			o.name = i2b2.h.getXNodeVal(c[i],'name');
+			//o.hasChildren = i2b2.h.getXNodeVal(c[i],'visualattributes').substring(0,2);
+			o.hasChildren = YAHOO.lang.trim(i2b2.h.getXNodeVal(c[i],'visualattributes').substring(0,3)); 
+			o.level = i2b2.h.getXNodeVal(c[i],'level');
+			o.key = i2b2.h.getXNodeVal(c[i],'key');
+			if (cl_options.ont_short_tooltip) {
+				o.tooltip = o.name;
+			} else {
+				o.tooltip = i2b2.h.getXNodeVal(c[i],'tooltip');
+			}
+			o.icd9 = '';
+			o.table_name = i2b2.h.getXNodeVal(c[i],'tablename');
+			o.column_name = i2b2.h.getXNodeVal(c[i],'columnname');
+			o.operator = i2b2.h.getXNodeVal(c[i],'operator');
+			o.total_num = i2b2.h.getXNodeVal(c[i],'totalnum');
+			o.dim_code = i2b2.h.getXNodeVal(c[i],'dimcode');
+			o.basecode = i2b2.h.getXNodeVal(c[i],'basecode');
+			if (cl_options.ont_show_concept_code && o.basecode != undefined) {
+				o.tooltip  += "(" + o.basecode + ")";
+			}
+			// append the data node
+			var sdxDataNode = i2b2.sdx.Master.EncapsulateData('CONCPT',o);
+			if (modifier) {				
+				var renderOptions = {
+					title: o.name,
+					dragdrop: "i2b2.sdx.TypeControllers.CONCPT.AttachDrag2Data",
+					dblclick: "i2b2.ONT.view.nav.ToggleNode(this,'"+cl_node.tree.id+"')",
+					icon: {
+						root: "sdx_ONT_MODIFIER_root.gif",
+						rootExp: "sdx_ONT_MODIFIER_root-exp.gif",
+						branch: "sdx_ONT_MODIFIER_branch.gif",
+						branchExp: "sdx_ONT_MODIFIER_branch-exp.gif",
+						leaf: "sdx_ONT_MODIFIER_leaf.gif"
+					}
+				};
+			} else {
+				var renderOptions = {
+					title: o.name,
+					dragdrop: "i2b2.sdx.TypeControllers.CONCPT.AttachDrag2Data",
+					dblclick: "i2b2.ONT.view.nav.ToggleNode(this,'"+cl_node.tree.id+"')",
+					icon: {
+						root: "sdx_ONT_CONCPT_root.gif",
+						rootExp: "sdx_ONT_CONCPT_root-exp.gif",
+						branch: "sdx_ONT_CONCPT_branch.gif",
+						branchExp: "sdx_ONT_CONCPT_branch-exp.gif",
+						leaf: "sdx_ONT_CONCPT_leaf.gif"
+					}
+				};				
+			}
+
+			var sdxRenderData = i2b2.sdx.Master.RenderHTML(cl_node.tree.id, sdxDataNode, renderOptions);
+			i2b2.sdx.Master.AppendTreeNode(cl_node.tree, cl_node, sdxRenderData);
+		}
+		// handle the YUI treeview	
+		cl_onCompleteCB();
+		if (node.data.i2b2_SDX.origData.hasChildren != "DA") {
+			i2b2.sdx.TypeControllers.CONCPT.LoadConcepts(node, onCompleteCallback, false);
+		}
+	}
+	var key = node.data.i2b2_SDX.sdxInfo.sdxKeyValue;
+	// TODO: Implement param routing from node's container
+	var options = {};
+	switch (node.tree.id) {
+		case "ontNavResults":
+			var t = i2b2.ONT.view.nav.params;
+			break;
+		case "ontSearchModifiersResults":
+			var t = i2b2.ONT.view.find.params;
+			break;			
+		case "ontSearchCodesResults":
+			var t = i2b2.ONT.view.find.params;
+			break;					
+		case "ontSearchNamesResults": 
+//		case "ontSearchCodesResults", "ontSearchNamesResults", "ontSearchModifiersResults":
+			var t = i2b2.ONT.view.find.params;
+			break;
+		default:
+			var t = i2b2.ONT.params;
+	}
+	options.ont_hidden_records = t.hiddens;
+	options.ont_max_records = "max='"+t.max+"' ";
+	options.ont_synonym_records = t.synonyms;
+	options.ont_patient_count = t.patientCount;
+	options.ont_short_tooltip = t.shortTooltip;
+	options.ont_show_concept_code = t.showConceptCode;
+	options.concept_key_value = key;
+	
+	if (node.data.i2b2_SDX.origData.hasChildren == "DA") {
+		options.modifier_key_value = node.data.i2b2_SDX.origData.key;
+		options.modifier_applied_path = node.data.i2b2_SDX.origData.applied_path;
+		options.modifier_applied_concept = node.data.i2b2_SDX.origData.parent.key;
+		i2b2.ONT.ajax.GetChildModifiers("ONT:SDX:Concept", options, scopedCallback );	
+	} else {
+		i2b2.ONT.ajax.GetModifiers("ONT:SDX:Concept", options, scopedCallback );
+	}
 }
 
 

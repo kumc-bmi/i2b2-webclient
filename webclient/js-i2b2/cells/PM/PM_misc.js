@@ -14,6 +14,7 @@ console.time('execute time');
 // helper functions in the object scope
 // ================================================================================================== //
 i2b2.h.getUser = function() { return i2b2.PM.model.login_username; }
+i2b2.h.getFullname = function() { return i2b2.PM.model.login_fullname; }
 i2b2.h.getPass = function() { return i2b2.PM.model.login_password; }
 i2b2.h.getDomain = function () { return i2b2.PM.model.login_domain; }
 i2b2.h.getProxy = function() { return i2b2.hive.cfg.urlProxy; }
@@ -21,11 +22,15 @@ i2b2.h.getProject = function() { return i2b2.PM.model.login_project; }
 i2b2.h.isSHRINE = function() { return i2b2.PM.model.shrine_domain; }
 i2b2.h.inDebugMode = function() { return i2b2.PM.model.login_debugging; }
 i2b2.h.allowAnalysis = function() { return i2b2.PM.model.allow_analysis; }
+i2b2.h.adminOnly = function() { return i2b2.PM.model.admin_only; }
 
 i2b2.PM.model.login_username = '';
+i2b2.PM.model.login_fullname = '';
 i2b2.PM.model.login_password = '';
+i2b2.PM.model.login_projectname = '';
 i2b2.PM.model.login_domain = '';
 i2b2.PM.model.shrine_domain = false;
+i2b2.PM.model.admin_only = false;
 i2b2.PM.model.Domains = i2b2.hive.cfg.lstDomains;
 
 
@@ -39,7 +44,7 @@ i2b2.PM.model.html.loginDialog = '<div id="i2b2_login_modal_dialog" style="displ
 	'			<div id="loginMessage">Login incorrect or host not found.</div>\n'+
 	'			<div class="formDiv">\n'+
 	'				<div class="label">Username:</div>\n'+
-	'				<div class="input"><input type="text" name="uname" id="loginusr" value="i2b2" size="20" maxlength="50" /></div>\n'+
+	'				<div class="input"><input type="text" name="uname" id="loginusr" value="demo" size="20" maxlength="50" /></div>\n'+
 	'				<div class="label">Password:</div>\n'+
 	'				<div class="input"><input type="password" name="pword" id="loginpass" value="demouser" size="20" maxlength="50" /></div>\n'+
 	'				<div class="label">i2b2 Host:</div>\n'+

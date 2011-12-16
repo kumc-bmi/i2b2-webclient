@@ -13,7 +13,7 @@ console.time('execute time');
 
 // ================================================================================================== //
 i2b2.CRC.ctrlr.dateConstraint = {
-	defaultStartDate: '01/01/2006',
+	defaultStartDate: '12/01/1979',
 	defaultEndDate: '12/31/2006',
 	currentPanelIndex: false,
 

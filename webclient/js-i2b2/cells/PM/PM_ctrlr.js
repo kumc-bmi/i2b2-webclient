@@ -6,6 +6,8 @@
  * @version 	1.5
  * ----------------------------------------------------------------------------------------
  * updated 9-15-09: Refactor loading process to allow CELL loading timeouts and failures [Nick Benik] 
+ * updated 11-9-09: Changes to announcement dialog functionality [Charles McGow]
+ * updated 11-23-09: Bug Fix for Firefox's 4k XML node text limit [Nick Benik]
  */
 console.group('Load & Execute component file: cells > PM > ctrlr');
 console.time('execute time');
@@ -52,6 +54,12 @@ i2b2.PM.doLogin = function() {
 			} else {
 				i2b2.PM.model.allow_analysis = true;
 			}
+			if (p[val].adminOnly != undefined) {
+				i2b2.PM.model.admin_only = Boolean.parseTo(p[val].adminOnly);
+			} else {
+				i2b2.PM.model.admin_only = false;
+			}
+			
 		}
 	} else {
 		e += "\n  No login channel was selected";
@@ -73,6 +81,7 @@ i2b2.PM.doLogin = function() {
 		project: login_project
 	};
 	i2b2.PM.ajax.getUserAuth("PM:Login", parameters, callback, transportOptions);
+
 }
 
 
@@ -80,25 +89,20 @@ i2b2.PM.doLogin = function() {
 i2b2.PM._processUserConfig = function (data) {
 	console.group("PROCESS Login XML");
 	console.debug(" === run the following command in Firebug to view message sniffer: i2b2.hive.MsgSniffer.show() ===");
-	
-	
+
 	// save the valid data that was passed into the PM cell's data model
 	i2b2.PM.model.login_username = data.msgParams.sec_user;
 	try {
 		var t = i2b2.h.XPath(data.refXML, '//user/password')[0];
 		i2b2.PM.model.login_password = i2b2.h.Xml2String(t);
-		t = i2b2.h.XPath(data.refXML, '//user/user_name/text()')[0];
-		i2b2.PM.model.login_username = i2b2.h.Xml2String(t);
 	} catch (e) {
 		console.error("Could not find returned password node in login XML");
 		i2b2.PM.model.login_password = "<password>"+data.msgParams.sec_pass+"</password>\n";
-                if (i2b2.PM.model.CAS_server) {
-		    alert("Login attempt failed.");
-		    eraseCookie("CAS_ticket");
-		    i2b2.PM.doCASLogin(data.msgParams.sec_domain);
-		    return true;
-		}
 	}	
+	try { 
+		var t = i2b2.h.XPath(data.refXML, '//user/full_name')[0];
+		i2b2.PM.model.login_fullname = i2b2.h.Xml2String(t);
+	} catch(e) {}	
 	i2b2.PM.model.login_domain = data.msgParams.sec_domain;
 	i2b2.PM.model.shrine_domain = Boolean.parseTo(data.msgParams.is_shrine);
 	i2b2.PM.model.login_project = data.msgParams.sec_project;
@@ -114,6 +118,8 @@ i2b2.PM._processUserConfig = function (data) {
 	// if user has more than one project display a modal dialog box to have them select one
 	var xml = data.refXML;
 
+	i2b2.PM.model.isAdmin = false;
+
 	var projs = i2b2.h.XPath(xml, 'descendant::user/project[@id]');	
 	console.debug(projs.length+' project(s) discovered for user');
 	// populate the Project data into the data model
@@ -123,7 +129,18 @@ i2b2.PM._processUserConfig = function (data) {
 		var code = projs[i].getAttribute('id');
 		i2b2.PM.model.projects[code] = {};
 		i2b2.PM.model.projects[code].name = i2b2.h.getXNodeVal(projs[i], 'name');
-		// details
+		var roledetails = i2b2.h.XPath(projs[i], 'descendant-or-self::role');
+		i2b2.PM.model.projects[code].roles = {};
+		for (var d=0; d<roledetails.length; d++) {
+			//alert(roledetails[d].textContent);
+			// BUG FIX - Firefox splits large values into multiple 4k text nodes... use Firefox-specific function to read concatenated value
+			if ((roledetails[d].textContent) && (roledetails[d].textContent  == "ADMIN")) {
+				i2b2.PM.model.isAdmin = true
+			} else if ((roledetails[d].firstChild) && (roledetails[d].firstChild.nodeValue.unescapeHTML() == "ADMIN")) {
+				i2b2.PM.model.isAdmin = true		
+			}
+		}
+		// details`
 		var projdetails = i2b2.h.XPath(projs[i], 'descendant-or-self::param[@name]');
 		i2b2.PM.model.projects[code].details = {};
 		for (var d=0; d<projdetails.length; d++) {
@@ -131,22 +148,43 @@ i2b2.PM._processUserConfig = function (data) {
 			// BUG FIX - Firefox splits large values into multiple 4k text nodes... use Firefox-specific function to read concatenated value
 			if (projdetails[d].textContent) {
 				i2b2.PM.model.projects[code].details[paramName] = projdetails[d].textContent;
-			} else {
+			} else if (projdetails[d].firstChild) {
 				i2b2.PM.model.projects[code].details[paramName] = projdetails[d].firstChild.nodeValue.unescapeHTML();				
 			}
 		}
 	}
-	// show project selection dialog if needed	
+	 
 	if (projs.length == 0) {
+	// show project selection dialog if needed	
 		try { i2b2.h.LoadingMask.hide(); } catch(e) {}
-		alert("Your account does not have access to any i2b2 projects.");
-		if (undefined == i2b2.PM.model.CAS_server) {
-		    try { i2b2.PM.view.modal.login.show(); } catch(e) {}
+		// better error messages
+		var s = i2b2.h.XPath(xml, 'descendant::result_status/status[@type="ERROR"]');
+		if (s.length > 0) {
+			// we have a proper error msg
+			try {
+				alert("ERROR: "+s[0].firstChild.nodeValue);				
+			} catch (e) {
+				alert("An unknown error has occured during your login attempt!");
+			}
+		} else {
+			alert("Your account does not have access to any i2b2 projects.");		
 		}
+		try { i2b2.PM.view.modal.login.show(); } catch(e) {}
 		return true;
+	} else if (!i2b2.PM.model.isAdmin && i2b2.PM.model.admin_only)
+	{
+		alert("Requires ADMIN role, please contact your system administrator");
+		try { i2b2.PM.view.modal.login.show(); } catch(e) {}
+		return true;
+	} else if (i2b2.PM.model.admin_only) {	
+		// default to the first project
+		$('crcQueryToolBox').hide(); 
+		i2b2.PM.model.login_project = i2b2.h.XPath(projs[0], 'attribute::id')[0].nodeValue;
+		i2b2.PM._processLaunchFramework();
 	} else if (projs.length == 1) {
 		// default to the only project the user has access to
 		i2b2.PM.model.login_project = i2b2.h.XPath(projs[0], 'attribute::id')[0].nodeValue;
+		i2b2.PM.model.login_projectname = i2b2.h.getXNodeVal(projs[0], "name");
 		try {
 			var announcement = i2b2.PM.model.projects[i2b2.PM.model.login_project].details.announcement;
 			if (announcement) {
@@ -159,18 +197,14 @@ i2b2.PM._processUserConfig = function (data) {
 		// display list of possible projects for the user to select
 		i2b2.PM.view.modal.projectDialog.showProjects();
 	}
+
 }
 
 
 // ================================================================================================== //
 i2b2.PM.doLogout = function() {
-    if (undefined != i2b2.PM.model.CAS_server) {
-	eraseCookie("CAS_ticket");
-	window.location = i2b2.PM.model.CAS_server + "logout";
-    } else {
 	// bug fix - must reload page to avoid dirty data from lingering
 	window.location.reload();
-    }
 }
 
 
@@ -260,8 +294,10 @@ i2b2.PM.view.modal.projectDialog = {
 			// get the ID of the currently selected project in the dropdown
 			var p = $('loginProjs');
 			ProjId = p.options[p.selectedIndex].value;
+			ProjName = p.options[p.selectedIndex].text;
 		}
 		i2b2.PM.model.login_project = ProjId;
+		i2b2.PM.model.login_projectname = ProjName;
 		i2b2.PM.view.modal.projectDialog.yuiDialog.destroy();
 		try {
 			var announcement = i2b2.PM.model.projects[ProjId].details.announcement;
@@ -285,7 +321,10 @@ i2b2.PM.view.modal.announcementDialog = {
 				constraintoviewport: true,
 				close: false
 			});
-			thisRef.yuiDialog.cfg.queueProperty("buttons",[{text: "Continue", handler:i2b2.PM.view.modal.announcementDialog.clickOK, isDefault:true}])
+			thisRef.yuiDialog.cfg.queueProperty("buttons",
+				[{text: "Yes, I agree", handler:i2b2.PM.view.modal.announcementDialog.clickOK, isDefault:true},
+				 {text: "No, I disagree", handler:i2b2.PM.view.modal.announcementDialog.clickCancel}
+				]);
 			thisRef.yuiDialog.render(document.body);
 			// show the form
 			thisRef.yuiDialog.show();
@@ -353,10 +392,16 @@ i2b2.PM._processLaunchFramework = function() {
 
 	// extract additional user/project information
 	i2b2.PM.model.userRoles = [];
-	var roles = i2b2.h.XPath(oXML, "//user/project/role/text()");
+	i2b2.PM.model.isObfuscated = true;
+	var roles = i2b2.h.XPath(oXML, "//user/project[@id='"+i2b2.PM.model.login_project+"']/role/text()");
 	var l = roles.length;
 	for (var i=0; i<l; i++) {
-		i2b2.PM.model.userRoles.push(roles[i].nodeValue);
+		if (i2b2.PM.model.userRoles.indexOf(roles[i].nodeValue) == -1)
+			i2b2.PM.model.userRoles.push(roles[i].nodeValue);
+			if (roles[i].nodeValue == "DATA_AGG")
+			{
+				i2b2.PM.model.isObfuscated = false;	
+			}
 	}
 
 	// process cell listing

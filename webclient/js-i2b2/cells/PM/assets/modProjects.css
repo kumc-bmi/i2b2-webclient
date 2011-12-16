@@ -144,3 +144,46 @@ DIV#i2b2_login_modal_dialog DIV.button INPUT {
 	width: 90px;
 	margin-top: 6px;
 }
+
+
+/*** CSS for Project Request  ***/
+
+
+DIV#project-request-viewer-body DIV.ProjectRequest-MainContent {
+    background:#FFF;
+    border:solid #63758C;
+    border-width:1px 0;
+    overflow:auto;
+    height:100%;
+}
+
+
+DIV.ProjectRequest-MainContent DIV.droptrgtlbl {
+	padding: 6px 0px;
+	width:180px;
+	text-align:right;
+	float: left;
+	font-weight:bold;
+	color:#666;
+	margin: 15px 10px 0px 0px;
+}
+DIV.ProjectRequest-MainContent DIV.droptrgt {
+	padding: 5px 10px;
+	background: #DEEBEF;
+	margin-top: 15px;
+	text-align:left;
+	border: 1px solid #63758C;
+	overflow:hidden;
+	float:left;
+	white-space:nowrap;
+}
+ 
+
+DIV.ProjectRequest-MainContent DIV.outputOptions {
+	padding: 5px 10px;
+	margin-top: 15px;
+	text-align:center;
+	float:left;
+	border: 1px solid #63758C;
+	overflow:hidden; 
+}

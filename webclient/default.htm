@@ -6,7 +6,7 @@
 <!--
  *  *************************
  *       i2b2 Web Client
- *           v1.3.1
+ *           v1.6
  *  *************************
  *  @modified: 4/30/2009
  *  Contributors:
@@ -79,6 +79,71 @@
 <script type="text/javascript" src="js-ext/excanvas.js"></script>
 
 
+<script type="text/javascript" src="js-ext/bubbling-min.js"></script>
+<script type="text/javascript" src="js-ext/accordion-min.js"></script>
+
+<style type="text/css">
+.myAccordion {
+    float: left;
+    width: 260px;
+	 float: left;
+}
+    .myAccordion .yui-cms-accordion {
+		width: 230px;
+		position:relative;
+		z-index:10000;
+    }
+    .myAccordion .moreinfo {
+        padding-left: 30px;
+    }
+      .myAccordion .yui-cms-accordion .yui-cms-item {
+        list-style-type: none;
+        float: left;
+        display: inline;
+        width: auto;
+      }
+        .myAccordion .yui-cms-accordion .yui-cms-item .accordionToggleItem {
+          width: 1px;
+          height: 1px;
+          display: block;
+          background: url(assets/images/accordion.gif) no-repeat 0px -200px;
+          text-decoration: none;
+          float: left;
+        }
+        .myAccordion .yui-cms-accordion .yui-cms-item.selected .accordionToggleItem {
+          background: url(assets/images/accordion.gif) no-repeat 0px -300px;
+        }
+
+        .myAccordion .yui-cms-accordion .yui-cms-item .bd {
+            width: 0px;
+            overflow: hidden;
+        }
+		
+            .myAccordion .yui-cms-accordion .yui-cms-item .bd .fixed {
+  			background: none repeat scroll 0 50% #BBCCEE;
+            padding: 5px;
+    		border: 1px solid #667788;			
+
+
+			
+            overflow: hidden;
+            width: 200px;
+            height: 250px;
+            }
+			
+            .myAccordion .yui-cms-accordion .yui-cms-item .bd .fixedbody {
+		    background: none repeat scroll 0 0 #FFFFFF;
+    		border: 1px solid #667788;
+    		padding: 1px 5px;
+            height: 245px;
+
+	
+			}			
+			
+</style>
+
+
+
 <!-- load i2b2 framework -->
 <script type="text/javascript" src="js-i2b2/i2b2_loader.js"></script>
 <link type="text/css" href="assets/i2b2.css" rel="stylesheet" />
@@ -102,9 +167,13 @@ function initI2B2() {
 					// by editing the CSS file.  You can remark out the lines below with no ill effect.  Use the following
 					// javascript function to display the modal login form: i2b2.hive.PM.doLoginDialog();
 					//cellObj.doConnectForm($('loginusr'),$('loginpass'),$('logindomain'), $('loginsubmit'));
-                                        var domain = 'localhost'; //@@HARDCODED
-                                        i2b2.PM.doCASLogin(domain);
-					break;
+				        var creds = i2b2.PM.pre_authz();
+				        if (creds) {
+						i2b2.PM.authz_login(creds);
+					} else {
+						i2b2.PM.doLoginDialog();
+					}
+				        break;
 			}
 		})
 	);
@@ -124,7 +193,17 @@ function initI2B2() {
 			// after successful login hide the login box and display the application GUI
 			$('topBar').style.display = 'block';
 			$('screenQueryData').style.display = 'block';
-			i2b2.hive.MasterView.setViewMode('Patients');
+			if (i2b2.PM.model.admin_only)
+			{
+				i2b2.hive.MasterView.setViewMode('Admin');
+				$('viewMode-Patients').style.display = 'none';
+				$('viewMode-Analysis').style.display = 'none';			
+			} else {
+				i2b2.hive.MasterView.setViewMode('Patients');
+			}
+			$('viewMode-Project').innerHTML = "Project: " + i2b2.PM.model.login_projectname;
+			$('viewMode-User').innerHTML = "User: " + i2b2.PM.model.login_fullname;
+			$('viewMode-User').title = i2b2.PM.model.userRoles;
 			if (i2b2.PM.model.login_debugging) { $('debugMsgSniffer').show(); }
 		}), i2b2
 	);
@@ -153,6 +232,22 @@ YAHOO.util.Event.addListener(window, "load", init);
 <div id="title-back"></div>
 <div class="pageMask" id="topMask" style="display:none;">&nbsp;</div>
 
+<div id="project-request-viewer-panel" style="display:none;">
+	<div class="hd">i2b2 Web Client Project Request</div>
+	<div class="bd" id="project-request-viewer-body">
+		<p>Lorem Ipsum...</p>
+	</div>
+	<div class="ft"></div>
+</div>
+
+
+<div id="modifier-viewer-panel" style="display:none;">
+	<div class="hd">i2b2 Web Client Modifier</div>
+	<div class="bd" id="modifier-viewer-body">
+		<p>Lorem Ipsum...</p>
+	</div>
+	<div class="ft"></div>
+</div>
 
 <div id="help-viewer-panel" style="display:none;">
 	<div class="hd">i2b2 Web Client Help</div>
@@ -191,6 +286,9 @@ YAHOO.util.Event.addListener(window, "load", init);
 <table border="0" cellspacing="0" cellpadding="0" width="100%" id="topBarTable">
 <tr>
 	<td align="left" valign="middle"><img src="assets/images/title.gif" id="topBarTitle" border="0" alt="" /></td>
+    <td align="left" valign="middle"><div id="viewMode-Project"></div></td>
+	<td align="right" valign="middle"><div id="viewMode-User"></div></td>
+
 	<td align="right" valign="middle">
 		<div id="topBar" style="display:none;">
     <!--        <form name="projectsForm" style="margin: 0pt; padding: 0pt;" onSubmit="i2b2.PM.selectProject(); return false;">
@@ -199,21 +297,23 @@ YAHOO.util.Event.addListener(window, "load", init);
     </form>
     -->
       
-			<a id="viewMode-Patients" href="Javascript:void(0)" onClick="i2b2.hive.MasterView.setViewMode('Patients');">Find Patients</a>
-			&nbsp;|&nbsp;
-                        <a id="viewMode-Admin" href="Javascript:void(0)" onClick="i2b2.hive.MasterView.setViewMode('Admin');">Admin</a>
-                        &nbsp;|&nbsp;
-			<a id="viewMode-Analysis" href="Javascript:void(0)" onClick="i2b2.hive.MasterView.setViewMode('Analysis');">Analysis Tools</a>
-			&nbsp;|&nbsp;
+      		<span id="viewMode-Patients">
+				<a href="Javascript:void(0)" onClick="i2b2.hive.MasterView.setViewMode('Patients');">Find Patients</a>
+				&nbsp;|&nbsp;            </span>
+   <!--         <span id="viewMode-Admin">
+	            <a href="Javascript:void(0)" onClick="i2b2.hive.MasterView.setViewMode('Admin');">Admin</a>
+    	        &nbsp;|&nbsp;
+            </span>
+            -->
+            <span id="viewMode-Analysis">
+				<a href="Javascript:void(0)" onClick="i2b2.hive.MasterView.setViewMode('Analysis');">Analysis Tools</a>
+				&nbsp;|&nbsp;            </span>
 			<span id="debugMsgSniffer" style="display:none">
 				<a href="Javascript:void(0)" onClick="i2b2.hive.MsgSniffer.show();">Message Log</a>
-				&nbsp;|&nbsp;
-			</span>
-			<a id="helpLink" href="Javascript:void(0)" onclick="i2b2.hive.HelpViewer.show();">Help</a>
+				&nbsp;|&nbsp;			</span>
+			<a id="helpLink" href="Javascript:void(0)" onClick="i2b2.hive.HelpViewer.show();">Help</a>
 			&nbsp;|&nbsp;
-			<a href="Javascript:void(0);" onclick="i2b2.PM.doLogout();">Logout</a>
-		</div>
-	</td>
+			<a href="Javascript:void(0);" onClick="i2b2.PM.doLogout();">Logout</a>		</div>	</td>
 </tr>
 </table>
 
@@ -223,12 +323,12 @@ YAHOO.util.Event.addListener(window, "load", init);
 
 <!-- ############### <ONT View> ############### -->
 	<div id="ontMainBox" style="display:none">
-		<div class="TopTabs">
+		<div id="ontTopTabs">
 			<div style="position:absolute;z-index:200;">
-				<div id="tabNavigate" class="tabBox active" onclick="i2b2.ONT.view.main.selectTab('nav')">
+				<div id="tabNavigate" class="tabBox active" onClick="i2b2.ONT.view.main.selectTab('nav')">
 				<div>Navigate Terms</div>
 			</div>
-				<div id="tabFind" class="tabBox" onclick="i2b2.ONT.view.main.selectTab('find')">
+				<div id="tabFind" class="tabBox" onClick="i2b2.ONT.view.main.selectTab('find')">
 				<div>Find Terms</div>
 			</div>
 			</div>
@@ -237,10 +337,9 @@ YAHOO.util.Event.addListener(window, "load", init);
 <!--				<a href="JavaScript:showXML('ONT',i2b2.ONT.view.main.currentTab,'Response');" class="debug"><img src="assets/images/msg_response.gif" border="0" width="16" height="16"  alt="Show XML Response" title="Show XML Response" /></a> -->
 				<a href="JavaScript:showXML('ONT',i2b2.ONT.view.main.currentTab,'Stack');" class="debug"><img src="assets/images/msg_stack.gif" border="0" width="16" height="16"  alt="Show XML Message Stack" title="Show XML Message Stack" /></a>
 				<a href="JavaScript:i2b2.ONT.view.main.showOptions();"><img src="assets/images/options.gif" border="0" width="16" height="16" alt="Show Options" title="Show Options" /></a>
-				<a href="JavaScript:i2b2.ONT.view.main.ZoomView();"><img id="ontZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/ONT/assets/zoom_icon.gif" alt="Toggle Zoom" title="Toggle Zoom" /></a>
-			</div>
+				<a href="JavaScript:i2b2.ONT.view.main.ZoomView();"><img id="ontZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/ONT/assets/zoom_icon.gif" alt="Resize Workspace" title="Resize Workspace" /></a>			</div>
 		</div>
-		<div id="ontMainDisp">
+  <div id="ontMainDisp">
 			<div id="ontNavDisp">
 				<!--<div id="standardQuery">Standard Query Items</div>-->
 				<div id="ontNavResults"></div>
@@ -252,12 +351,12 @@ YAHOO.util.Event.addListener(window, "load", init);
 					<form id="ontFormFindName" method="post" action="JavaScript:i2b2.ONT.ctrlr.FindBy.clickSearchName();" style="margin:0px; padding:0px;">
 					<table border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse;width:100%;">
 					<tr>
-						<td style="width:100px;" valign="middle"><select name="ontFindStrategy" style="width:90px;overflow:hidden;font-size:11px;"><option value="contains">contains</option><option value="exact">exact</option><option value="left">left</option><option value="right">right</option></select></td>
+						<td style="width:100px;" valign="middle"><select name="ontFindStrategy" style="width:90px;overflow:hidden;font-size:11px;"><option value="contains">Containing</option><option value="exact">Exact</option><option value="left">Starting with</option><option value="right">Ending with</option></select></td>
 						<td valign="middle"><input name="ontFindNameMatch" type="text" maxlength="100" style="border:1px solid #7c9cba;width:100%;font-size:11px;" /></td>
 					</tr>
 					<tr><td colspan="2" style="height:5px;overflow:hidden;"></td></tr>
 					<tr>
-						<td valign="middle" style="width:100px;"><div class="ontFindButton"><a href="JavaScript:i2b2.ONT.ctrlr.FindBy.clickSearchName();">Find</a></div></td>
+						<td valign="middle" style="width:100px;"><div class="ontFindButton"><a href="JavaScript:i2b2.ONT.ctrlr.FindBy.clickSearchName();">Find</a></div><div id="ontFindNameButtonWorking" style="display:none;"><img src="js-i2b2/cells/ONT/assets/loadera16.gif"/></div></td>
 						<td valign="middle"><select id="ontFindCategory" name="ontFindCategory" style="font-size:11px;"><option value="i2b2">Any Category</option></select></td>
 					</tr>
 					</table>
@@ -270,9 +369,9 @@ YAHOO.util.Event.addListener(window, "load", init);
 					<table border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse;width:100%; margin-top:5px;">
 					<tr>
 						<td style="width:100px;" valign="middle">
-							<div class="ontFindButton" style=""><a href="JavaScript:i2b2.ONT.ctrlr.FindBy.clickSearchCode();">Find</a></div>
+							<div class="ontFindButton" style=""><a href="JavaScript:i2b2.ONT.ctrlr.FindBy.clickSearchCode();">Find</a></div><div id="ontFindCodeButtonWorking" style="display:none;"><img src="js-i2b2/cells/ONT/assets/loadera16.gif"/></div>
 						</td>
-						<td valign="middle">
+						<td style="width:280px;" valign="middle">
 						<select id="ontFindCoding" name="ontFindCoding" style="font-size:11px;">
 							<option value="">Loading...</option>
 						</select>
@@ -281,7 +380,25 @@ YAHOO.util.Event.addListener(window, "load", init);
 					</table>
 					</form>
 				</div>
-				<div id="ontSearchCodesResults" oncontextmenu="return false"></div>
+				<div id="ontSearchCodesResults" oncontextmenu="return false"></div>                
+				<div id="ontFindFrameModifier"  style="display:none" class="findSubFrame">
+                <div id="ontFindFrameModifierTitle"></div>
+					<form id="ontFormFindModifier" method="post" action="JavaScript:i2b2.ONT.ctrlr.FindBy.clickSearchModifier();" style="margin:0px; padding:0px;">
+					<table border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+					<tr>
+						<td style="width:100px;" valign="middle"><select name="ontFindStrategy" style="width:90px;overflow:hidden;font-size:11px;"><option value="contains">Containing</option><option value="exact">Exact</option><option value="left">Starting with</option><option value="right">Ending with</option></select></td>
+						<td colspan="2" valign="middle"><input name="ontFindModifierMatch" type="text" maxlength="100" style="border:1px solid #7c9cba;width:100%;font-size:11px;" /></td>
+					</tr>
+					<tr><td colspan="3" style="height:5px;overflow:hidden;"></td></tr>
+					<tr>
+						<td valign="middle"><div class="ontFindButton" style="width:75px;"><a href="JavaScript:i2b2.ONT.ctrlr.FindBy.clickSearchModifier('name');">Find Name</a></div><div id="ontFindNameButtonWorking" style="display:none;"><img src="js-i2b2/cells/ONT/assets/loadera16.gif"/></div></td>
+						<td valign="middle"><div class="ontFindButton" style="width:75px;"><a href="JavaScript:i2b2.ONT.ctrlr.FindBy.clickSearchModifier('code');">Find Code</a></div><div id="ontFindNameButtonWorking" style="display:none;"><img src="js-i2b2/cells/ONT/assets/loadera16.gif"/></div></td>
+						<td valign="middle"><div class="ontFindButton" style="width:75px;"><a href="JavaScript:i2b2.ONT.ctrlr.FindBy.clickSearchModifier('all');">Get All</a></div><div id="ontFindNameButtonWorking" style="display:none;"><img src="js-i2b2/cells/ONT/assets/loadera16.gif"/></div></td>
+					</tr>
+					</table>
+					</form>
+				</div>                
+				<div id="ontSearchModifiersResults" oncontextmenu="return false"></div>                
 			</div>
 			<div id="ontBalloonBox" xonmouseover="i2b2.ONT.view.main.hballoon.hideBalloons()">
 			<!--
@@ -291,7 +408,22 @@ YAHOO.util.Event.addListener(window, "load", init);
 			-->
 			</div>
 		</div>
-		<div style="clear:both;"></div>
+        <!--
+                  <div class="myAccordion">
+                    <div class="yui-cms-accordion vertical fast">
+                        <div class="yui-cms-item">
+                
+                            <a href="#" class="accordionToggleItem" title="click to expand">&nbsp;</a>
+                            <div class="bd">
+                              <div class="fixed" id="ontModifier">
+                                Modifier Info
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+              </div>
+              -->
+	<div style="clear:both;"></div>
 	</div>
 <!-- ############### </ONT View> ############### -->
 
@@ -305,7 +437,7 @@ YAHOO.util.Event.addListener(window, "load", init);
 				<div>PM Navigation</div>
 			</div>
 		</div>
-		<div class="bodyBox">
+	  <div class="bodyBox">
         <div id="pmNavTreeview" class="StatusBoxText"></div>
 		</div>
 	</div>
@@ -322,10 +454,9 @@ YAHOO.util.Event.addListener(window, "load", init);
 				<div id="pmMainTitle">Primary Table</div>
 			</div>
 			<div class="opXML">
-				<a href="JavaScript:showXML('PM','Admin','Stack');" class="debug"><img src="assets/images/msg_stack.gif" border="0" width="16" height="16"  alt="Show XML Message Stack" title="Show XML Message Stack" /></a>
-			</div>
+				<a href="JavaScript:showXML('PM','Admin','Stack');" class="debug"><img src="assets/images/msg_stack.gif" border="0" width="16" height="16"  alt="Show XML Message Stack" title="Show XML Message Stack" /></a>			</div>
 		</div>
-		<div class="bodyBox">
+  <div class="bodyBox">
 			<div id="pmAdminMainView" class="StatusBoxText" style="overflow:auto">
 				<div id="pmAdminHelp" style="margin-bottom:20px">Intro to PM Administration interface</div>
 
@@ -349,10 +480,9 @@ YAHOO.util.Event.addListener(window, "load", init);
 			</div>
 			<div class="opXML">
 				<a href="JavaScript:showXML('PM','main','Stack');" class="debug"><img src="assets/images/msg_stack.gif" border="0" width="16" height="16"  alt="Show XML Message Stack" title="Show XML Message Stack" /></a>
-				<a href="JavaScript:i2b2.WORK.view.main.ZoomView();"><img id="wrkZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/WORK/assets/zoom_icon.gif" alt="Toggle Zoom" title="Toggle Zoom" /></a> 
-			</div>
+				<a href="JavaScript:i2b2.WORK.view.main.ZoomView();"><img id="wrkZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/WORK/assets/zoom_icon.gif" alt="Resize Workspace" title="Resize Workspace" /></a>			</div>
 		</div>
-		<div class="bodyBox">
+	  <div class="bodyBox">
     <span id="goParam" class="yui-button yui-push-button" style="float:right;">
         <span class="first-child">
             <button type="button">Add</button>
@@ -377,10 +507,9 @@ YAHOO.util.Event.addListener(window, "load", init);
 <!--				<a href="JavaScript:showXML('WORK','main','Response');" class="debug"><img src="assets/images/msg_response.gif" border="0" width="16" height="16" alt="Show XML Response" title="Show XML Response" /></a> -->
 				<a href="JavaScript:showXML('WORK','main','Stack');" class="debug"><img src="assets/images/msg_stack.gif" border="0" width="16" height="16"  alt="Show XML Message Stack" title="Show XML Message Stack" /></a>
 <!--				<a href="JavaScript:i2b2.WORK.view.main.showOptions();"><img src="assets/images/options.gif" border="0" width="16" height="16" alt="Show Options" title="Show Options" /></a> -->
-				<a href="JavaScript:i2b2.WORK.view.main.ZoomView();"><img id="wrkZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/WORK/assets/zoom_icon.gif" alt="Toggle Zoom" title="Toggle Zoom" /></a>
-			</div>
+				<a href="JavaScript:i2b2.WORK.view.main.ZoomView();"><img id="wrkZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/WORK/assets/zoom_icon.gif" alt="Resize Workspace" title="Resize Workspace" /></a>			</div>
 		</div>
-		<div class="bodyBox">
+  <div class="bodyBox">
 			<div id="wrkTreeview" class="StatusBoxText"></div>
 		</div>
 	</div>
@@ -399,10 +528,9 @@ YAHOO.util.Event.addListener(window, "load", init);
 <!--				<a href="JavaScript:showXML('CRC','history','Response');" class="debug"><img src="assets/images/msg_response.gif" border="0" width="16" height="16" alt="Show XML Response" title="Show XML Response" /></a> -->
 				<a href="JavaScript:showXML('CRC','history','Stack');" class="debug"><img src="assets/images/msg_stack.gif" border="0" width="16" height="16"  alt="Show XML Message Stack" title="Show XML Message Stack" /></a>
 				<a href="JavaScript:i2b2.CRC.view.history.showOptions();"><img src="assets/images/options.gif" border="0" width="16" height="16" alt="Show Options" title="Show Options" /></a>
-				<a href="JavaScript:i2b2.CRC.view.history.ZoomView();"><img id="histZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/WORK/assets/zoom_icon.gif" alt="Toggle Zoom" title="Toggle Zoom" /></a>
-			</div>
+				<a href="JavaScript:i2b2.CRC.view.history.ZoomView();"><img id="histZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/WORK/assets/zoom_icon.gif" alt="Resize Workspace" title="Resize Workspace" /></a>			</div>
 		</div>
-		<div class="bodyBox">
+  <div class="bodyBox">
 			<div id="crcHistoryData" oncontextmenu="return false"></div>
 		</div>
 	</div>
@@ -421,13 +549,23 @@ YAHOO.util.Event.addListener(window, "load", init);
 <!--				<a href="JavaScript:showXML('CRC','QT','Response');" class="debug"><img src="assets/images/msg_response.gif" border="0" width="16" height="16" alt="Show XML Response" title="Show XML Response" /></a> -->
 				<a href="JavaScript:showXML('CRC','QT','Stack');" class="debug"><img src="assets/images/msg_stack.gif" border="0" width="16" height="16"  alt="Show XML Message Stack" title="Show XML Message Stack" /></a>
 				<a href="JavaScript:i2b2.CRC.view.QT.showOptions();"><img src="assets/images/options.gif" border="0" width="16" height="16" alt="Show Options" title="Show Options" /></a>
-				<a href="JavaScript:i2b2.CRC.view.QT.ZoomView();"><img id="qtZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/CRC/assets/zoom_icon.gif" alt="Toggle Zoom" title="Toggle Zoom" /></a>
-			</div>
+				<a href="JavaScript:i2b2.CRC.view.QT.ZoomView();"><img id="qtZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/CRC/assets/zoom_icon.gif" alt="Resize Workspace" title="Resize Workspace" /></a>			</div>
 		</div>
-		<div class="bodyBox" >
+  <div class="bodyBox" >
 			<div class="queryNameBar" style="width:512px;">
 				<div class="queryLabel">Query Name:&nbsp;</div>
 				<div id="queryName"></div>
+			</div>
+			<div class="queryNameBar" style="width:512px;">
+				<div class="queryLabel">Temporal Constraint:&nbsp;</div>
+                <div class="qryTemporalConstraint" style="float:left">
+						<input type="submit" id="queryTiming" name="queryTiming" value="Treat all groups independently"> 
+                        <select id="menubutton1select" name="menubutton1select"> 
+                            <option value="ANY">Treat all groups independently</option> 
+                            <option value="SAME">Selected groups occur in the same financial encounter</option> 
+                            <option value="SAMEINSTANCENUM">Items Instance will be the same</option> 
+                        </select>   
+                </div>
 			</div>
 			<div id="crcQryToolPanels" style="width:512px;overflow:hidden;">
 			<div style="width:550px;">
@@ -441,6 +579,17 @@ YAHOO.util.Event.addListener(window, "load", init);
 						<div class="qryButtonOccurs" style="float:left"><a id="queryPanelOccursB1" class="queryPanelButton" href="JavaScript:i2b2.CRC.ctrlr.QT.panelControllers[0].showOccurs()" title="Select the minimum number of times this group's criterion has occured...">Occurs &gt; <span id="QP1Occurs">0</span>x</a></div>
 						<div class="qryButtonExclude" style="float:left"><a id="queryPanelExcludeB1" class="queryPanelButton" href="JavaScript:i2b2.CRC.ctrlr.QT.panelControllers[0].doExclude()" title="Exclude records matching this group's criteria...">Exclude</a></div>
 					</div>
+					<div class="qryPanelTiming" style="float:left">
+						<input type="submit" id="queryPanelTimingB1" name="queryPanelTiming" value="Treat Independently"> 
+                        <select id="menubutton1select" name="menubutton1select"> 
+                            <option value="ANY">Treat Independently</option> 
+                            <option value="SAME">Occurs in Same Encounter</option> 
+                        </select>                         
+                
+   				<!--	<div class="qryPanelButtonBar2">
+                    	<div class="qryPanelTiming" id="queryPanelTimingB1" style="float:left"></div> -->
+      
+                    </div>
 					<div id="QPD1" style="clear:both" oncontextmenu="return false" class="queryPanel"></div>
 				</div>
 				<div class="qryPanel" style="margin-left:2px;">
@@ -453,6 +602,13 @@ YAHOO.util.Event.addListener(window, "load", init);
 						<div class="qryButtonOccurs" style="float:left"><a id="queryPanelOccursB2" class="queryPanelButton" href="JavaScript:i2b2.CRC.ctrlr.QT.panelControllers[1].showOccurs()" title="Select the minimum number of times this group's criterion has occured...">Occurs &gt; <span id="QP2Occurs">0</span>x</a></div>
 						<div class="qryButtonExclude" style="float:left"><a id="queryPanelExcludeB2" class="queryPanelButton" href="JavaScript:i2b2.CRC.ctrlr.QT.panelControllers[1].doExclude()" title="Exclude records matching this group's criteria...">Exclude</a></div>
 					</div>
+   					<div class="qryPanelTiming" style="float:left">
+						<input type="submit" id="queryPanelTimingB2" name="queryPanelTiming" value="Treat Independently"> 
+                        <select id="menubutton1select" name="menubutton1select"> 
+                            <option value="ANY">Treat Independently</option> 
+                            <option value="SAME">Occurs in Same Encounter</option> 
+                        </select>                         
+                    </div>
 					<div id="QPD2" style="clear:both" oncontextmenu="return false" class="queryPanel"></div>
 				</div>
 				<div class="qryPanel" style="margin-left:2px;">
@@ -465,11 +621,18 @@ YAHOO.util.Event.addListener(window, "load", init);
 						<div class="qryButtonOccurs" style="float:left"><a id="queryPanelOccursB3" class="queryPanelButton" href="JavaScript:i2b2.CRC.ctrlr.QT.panelControllers[2].showOccurs()" title="Select the minimum number of times this group's criterion has occured...">Occurs &gt; <span id="QP3Occurs">0</span>x</a></div>
 						<div class="qryButtonExclude" style="float:left"><a id="queryPanelExcludeB3" class="queryPanelButton" href="JavaScript:i2b2.CRC.ctrlr.QT.panelControllers[2].doExclude()" title="Exclude records matching this group's criteria...">Exclude</a></div>
 					</div>
+					<div class="qryPanelTiming" style="float:left">
+						<input type="submit" id="queryPanelTimingB3" name="queryPanelTiming" value="Treat Independently"> 
+                        <select id="menubutton1select" name="menubutton1select"> 
+                            <option value="ANY">Treat Independently</option> 
+                            <option value="SAME">Occurs in Same Encounter</option> 
+                        </select>                         
+                    </div>
 					<div id="QPD3" style="clear:both" oncontextmenu="return false" class="queryPanel"></div>
 				</div>
 				<div style="clear:both; width:100%; height:5px; overflow:hidden;"></div>
 
-				<div id="queryBalloonBox" onmouseover="i2b2.CRC.view.QT.hballoon.hideBalloons()">
+				<div id="queryBalloonBox" onMouseOver="i2b2.CRC.view.QT.hballoon.hideBalloons()">
 					<div class="queryBalloon" id="queryBalloon1">drop a<br />term<br />on here</div>
 					<div class="queryBalloonAnd" id="queryBalloonAnd1">AND</div>
 					<div class="queryBalloon" id="queryBalloon2">drop a<br />term<br />on here</div>
@@ -480,9 +643,10 @@ YAHOO.util.Event.addListener(window, "load", init);
 
 			</div>
 			<div id="qryToolFooter" style="width:512px; overflow:hidden">
-				<div id="runBox"><a href="JavaScript:i2b2.CRC.ctrlr.QT.doQueryRun()">Run Query</a></div>
-				<div id="newBox"><a href="JavaScript:i2b2.CRC.ctrlr.QT.doQueryClear();">New Query</a></div>
-				<div id="groupCount" style="width:175px;float:left;height:16px;overflow:hidden;"></div>
+				<div id="runBox"><a href="JavaScript:i2b2.CRC.ctrlr.QT.doQueryRun()"><span id="runBoxText">Run Query</span></a></div>
+				<div id="newBox"><a href="JavaScript:i2b2.CRC.ctrlr.QT.doQueryClear();">Clear</a></div>
+				<div id="printQueryBox"><a href="JavaScript:i2b2.CRC.ctrlr.QT.doPrintQuery();">Print Query</a></div>
+				<div id="groupCount" style="width:75px;float:left;height:16px;overflow:hidden;"></div>
 				<div id="scrollBox">
 					<a href="JavaScript:i2b2.CRC.ctrlr.QT.doScrollFirst();"><img id="panelScrollFirst" src="js-i2b2/cells/CRC/assets/QryTool_b_first_hide.gif" border="0" alt="Go First" /></a>
 					<a href="JavaScript:i2b2.CRC.ctrlr.QT.doScrollPrev();"><img id="panelScrollPrev" src="js-i2b2/cells/CRC/assets/QryTool_b_prev_hide.gif" border="0" alt="Go Previous" /></a>
@@ -500,7 +664,7 @@ YAHOO.util.Event.addListener(window, "load", init);
 		<div class="TopTabs">
 			<div class="tabBox tabQueryStatus active"><div>Query Status</div></div>
 		</div>
-		<div class="StatusBox">
+  <div class="StatusBox">
 			<div id="infoQueryStatusText" class="StatusBoxText" oncontextmenu="return false"></div>
 		</div>
 	</div>
@@ -516,10 +680,9 @@ YAHOO.util.Event.addListener(window, "load", init);
 			<div class="tabBox tabPluginList active" ><div>Plugins</div></div>
 			<div class="opXML">
 <!--			<a href="JavaScript:i2b2.PLUGINMGR.view.list.showOptions();"><img src="assets/images/options.gif" border="0" width="16" height="16"></a> -->
-				<a href="JavaScript:i2b2.PLUGINMGR.view.list.ZoomView();"><img id="pluglstZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/CRC/assets/zoom_icon.gif" alt="Toggle Zoom" /></a>
-			</div>
+				<a href="JavaScript:i2b2.PLUGINMGR.view.list.ZoomView();"><img id="pluglstZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/CRC/assets/zoom_icon.gif" alt="Resize Workspace" /></a>			</div>
 		</div>
-		<a id="plugListRecDETAIL-CLONE" class="pluginRecordBox DETAIL" style="display:none">
+<a id="plugListRecDETAIL-CLONE" class="pluginRecordBox DETAIL" style="display:none">
 			<div class="Icon"><img src="js-i2b2/cells/PLUGINMGR/assets/DEFAULTLIST_icon_32x32.gif" alt="" /></div>
 			<div class="txtBoundBox">
 				<div class="Name">Plugin Name</div>
@@ -535,8 +698,8 @@ YAHOO.util.Event.addListener(window, "load", init);
 		<div class="PluginListBox">
 			<div class="topmenu" oncontextmenu="return false">
 				<form style="margin-top:1px;" action="javascript:void(0)">
-					<div style="float:left;"><select id="anaPluginView" style="width:160px" onchange="i2b2.PLUGINMGR.view.list.Render()"><option value="DETAIL">Detailed List View</option><option value="SUMMARY">Summary List View</option></select></div>
-					Category: <select id="anaPluginCats" style="width:200px" onchange="i2b2.PLUGINMGR.view.list.Render();"><option value="">Loading...</option></select>
+					<div style="float:left;"><select id="anaPluginView" style="width:160px" onChange="i2b2.PLUGINMGR.view.list.Render()"><option value="DETAIL">Detailed List View</option><option value="SUMMARY">Summary List View</option></select></div>
+					Category: <select id="anaPluginCats" style="width:200px" onChange="i2b2.PLUGINMGR.view.list.Render();"><option value="">Loading...</option></select>
 				</form>
 			</div>
 			<div id="anaPluginList" oncontextmenu="return false"></div>
@@ -554,10 +717,9 @@ YAHOO.util.Event.addListener(window, "load", init);
 <!--				<a href="JavaScript:showXML('PLUGINMGR','PlugView','Response');" class="debug"><img src="assets/images/msg_response.gif" border="0" width="16" height="16" alt="Show XML Response" title="Show XML Response" /></a> -->
 				<a href="JavaScript:showXML('PLUGINMGR','PlugView','Stack');" class="debug"><img src="assets/images/msg_stack.gif" border="0" width="16" height="16"  alt="Show XML Message Stack" title="Show XML Message Stack" /></a>
 				<a href="JavaScript:i2b2.PLUGINMGR.view.PlugView.showOptions();"><img src="assets/images/options.gif" border="0" width="16" height="16" alt="Show Options" title="Show Options" /></a>
-				<a href="JavaScript:i2b2.PLUGINMGR.ctrlr.main.ZoomView();"><img id="plugviewZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/PLUGINMGR/assets/zoom_icon.gif" alt="Toggle Zoom" title="Toggle Zoom" /></a>
-			</div>
+				<a href="JavaScript:i2b2.PLUGINMGR.ctrlr.main.ZoomView();"><img id="plugviewZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/PLUGINMGR/assets/zoom_icon.gif" alt="Resize Workspace" title="Resize Workspace" /></a>			</div>
 		</div>
-		<div class="PluginViewBox">
+  <div class="PluginViewBox">
 			<div id="anaPluginViewFrame" oncontextmenu="return false">
 				<div class="initialMsg">Select a plugin to load from the "Plugins" window.</div>
 			</div>
@@ -567,9 +729,9 @@ YAHOO.util.Event.addListener(window, "load", init);
 	</div>
 <!-- ############### </Plugin Viewer> ############### -->
 
-	<div class="pageMask" id="itemOptionsMask" style="display:none" onclick="hidePopMenu();" onmousedown="hidePopMenu();"></div>
-	<div class="pageMask" id="itemConstraintsMask" style="background-color: #000; filter:alpha(opacity=25); -moz-opacity:0.25;opacity: 0.25; display:none">&nbsp;</div>
-	<div id="itemOptions" style="display:none"></div>
+	<div class="pageMask" id="itemOptionsMask" style="display:none" onClick="hidePopMenu();" onMouseDown="hidePopMenu();"></div>
+  <div class="pageMask" id="itemConstraintsMask" style="background-color: #000; filter:alpha(opacity=25); -moz-opacity:0.25;opacity: 0.25; display:none">&nbsp;</div>
+  <div id="itemOptions" style="display:none"></div>
 	<div id="itemConstraints" style=""></div>
 
 <!-- ############### <Option Screens> ############### -->
@@ -608,6 +770,10 @@ YAHOO.util.Event.addListener(window, "load", init);
 				<div style="font-size:12px; margin-left:50px" >Maximum Number of Children to Display: <input id="ONTNAVMaxQryDisp" style="width:35px" value="200" /></div>
 				<div style="margin-left:50px"><input type="checkbox" id="ONTNAVshowHiddens" /> Show Hidden Terms</div>
 				<div style="margin-left:50px"><input type="checkbox" id="ONTNAVshowSynonyms" /> Show Synonymous Terms</div>
+				<div style="margin-left:50px"><input type="checkbox" id="ONTNAVshowPatientCounts" /> Enable Patient Counts</div>
+				<div style="margin-left:50px"><input type="checkbox" id="ONTNAVshowShortTooltips" /> Use Short Tooltips</div>
+				<div style="margin-left:50px"><input type="checkbox" id="ONTNAVshowCodeTooltips" /> Show Concept Codes in Tooltips</div>
+    			<div style="margin-left:50px"><input type="checkbox" id="ONTNAVdisableModifiers" /> Disable Modifiers</div>                
 		</div>
 	</div>
 	<div id="optionsOntFind" style="display:none;">
@@ -617,12 +783,16 @@ YAHOO.util.Event.addListener(window, "load", init);
 				<div style="font-size:12px; margin-left:50px" >Maximum Number of Children to Display: <input id="ONTFINDMaxQryDisp" style="width:35px" value="200" /></div>
 				<div style="margin-left:50px"><input type="checkbox" id="ONTFINDshowHiddens" /> Show Hidden Terms</div>
 				<div style="margin-left:50px"><input type="checkbox" id="ONTFINDshowSynonyms" /> Show Synonymous Terms</div>
-		</div>
+				<div style="margin-left:50px"><input type="checkbox" id="ONTFINDshowPatientCounts" /> Enable Patient Counts</div>
+				<div style="margin-left:50px"><input type="checkbox" id="ONTFINDshowShortTooltips" /> Use Short Tooltips</div>
+				<div style="margin-left:50px"><input type="checkbox" id="ONTFINDshowCodeTooltips" /> Show Concept Codes in Tooltips</div> 		
+    			<div style="margin-left:50px"><input type="checkbox" id="ONTFINDdisableModifiers" /> Disable Modifiers</div>                
+         </div>
 	</div>
 <!-- ############### </Option Screens> ############### -->
 	<div id="calendarDiv" style="z-index:1520; display:none;"></div>
 	<!-- DO NOT MOVE calendarDivMask IE 5/6/7 has major z-index bug -->
-	<div id="calendarDivMask" style="display:none; z-index:1510; position:absolute; background-image:url('null.gif')" onclick="i2b2.CRC.ctrlr.dateConstraint.hideCalendar()"></div>
+	<div id="calendarDivMask" style="display:none; z-index:1510; position:absolute; background-image:url('null.gif')" onClick="i2b2.CRC.ctrlr.dateConstraint.hideCalendar()"></div>
 	<div id="constraintDates" style="display:none;">
 		<div class="hd" style="background:#6677AA;">Constrain Group by Date Range</div>
 		<div class="bd">
@@ -633,7 +803,7 @@ YAHOO.util.Event.addListener(window, "load", init);
 				<tr>
 					<td class="dateBorder">
 						<table><tr>
-							<td valign="middle"><input id="checkboxDateStart" type="checkbox" onchange="i2b2.CRC.ctrlr.dateConstraint.toggleDate()" /></td>
+							<td valign="middle"><input id="checkboxDateStart" type="checkbox" onChange="i2b2.CRC.ctrlr.dateConstraint.toggleDate()" /></td>
 							<td valign="middle"><input id="constraintDateStart" value="01/31/2008" style="width:75px;" disabled="disabled" /></td>
 							<td valign="middle"><a href="Javascript:i2b2.CRC.ctrlr.dateConstraint.doShowCalendar('S')"><img id="dropDateStart" style="position:relative; top:1px; border:none;" class="calendarDropdown" src="assets/images/b_dropdown.gif" alt="" /></a>&nbsp;</td>
 						</tr></table>
@@ -642,7 +812,7 @@ YAHOO.util.Event.addListener(window, "load", init);
 					<td class="dateBorder">
 						<table>
 						<tr>
-							<td valign="middle"><input id="checkboxDateEnd" type="checkbox" onchange="i2b2.CRC.ctrlr.dateConstraint.toggleDate()" /></td>
+							<td valign="middle"><input id="checkboxDateEnd" type="checkbox" onChange="i2b2.CRC.ctrlr.dateConstraint.toggleDate()" /></td>
 							<td valign="middle"><input id="constraintDateEnd" value="12/31/2008" style="width:75px;" disabled="disabled" /></td>
 							<td valign="middle"><a href="Javascript:i2b2.CRC.ctrlr.dateConstraint.doShowCalendar('E');"><img id="dropDateEnd" style="position:relative; top:1px" class="calendarDropdown" border="0" src="assets/images/b_dropdown.gif" alt=""/></a>&nbsp;</td>
 						</tr>
@@ -709,11 +879,11 @@ YAHOO.util.Event.addListener(window, "load", init);
 								Please select operator:<br />
 								<select id='mlvfrmOperator'>
 									<option value="LT">LESS THAN (&lt;)</option>
-									<option value="LTEQ">LESS THAN OR EQUAL TO (&lt;=)</option>
+									<option value="LE">LESS THAN OR EQUAL TO (&lt;=)</option>
 									<option value="EQ">EQUAL (=)</option>
 									<option value="BETWEEN">BETWEEN</option>
 									<option value="GT">GREATER THAN (&gt;)</option>
-									<option value="GTEQ">GREATER THAN OR EQUAL (&gt;=)</option>
+									<option value="GE">GREATER THAN OR EQUAL (&gt;=)</option>
 								</select>
 							</p>
 							<p id="mlvfrmEnterVal">
@@ -763,6 +933,18 @@ YAHOO.util.Event.addListener(window, "load", init);
 						</tr>
 					</table>
 				</div>
+<div style="margin: 10px 30px; text-align: left; display:none;">Click on a bar segment to help speicfy a value or range:
+                                <div id="mlvfrmGrp" style="background: none repeat scroll 0% 0% rgb(0, 255, 0); height: 15px;" onClick="i2b2.CRC.view.modalLabValues.updateValue(event)">
+                                    <div id="mlvfrmGrpLow" style="float: left; background: none repeat scroll 0% 0% rgb(255, 0, 0); height: 15px; width: 105px;">&nbsp;</div>
+                                    <div id="mlvfrmGrpHigh" style="float: right; background: none repeat scroll 0% 0% rgb(255, 0, 0); height: 15px; width: 105px;">&nbsp;</div>
+                                </div>
+                                <div id="mlvfrmGrpLowOfLow" style="float: left; width: 105px;">0</div>
+                                <div id="mlvfrmGrpHighOfLow" style="float: left;">20</div>
+                                <div id="mlvfrmGrpMiddle"  style="float: left; width: 280px; text-align: center;">50</div>
+                                <div id="mlvfrmGrpLowOfHigh"  style="float: left;">80</div>
+                                <div id="mlvfrmGrpHighOfHigh"  style="float: right; width: 100px; text-align: right;">100</div>
+
+                        </div>                
 			</div>
 		</div>
 	</div>
@@ -789,9 +971,10 @@ YAHOO.util.Event.addListener(window, "load", init);
 			<div style="margin-left:50px"><input class="inputQueryName" style="width:275px" /></div>
 			<div style="height:25px;"></div>
 			<div style="font-size:12px; margin-left:50px" >Please check the query result type(s):</div>
-			<div style="border: 1px solid rgb(171, 173, 179); margin-left: 50px; width: 275px; padding: 4px">
+			<div style="border: 1px solid rgb(171, 173, 179); height:100px; overflow:auto; margin-left: 50px; width: 275px; padding: 4px" id="dialogQryRunResultType">
 				<div id="crcDlgResultOutputPRC"><input type="checkbox" class="chkQueryType" name="queryType" value="PRC" checked="checked" /> Patient Count (aggregate number only)</div>
 				<div id="crcDlgResultOutputPRS"><input type="checkbox" class="chkQueryType" name="queryType" value="PRS" /> Patient Set (list of matching patients)</div>
+				<div id="crcDlgResultOutputENS"><input type="checkbox" class="chkQueryType" name="queryType" value="ENS" /> Encounter Set (list of matching encounters)</div>
 			</div>
 		</div>
 	</div>
