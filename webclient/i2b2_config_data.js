@@ -5,14 +5,23 @@
 	// THESE ARE ALL THE DOMAINS A USER CAN LOGIN TO
 	lstDomains: [
 		{ 
-		  domain: "i2b2demodata",
-		  name: "i2b2demodata",
-		  urlCellPM: "http://127.0.0.1/PM/rest/PMService/",
+		  domain: "i2b2demo",
+		  name: "I2B2 1.6 Query/Analysis",
+		  urlCellPM: "http://127.0.0.1:8080/i2b2/rest/PMService/",
 		  allowAnalysis: true,
-		  adminOnly: true,
-		  debug: false,
-		  isSHRINE: true
-		}
+		  adminOnly: false,
+		  debug: true,
+		  isSHRINE: false
+			},
+		{ 
+		  domain: "i2b2demo",
+		  name: "I2B2 1.6 Admin",
+		  urlCellPM: "http://127.0.0.1:8080/i2b2/rest/PMService/",
+		  allowAnalysis: true,
+		  adminOnly: false,
+		  debug: true,
+		  isSHRINE: false
+			},
 	]
 	//-------------------------------------------------------------------------------------------
 }
