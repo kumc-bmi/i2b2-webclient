@@ -196,12 +196,58 @@ i2b2.CRC.view.QT.ContextMenuRouter = function(a, b, actionName) {
 	}
  }
 
+i2b2.CRC.view.QT.enableSameTiming = function() {
+
+		if (YAHOO.util.Dom.inDocument(queryTimingButton.getMenu().element)) {
+
+		var t = queryTimingButton.getMenu().getItems();
+		if (t.length == 2) {
+				//	queryTimingButton.getMenu().clearContent();
+				//	queryTimingButton.getMenu().addItems([ 	 
+				//						{ text: "Treat Independently", value: "ANY"}]);	
+				//	queryTimingButton.getMenu().addItems([ 	 
+				//						{ text: "Selected groups occur in the same financial encounter", value: "SAMEVISIT" }]);	 
+					queryTimingButton.getMenu().addItems([ 	 
+										{ text: "Items Instance will be the samer", value: "SAMEINSTANCENUM" }]);	 
+					queryTimingButton.getMenu().render();
+		}
+		} else {
+			queryTimingButton.itemData =[{ text: "Treat Independently", value: "ANY"},
+										{ text: "Selected groups occur in the same financial encounter", value: "SAMEVISIT"},
+										{text: "Items Instance will be the same", value: "SAMEINSTANCENUM" }];
+				}
+}
+
 // ================================================================================================== //
 i2b2.CRC.view.QT.setQueryTiming = function(sText) {
 	
 	//TODO cleanup
-	if (sText == "SAME" )
+	
+		if (YAHOO.util.Dom.inDocument(queryTimingButton.getMenu().element)) {
+
+					queryTimingButton.getMenu().clearContent();
+					queryTimingButton.getMenu().addItems([ 	 
+										{ text: "Treat Independently", value: "ANY"}]);	
+					queryTimingButton.getMenu().addItems([ 	 
+										{ text: "Selected groups occur in the same financial encounter", value: "SAMEVISIT" }]);	 
+					queryTimingButton.getMenu().render();
+		}
+		queryTimingButton.getMenu().render();
+	if (sText == "SAMEINSTANCENUM" )
 	{
+		
+			var menu = queryTimingButton.getMenu();
+			var item = menu.getItem(2);
+			queryTimingButton.set("selectedMenuItem", item);
+		//queryTimingButton.set("selectedMenuItem", 2);	
+	} else if (sText == "SAMEVISIT" )
+	{
+	
+				// else {
+				//	i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.itemData ={ text: "Treat Independently", value: "ANY",
+				//						text: "Occurs in Same Encounter", value: "SAME" };
+				//}		
+		
 		queryTimingButton.set("selectedMenuItem", 1);	
 	} else
 	{
@@ -211,15 +257,18 @@ i2b2.CRC.view.QT.setQueryTiming = function(sText) {
 }
 
 i2b2.CRC.view.QT.setPanelTiming = function(panelNum, sText) {
-	
-	if (sText == "SAME" )
+	if (panelNum > 3) {return}
+	if (sText == "SAMEVISIT" )
 	{
 		$("queryPanelTimingB" + (panelNum) +  "-button").innerHTML = "Occurs in Same Encounter";	
 		i2b2.CRC.ctrlr.QT.panelControllers[panelNum - 1].doTiming(sText);
+		i2b2.CRC.ctrlr.QT.panelControllers[panelNum - 1].refTiming.set('disabled', false);	
+	} else if (sText == "SAMEINSTANCENUM") {
+		$("queryPanelTimingB" + (panelNum) +  "-button").innerHTML = "Items Instance will be the same";	
+		i2b2.CRC.ctrlr.QT.panelControllers[panelNum - 1].doTiming(sText);
+		i2b2.CRC.ctrlr.QT.panelControllers[panelNum - 1].refTiming.set('disabled', false);	
 	} else {
 		$("queryPanelTimingB" + (panelNum) +  "-button").innerHTML = "Treat Independently";	
-		//var bt = $("queryPanelTimingB" + (panelNum) +  "-button");
-		//bt.set("label", ("<em class=\"yui-button-label\">Treat Independently</em>"));
 		i2b2.CRC.ctrlr.QT.panelControllers[panelNum - 1].doTiming(sText);
 	}
 }
@@ -639,6 +688,7 @@ i2b2.events.afterCellInit.subscribe(
 				options.ont_hidden_records = i2b2.ONT.cfg.params.hiddens;
 				// parent key
 				options.concept_key_value = node.data.i2b2_SDX.sdxInfo.sdxKeyValue;
+				options.version = i2b2.ClientVersion;
 				i2b2.ONT.ajax.GetChildConcepts("CRC:QueryTool", options, scopedCallback);
 			}
 			i2b2.sdx.Master.setHandlerCustom('QPD1', 'CONCPT', 'LoadChildrenFromTreeview', funcLCFT);
@@ -653,8 +703,19 @@ i2b2.events.afterCellInit.subscribe(
 			var t = i2b2.CRC.ctrlr.QT;
 			
 			queryTimingButton =  new YAHOO.widget.Button("queryTiming", 
-					{ type: "menu", menu: "menubutton1select", name:"querytiming" });
+					{ lazyLoad: "false", type: "menu", menu: "menubutton1select", name:"querytiming" });
 
+	
+			queryTimingButton.on("mousedown", function (event) {
+				//i2b2.CRC.ctrlr.QT.panelControllers[0].doTiming(p_oItem.value);
+				if ((i2b2.CRC.ctrlr.QT.hasModifier) && (queryTimingButton.getMenu().getItems().length == 2))  {
+					queryTimingButton.getMenu().addItems([ 	 
+										{ text: "Items Instance will be the same", value: "SAMEINSTANCENUM" }]);	 
+					queryTimingButton.getMenu().render();
+				}
+			});
+	
+			
 			queryTimingButton.on("selectedMenuItemChange", function (event) {
 				//i2b2.CRC.ctrlr.QT.panelControllers[0].doTiming(p_oItem.value);
 				var oMenuItem = event.newValue; 
@@ -679,11 +740,33 @@ i2b2.events.afterCellInit.subscribe(
 			
 				queryTimingButton.set("label", sText);		
 				
-				if (sValue == "SAME") {
-					i2b2.CRC.ctrlr.QT.queryTiming = "SAME";
+			if (sValue == "SAMEVISIT") {
+					i2b2.CRC.ctrlr.QT.queryTiming = "SAMEVISIT";
 					for (var i=0; i<length; i++) {
-						$("queryPanelTimingB" + (i+1) +  "-button").disabled = false;					
-						$("queryPanelTimingB" + (i+1) +  "-button").innerHTML = "Occurs in Same Encounter";	
+						//$("queryPanelTimingB" + (i+1) +  "-button").disabled = false;					
+						//$("queryPanelTimingB" + (i+1) +  "-button").innerHTML = "Occurs in Same Encounter";	
+				i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set('disabled', false);					
+				i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set("label",  "Occurs in Same Encounter");	
+				//if (i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().getItem(1) != undefined) {
+				//	i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().getItem(1).cfg.setProperty("text", "Occurs in Same Encounter");
+				//}
+				
+				if (YAHOO.util.Dom.inDocument(i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().element)) {
+
+					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().clearContent();
+					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
+										{ text: "Treat Independently", value: "ANY"}]);	
+					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
+										{ text: "Occurs in Same Encounter", value: "SAME" }]);	 
+					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().render();
+				} else {
+					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.itemData ={ text: "Treat Independently", value: "ANY",
+										text: "Occurs in Same Encounter", value: "SAME" };
+				}
+				//i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().removeItem(1);		
+				//i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
+			//				        { text: "Occurs in Same Encounter", value: "SAME" } 	 
+			 //   ]); 
 						
 						i2b2.CRC.ctrlr.QT.panelControllers[i].doTiming(sValue);
 					}
@@ -692,18 +775,39 @@ i2b2.events.afterCellInit.subscribe(
 					i2b2.CRC.ctrlr.QT.queryTiming = "ANY";
 					
 					for (var i=0; i<length; i++) {
-						$("queryPanelTimingB" + (i+1) +  "-button").disabled = true;	
-						$("queryPanelTimingB" + (i+1) +  "-button").innerHTML = "Treat Independently";	
-						
+			//			$("queryPanelTimingB" + (i+1) +  "-button").disabled = true;	
+			//			$("queryPanelTimingB" + (i+1) +  "-button").innerHTML = "Treat Independently";	
+						i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set("label", "Treat Independently");		
+						i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set('disabled', true);				
 						i2b2.CRC.ctrlr.QT.panelControllers[i].doTiming(sValue);
 	
 					}
 				} else {
 					i2b2.CRC.ctrlr.QT.queryTiming = "SAMEINSTANCENUM";
 					for (var i=0; i<length; i++) {
-						$("queryPanelTimingB" + (i+1) +  "-button").disabled = false;					
-						$("queryPanelTimingB" + (i+1) +  "-button").innerHTML = sText;	
+	//		  i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming =  new YAHOO.widget.Button("queryPanelTimingB"+(i+1), 
+	//						{ type: "menu", menu: "menubutton1select", name:"querytiming" });
+				//qryButtonTiming.set('disabled', true);
+	//			 i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.on("selectedMenuItemChange", onSelectedMenuItemChange); 
 						
+
+				i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set('disabled', false);					
+				i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set("label", sText);
+				
+				if (YAHOO.util.Dom.inDocument(i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().element)) {
+
+					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().clearContent();
+					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
+										{ text: "Treat Independently", value: "ANY"}]);	
+					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
+										{ text: "Items Instance will be the same", value: "SAME" }]);	 
+					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().render();
+				} else {
+					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.itemData =[{ text: "Treat Independently", value: "ANY"},
+										{text: "Items Instance will be the same", value: "SAME" }];
+				}				
+			
+					
 						i2b2.CRC.ctrlr.QT.panelControllers[i].doTiming(sValue);
 					}
 					
@@ -738,37 +842,15 @@ i2b2.events.afterCellInit.subscribe(
 				t.panelControllers[i].refDispContents = $("QPD"+(i+1));
 				
 				
-				//t.panelControllers[i].refButtonTiming = $("queryPanelTimingB"+(i+1));
-				t.panelControllers[i].refButtonTiming = $("queryPanelTimingB"+(i+1));
+				//t.panelControllers[i].refTiming = $("queryPanelTimingB"+(i+1));
+				//t.panelControllers[i].refTiming = $("queryPanelTimingB"+(i+1));
 				var qryButtonTiming =  new YAHOO.widget.Button("queryPanelTimingB"+(i+1), 
 							{ type: "menu", menu: "menubutton1select", name:"querytiming" });
-
+				//qryButtonTiming.set('disabled', true);
 				 qryButtonTiming.on("selectedMenuItemChange", onSelectedMenuItemChange); 
-				 $("queryPanelTimingB" + (i+1) +  "-button").disabled = true;	
 
-				
-				/* maybe
-				qryButtonTiming.getMenu().subscribe("click", function (p_sType, p_aArgs) { 
-																	   
-					oMenuItem = p_aArgs[1]; //  MenuItem instance that was the target of the event 
-					if (oMenuItem) { 
-						var text = oMenuItem.cfg.getProperty("text");
-						
-						//this.set("label", ("<em class=\"yui-button-label\">" +  
-	        	        //oMenuItem.cfg.getProperty("text") + "</em>")); 
-						
-						var panelNumber = this.toString();
-						panelNumber = panelNumber.substring( panelNumber.length-1, panelNumber.length-0);
-				 			i2b2.CRC.ctrlr.QT.panelControllers[panelNumber-1].doTiming(oMenuItem.value);	
-						
-						//t.panelControllers[1].doTiming(oMenuItem.value);	
-						//this.set("label",text);
-						//qryButtonTiming.set("label",oMenuItem.cfg.getProperty("text")); 
-						YAHOO.log("[MenuItem Properties] text: " + oMenuItem.cfg.getProperty("text") + ", value: " + oMenuItem.value); 
-					} 
-				});
-				*/
-				
+				t.panelControllers[i].refTiming = qryButtonTiming;
+				t.panelControllers[i].refTiming.set('disabled', true);				
 
 				// create a instance of YUI Treeview
 				if (!t.panelControllers[i].yuiTree) {

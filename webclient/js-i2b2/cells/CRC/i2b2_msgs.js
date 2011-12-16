@@ -23,14 +23,14 @@ i2b2.CRC.cfg.msgs.getQueryMasterList_fromUserId = '<?xml version="1.0" encoding=
 '		{{{proxy_info}}}\n'+
 '		<sending_application>\n'+
 '			<application_name>i2b2_QueryTool</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>i2b2_DataRepositoryCell</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
@@ -64,7 +64,7 @@ i2b2.CRC.cfg.msgs.getQueryMasterList_fromUserId = '<?xml version="1.0" encoding=
 '			<user login="{{{sec_user}}}">{{{sec_user}}}</user>\n'+
 '			<patient_set_limit>0</patient_set_limit>\n'+
 '			<estimated_time>0</estimated_time>\n'+
-'			<request_type>CRC_QRY_getQueryMasterList_fromUserId</request_type>\n'+
+'			<request_type>{{{crc_user_type}}}</request_type>\n'+
 '		</ns4:psmheader>\n'+
 '		<ns4:request xsi:type="ns4:user_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n'+
 '			<user_id>{{{sec_user}}}</user_id>\n'+
@@ -120,14 +120,14 @@ i2b2.CRC.cfg.msgs.getQueryInstanceList_fromQueryMasterId = '<?xml version="1.0" 
 '		{{{proxy_info}}}\n'+
 '		<sending_application>\n'+
 '			<application_name>i2b2_QueryTool</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>i2b2_DataRepositoryCell</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '		<facility_name>PHS</facility_name>\n'+
@@ -205,14 +205,14 @@ i2b2.CRC.cfg.msgs.getQueryResultInstanceList_fromQueryResultInstanceId = '<?xml 
 '		{{{proxy_info}}}\n'+
 '		<sending_application>\n'+
 '			<application_name>i2b2_QueryTool</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>i2b2_DataRepositoryCell</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '		<facility_name>PHS</facility_name>\n'+
@@ -290,14 +290,14 @@ i2b2.CRC.cfg.msgs.getQueryResultInstanceList_fromQueryInstanceId = '<?xml versio
 '		{{{proxy_info}}}\n'+
 '		<sending_application>\n'+
 '			<application_name>i2b2_QueryTool</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>i2b2_DataRepositoryCell</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
@@ -447,14 +447,14 @@ i2b2.CRC.cfg.msgs.getRequestXml_fromQueryMasterId = '<?xml version="1.0" encodin
 '		{{{proxy_info}}}\n'+
 '		<sending_application>\n'+
 '			<application_name>i2b2_QueryTool</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>i2b2_DataRepositoryCell</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
@@ -504,14 +504,14 @@ i2b2.CRC.cfg.msgs.runQueryInstance_fromQueryDefinition = '<?xml version="1.0" en
 '		{{{proxy_info}}}\n'+
 '		<sending_application>\n'+
 '			<application_name>i2b2_QueryTool</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>i2b2_DataRepositoryCell</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
@@ -544,6 +544,7 @@ i2b2.CRC.cfg.msgs.runQueryInstance_fromQueryDefinition = '<?xml version="1.0" en
 '			<user group="{{{sec_project}}}" login="{{{sec_user}}}">{{{sec_user}}}</user>\n'+
 '			<patient_set_limit>0</patient_set_limit>\n'+
 '			<estimated_time>0</estimated_time>\n'+
+'			<query_mode>optimize_without_temp_table</query_mode>\n'+
 '			<request_type>CRC_QRY_runQueryInstance_fromQueryDefinition</request_type>\n'+
 '		</ns4:psmheader>\n'+
 '		<ns4:request xsi:type="ns4:query_definition_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n'+
@@ -566,14 +567,14 @@ i2b2.CRC.cfg.msgs.deleteQueryMaster = '<?xml version="1.0" encoding="UTF-8" stan
 '		{{{proxy_info}}}\n'+
 '		<sending_application>\n'+
 '			<application_name>i2b2_QueryTool</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>i2b2_DataRepositoryCell</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
@@ -624,14 +625,14 @@ i2b2.CRC.cfg.msgs.renameQueryMaster = '<?xml version="1.0" encoding="UTF-8" stan
 '		{{{proxy_info}}}\n'+
 '		<sending_application>\n'+
 '			<application_name>i2b2_QueryTool</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>i2b2_DataRepositoryCell</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
@@ -688,14 +689,14 @@ i2b2.CRC.cfg.msgs.getPDO_fromInputList = '<?xml version="1.0" encoding="UTF-8" s
 '		{{{proxy_info}}}'+
 '		<sending_application>\n'+
 '			<application_name>i2b2_QueryTool</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>i2b2_DataRepositoryCell</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
@@ -811,14 +812,14 @@ i2b2.CRC.cfg.msgs.getQRY_getResultType = '<?xml version="1.0" encoding="UTF-8" s
 '		{{{proxy_info}}}'+
 '		<sending_application>\n'+
 '			<application_name>i2b2_QueryTool</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>i2b2_DataRepositoryCell</application_name>\n'+
-'			<application_version>0.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '			<facility_name>PHS</facility_name>\n'+

@@ -4,14 +4,11 @@
 	//-------------------------------------------------------------------------------------------
 	// THESE ARE ALL THE DOMAINS A USER CAN LOGIN TO
 	lstDomains: [
-		{ 
-		  domain: "i2b2demodata",
-		  name: "i2b2demodata",
-		  urlCellPM: "http://127.0.0.1/PM/rest/PMService/",
-		  allowAnalysis: true,
-		  adminOnly: true,
-		  debug: false,
-		  isSHRINE: true
+		{ domain: "HarvardDemo",
+		  name: "HarvardDemo",
+		  urlCellPM: "http://webservices.i2b2.org/i2b2/rest/PMService/",
+		  allowAnalysis: false,
+		  debug: false
 		}
 	]
 	//-------------------------------------------------------------------------------------------

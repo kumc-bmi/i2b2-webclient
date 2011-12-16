@@ -422,7 +422,7 @@ i2b2.WORK.view.main.TreeviewLoader = function(tv_node, onCompleteCallback){
             nodeData.xmlOrig = s;
             nodeData.index = i2b2.h.getXNodeVal(s, "index");
             nodeData.key = nodeData.index;
-            nodeData.name = i2b2.h.getXNodeVal(s, "name");
+            nodeData.name = i2b2.h.getXNodeVal(s, "name", false);
             nodeData.annotation = i2b2.h.getXNodeVal(s, "tooltip");
             nodeData.share_id = i2b2.h.getXNodeVal(s, "share_id");
             nodeData.visual = String(i2b2.h.getXNodeVal(s, "visual_attributes")).strip();
@@ -540,7 +540,11 @@ i2b2.events.afterLogin.subscribe((function(en, co){
             i2b2.WORK.view.main.yuiTree.draw();
         };
         // ajax communicator call
-        i2b2.WORK.ajax.getFoldersByUserId("WORK:Workplace", {}, scopedCallback);
+		if (i2b2.PM.model.userRoles.indexOf("MANAGER") == -1) {		
+			i2b2.WORK.ajax.getFoldersByUserId("WORK:Workplace", {}, scopedCallback);
+		} else {
+	        i2b2.WORK.ajax.getFoldersByProject("WORK:Workplace", {}, scopedCallback);
+		}
     }
     // -------------------------------------------------------
     i2b2.WORK.view.main.ContextMenu = new YAHOO.widget.ContextMenu("divContextMenu-Workplace", {

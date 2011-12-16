@@ -235,16 +235,22 @@ i2b2.sdx.TypeControllers.QI.getChildRecords = function(sdxParentNode, onComplete
 			o.start_date = i2b2.h.getXNodeVal(ps[i1],'start_date');
 			o.end_date = i2b2.h.getXNodeVal(ps[i1],'end_date');
 			try {
-				o.title = i2b2.h.XPath(ps[i1],'description/text()')[0].nodeValue;
+				o.title = i2b2.h.getXNodeVal(ps[i1],'description'); //[0].nodeValue;
 			} catch (e) {
 				o.title = i2b2.h.getXNodeVal(ps[i1],'name');
 			}
+			if (i2b2.h.XPath(ps[i1],'query_status_type/name/text()')[0].nodeValue != "COMPLETED")
+			{
+				o.title += " - " +  i2b2.h.XPath(ps[i1],'query_status_type/name/text()')[0].nodeValue;	
+			}
+
 			o.result_type = i2b2.h.XPath(ps[i1],'query_result_type/name/text()')[0].nodeValue;
 			var addme = false;
 			switch (o.result_type) {
 				case "PATIENT_ENCOUNTER_SET":
 					o.PRS_id = i2b2.h.getXNodeVal(ps[i1],'result_instance_id');
 					// use given title if it exist otherwise generate a title
+					/*
 					try {
 						var t = i2b2.h.XPath(temp,'self::description')[0].firstChild.nodeValue;
 					} catch(e) { var t = null; }
@@ -262,7 +268,7 @@ i2b2.sdx.TypeControllers.QI.getChildRecords = function(sdxParentNode, onComplete
 						} else {
 							o.title = t+" - "+o.size+" encounters";
 						}
-					}
+					} */
 					o.titleCRC = o.title;
 					o.title = pn.parent.sdxInfo.sdxDisplayName + ' [PATIENT_ENCOUNTER_SET_'+o.PRS_id+']';
 					o.result_instance_id = o.PRS_id;

@@ -603,7 +603,7 @@ i2b2.PM.admin.clickActionBtn = function(btnLevel, btnCommand) {
 								if (updateRow.password != "") {
 									updateRow.password = "<password>"+updateRow.password+"</password>";
 								}
-								i2b2.PM.ajax.setUser("PM:Admin", {user_name:updateRow.user_name, full_name:updateRow.full_name, email:updateRow.email, password:updateRow.password}, i2b2.PM.view.admin.refreshScreen);
+								i2b2.PM.ajax.setUser("PM:Admin", {user_name:updateRow.user_name, full_name:updateRow.full_name, is_admin:updateRow.is_admin, email:updateRow.email, password:updateRow.password}, i2b2.PM.view.admin.refreshScreen);
 							} else {
 								errAlertMissing();
 							}
@@ -747,12 +747,9 @@ i2b2.PM.admin.saveProjectUser = function() {
 
 	var result = i2b2.PM.ajax.deleteRole("PM:Admin", {user_id: i2b2.PM.view.admin.currentProject.i2b2NodeUsername, user_role: "USER", project_id:i2b2.PM.view.admin.currentProject.i2b2NodeKey});
 	var result = i2b2.PM.ajax.deleteRole("PM:Admin", {user_id: i2b2.PM.view.admin.currentProject.i2b2NodeUsername, user_role: "DATA_OBFSC", project_id:i2b2.PM.view.admin.currentProject.i2b2NodeKey});	
-//	var  = $('RoleADMIN').checked; 
 
 	var tRole = "USER";
-	if ( $('RoleADMIN').checked) {
-		tRole = "ADMIN"	
-	} else if ( $('RoleMANAGER').checked) {
+	if ( $('RoleMANAGER').checked) {
 		tRole = "MANAGER";	
 	}
 	i2b2.PM.ajax.setRole("PM:Admin", {user_id: i2b2.PM.view.admin.currentProject.i2b2NodeUsername, user_role: tRole, project_id:i2b2.PM.view.admin.currentProject.i2b2NodeKey});
@@ -937,6 +934,7 @@ i2b2.PM.admin.saveUser = function() {
 	{
 		errstr = errstr + '\n Password is a required field';
 	}
+	userData.is_admin = $('pmAdmin-userIsAdmin').value; 
 
 	userData.password = "";
 	if ($('pmAdmin-userPasswd1').value!=$('pmAdmin-userPasswd2').value) {
@@ -991,7 +989,7 @@ i2b2.PM.admin.addUserProject = function() {
 	//i2b2.PM.ajax.setUser("PM:Admin", userData, i2b2.PM.admin.refreshUsers);
 	// restore screen
 	$('pmMainTitle').innerHTML = "Project List";
-	i2b2.PM.view.admin.showInfoPanel("PROJECT");
+	i2b2.PM.view.admin.showInfoPanel("PROJECTUSERS");
 	i2b2.PM.view.admin.configScreenDispay(0); 
 };
 
@@ -1160,7 +1158,7 @@ i2b2.PM.admin.saveParameter = function() {
 								}
 						break;
 					case "project_user_param":
-								var ma = ' id="'+i2b2.PM.view.admin.parentParams.id+'" ';
+								var ma = ' id="'+i2b2.PM.view.admin.parentParams.data.id+'" ';
 								if (!Object.isUndefined(userData.id)) {
 									var mx = i2b2.PM.view.admin.parentParams.data.xmlData+'<param id="'+userData.id+'" datatype="'+userData.datatype+'" name="'+userData.name+'">'+userData.value+"</param>";
 								} else {
@@ -1308,10 +1306,10 @@ i2b2.PM.admin.refreshProjectsUsers = function(tvNode, onCompleteCallback) {
 		
 
 		i2b2.PM.view.admin.yuiTreeNodePARAMS = new YAHOO.widget.TextNode({label: "Params", expanded: false}, tmpNode);
-			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.id = d.id;
+			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.id = d.projectid;
 			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.xmlId = "";
 			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.i2b2Table = "project_user_param";
-			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.xmlData = "<project_path>"+d.projectid+"</project_path><user_name>"+d.username+"</user_name>";
+			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.xmlData = "<path>"+d.projectid+"</path><user_name>"+d.username+"</user_name>";
 			
 			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.i2b2NodeType = "PARAMS";
 			i2b2.PM.view.admin.yuiTreeNodePARAMS.setDynamicLoad(i2b2.PM.admin.refreshParameters);			
@@ -1476,6 +1474,7 @@ i2b2.PM.view.admin.treeClick = function(tvEvent, override) {
 				if (data.user_name) { $('pmAdmin-userName').value = data.user_name; }
 				if (data.full_name) { $('pmAdmin-userFullname').value = data.full_name; }
 				if (data.email) { $('pmAdmin-userEmail').value = data.email; }
+				if (data.is_admin) { $('pmAdmin-userIsAdmin').value = data.is_admin; }
 					
 			} catch (e) {}
 			i2b2.PM.view.admin.configScreenDispay(0);

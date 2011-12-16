@@ -317,7 +317,7 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 
 		}
 		self.dispDIV.innerHTML += '</div>';
-		if (!private_singleton_isRunning) {
+		if ((!private_singleton_isRunning) && (undefined != self.QI.end_date)){
 			self.dispDIV.innerHTML += '<div style="margin-left:20px; clear:both; line-height:16px; ">Compute Time: '+ (Math.floor((self.QI.end_date - self.QI.start_date)/100))/10 +' secs</div>';
 		}
 		
@@ -343,6 +343,7 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 					case "PROCESSING":
 						self.dispDIV.innerHTML += '<div style="clear:both; height:16px;line-height:16px; "><div style="float:left; font-weight:bold;  height:16px; line-height:16px; ">'+rec.title+'</div><div style="float:right; height:16px; line-height:16px; "><font color="#00dd00">PROCESSING</font></div>';	
 		//				self.dispDIV.innerHTML += '<div style="float:right; height:16px; line-height:16px; "><font color="#00dd00">PROCESSING</font></div>'; //['+rec.QRS_time+' secs]</div>';
+						alert('Your query has timed out and has been rescheduled to run in the background.  The results will appear in "Previous Queries"');
 						foundError = true;
 					
 						//t += '#00dd00">'+rec.QRS_Status;
@@ -441,7 +442,16 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 		this.callbackQueryDef.scope = this;
 		this.callbackQueryDef.callback = function(results) {
 			if (results.error) {
+					var temp = results.refXML.getElementsByTagName('response_header')[0];
+					if (undefined != temp) {
+						results.errorMsg = i2b2.h.XPath(temp, 'descendant-or-self::result_status/status')[0].firstChild.nodeValue;
+						if (results.errorMsg.substring(0,9) == "LOCKEDOUT")
+						{
+							results.errorMsg = 'As an "obfuscated user" you have exceeded the allowed query repeat and are now LOCKED OUT, please notify your system administrator.';
+						}
+					}
 				alert(results.errorMsg);
+				private_cancelQuery();
 				return;
 			} else {
 				//		"results" object contains the following attributes:

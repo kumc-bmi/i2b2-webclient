@@ -99,6 +99,7 @@ i2b2.PM.model.helpMSGS.USER =  "<form><p>Click on \"User\" in the navigation bar
 	'<tr><td valign="middle"><b>User Email:</b></td><td><input type="TEXT" maxlength="255" id="pmAdmin-userEmail" style="width:250px"/></td></tr>'+
 	'<tr><td valign="middle"><b>User Password:</b></td><td><input type="password" maxlength="255" id="pmAdmin-userPasswd1" style="width:250px"/></td></tr>'+
 	'<tr><td valign="middle"><b>User Password (verify):</b></td><td><input type="password" maxlength="255" id="pmAdmin-userPasswd2" style="width:250px"/></td></tr>'+
+	'<tr><td valign="middle"><b>Is Admin:</b></td><td><SELECT style="width:250px" id="pmAdmin-userIsAdmin"><OPTION value="false">No</option><OPTION value="true">Yes</option></select></td></tr>'+
 	'<tr><td></td><td align="right"><input type="hidden" id="pmAdmin-newUser" value="true"><input type="BUTTON" value="Save" onclick="i2b2.PM.admin.saveUser();"/> <input type="BUTTON" value="Cancel" onclick="i2b2.PM.view.admin.refreshScreen();"/></td></tr>'+
 	'</table></div></form>';
 i2b2.PM.model.helpMSGS.USERREC = "<form><p>Please select which user configuration screen you want to access.</p>"+
@@ -108,6 +109,7 @@ i2b2.PM.model.helpMSGS.USERREC = "<form><p>Please select which user configuratio
 	'<tr><td valign="middle"><b>User Email:</b></td><td><input type="TEXT" maxlength="255" id="pmAdmin-userEmail" style="width:250px"/></td></tr>'+
 	'<tr><td valign="middle"><b>User Password:</b></td><td><input type="password" maxlength="255" id="pmAdmin-userPasswd1" style="width:250px"/></td></tr>'+
 	'<tr><td valign="middle"><b>User Password (verify):</b></td><td><input type="password" maxlength="255" id="pmAdmin-userPasswd2" style="width:250px"/></td></tr>'+
+	'<tr><td valign="middle"><b>Is Admin:</b></td><td><SELECT style="width:250px" id="pmAdmin-userIsAdmin"><OPTION value="false">No</option><OPTION value="true">Yes</option></select></td></tr>'+
 	'<tr><td></td><td align="right"><input type="hidden" id="pmAdmin-newUser" value="false"><input type="BUTTON" value="Delete" onclick="i2b2.PM.admin.deleteUser();"/> <input type="BUTTON" value="Save" onclick="i2b2.PM.admin.saveUser();"/> <input type="BUTTON" value="Cancel" onclick="i2b2.PM.view.admin.refreshScreen();"/></td></tr>'+
 	'</table></div></form>';
 i2b2.PM.model.helpMSGS.PARAM =  "<form><p>Click on \"Parameter\" in the navigation bar to refresh the list of parameters.<br />Please select a parameter on the left to edit it's properties</p>"+
@@ -125,7 +127,7 @@ i2b2.PM.model.helpMSGS.PARAMREC = "<form><p>Please select which parameter screen
 	'<tr><td valign="middle"><b>Parameter Data Type:</b></td><td><SELECT style="width:250px" id="pmAdmin-paramDatatype"><OPTION value="T">Text</option><OPTION value="C">Reference Binary</option><OPTION value="N">Numeric</option><OPTION value="D">Date</option><OPTION value="I">Integer</option><OPTION value="B">Boolean</option><OPTION value="RTF">RTF</option><OPTION value="XLS">Excel</option><OPTION value="XML">XML</option><OPTION value="DOC">Word</option></select></td></tr>'+
 	'<tr><td></td><td align="right"><input type="HIDDEN" value="" id="pmAdmin-paramId"/><input type="HIDDEN" value="" id="pmAdmin-paramTable"/><input type="BUTTON" value="Delete" onclick="i2b2.PM.admin.deleteParameter();"/> <input type="BUTTON" value="Save" onclick="i2b2.PM.admin.saveParameter();"/> <input type="BUTTON" value="Cancel" onclick="i2b2.PM.view.admin.refreshScreen();"/></td></tr>'+
 	'</table></div></form>';	
-i2b2.PM.model.helpMSGS.PROJECTUSER  = '<form> <fieldset id="checkboxbuttonsfrommarkup"><table valign="top"><tbody><!-- Header --><tr valign="top"><th width="150px">Admin Path</th><th width="150px">Data Path</th><th width="150px">Custom Path</th></tr><tr valign="top"><td><input type="checkbox" id="RoleADMIN" name="ADMIN" onClick="i2b2.PM.view.admin.onCheckedChange(\'ADMIN\');" >Admin<br><input type="checkbox" id="RoleMANAGER" onClick="i2b2.PM.view.admin.onCheckedChange(\'MANAGER\');" name="MANAGER">Manager<br><input type="checkbox" id="RoleUSER" onClick="i2b2.PM.view.admin.onCheckedChange(\'USER\');" name="USER">User<br>' +
+i2b2.PM.model.helpMSGS.PROJECTUSER  = '<form> <fieldset id="checkboxbuttonsfrommarkup"><table valign="top"><tbody><!-- Header --><tr valign="top"><th width="150px">Admin Path</th><th width="150px">Data Path</th><th width="150px">Custom Path</th></tr><tr valign="top"><td><input type="checkbox" id="RoleMANAGER" onClick="i2b2.PM.view.admin.onCheckedChange(\'MANAGER\');" name="MANAGER">Manager<br><input type="checkbox" id="RoleUSER" onClick="i2b2.PM.view.admin.onCheckedChange(\'USER\');" name="USER">User<br>' +
 '</td><td><input type="checkbox" id="RoleDATA_PROT" onClick="i2b2.PM.view.admin.onCheckedChange(\'DATA_PROT\');" name="DATA_PROT">Protected<br><input type="checkbox" id="RoleDATA_DEID" onClick="i2b2.PM.view.admin.onCheckedChange(\'DATA_DEID\');" name="DATA_DEID">De-identified Data<br><input type="checkbox" id="RoleDATA_LDS" onClick="i2b2.PM.view.admin.onCheckedChange(\'DATA_LDS\');" name="DATA_LDS">Limited Data Set<br><input type="checkbox" id="RoleDATA_AGG" onClick="i2b2.PM.view.admin.onCheckedChange(\'DATA_AGG\');"  name="DATA_AGG">Aggregated<br><input type="checkbox" id="RoleDATA_OBFSC"onClick="i2b2.PM.view.admin.onCheckedChange(\'DATA_OBFSC\');"   name="DATA_OBFSC">Obfuscated<br></td><td><input type="checkbox" id="RoleEDITOR" name="EDITOR">Editor</td></tr>' +
 	'<tr><td></td><td colspan="2" align="right"><input type="HIDDEN" value="" id="pmAdmin-projOrigKey"/><input type="BUTTON" value="Delete" onclick="i2b2.PM.admin.deleteProjectUser();"/> <input type="BUTTON" value="Save" onclick="i2b2.PM.admin.saveProjectUser();"/> <input type="BUTTON" value="Cancel" onclick="i2b2.PM.view.admin.refreshScreen();"/></td></tr>'+
 	'</table></div></fieldset></form>';
@@ -213,7 +215,7 @@ i2b2.PM.model.adminColumnDef["USERS"] = [
 	{key:"full_name", sortable:true, resizeable:true, editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}, 
 	{key:"user_name",sortable:true, resizeable:true, editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}, 
 	{key:"email",sortable:true, resizeable:true, editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}, 
-	{key:"password",resizeable:true, editor: new YAHOO.widget.PasswordCellEditor({disableBtns:false}), formatter: DataTableUtils.PasswordFormatter}
+	{key:"is_admin",sortable:true, resizeable:true, editor: new YAHOO.widget.TextboxCellEditor({disableBtns:true})}	
 ];
 
 		
@@ -256,19 +258,12 @@ i2b2.PM.view.admin.showInfoPanel = function(infoID) {
 
 i2b2.PM.view.admin.onCheckedChange = function(items) {
 	var items = items;
-			if (items == "ADMIN")
-			{				
-				document.getElementById("RoleADMIN").checked = true;
-				document.getElementById("RoleMANAGER").checked = true;
-				document.getElementById("RoleUSER").checked = true;
-			} else 			if (items == "MANAGER")
+			if (items == "MANAGER")
 			{
-				document.getElementById("RoleADMIN").checked = false;
 				document.getElementById("RoleMANAGER").checked = true;
 				document.getElementById("RoleUSER").checked = true;
 			} else 			if (items == "USER")
 			{
-				document.getElementById("RoleADMIN").checked = false;
 				document.getElementById("RoleMANAGER").checked = false;
 				document.getElementById("RoleUSER").checked = true;
 			} else 			if (items == "DATA_PROT")
@@ -905,7 +900,7 @@ i2b2.PM.view.admin.showUsers = function() {
 	delete usrList;		
 	i2b2.PM.admin.dsPrimary = new YAHOO.util.DataSource(tmp);
 	i2b2.PM.admin.dsPrimary.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
-	i2b2.PM.admin.dsPrimary.responseType.responseSchema = {fields: ["user_name","full_name","password", "email"]};
+	i2b2.PM.admin.dsPrimary.responseType.responseSchema = {fields: ["user_name","full_name","password", "email", "is_admin"]};
 	// create the grid
 	i2b2.PM.admin.grdPrimaryColumnDefs = i2b2.PM.model.adminColumnDef.USERS;
 	if (l > 10)	 

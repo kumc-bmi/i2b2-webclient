@@ -67,7 +67,8 @@ function i2b2_PanelController(parentCtrlr) {
 			if (this.panelCurrentIndex == i2b2.CRC.model.queryCurrent.panels.length) {
 				this.isActive = 'Y';
 				if (this.QTController.queryTiming == "SAME") {
-					$("queryPanelTimingB" + (this.panelCurrentIndex+1) +  "-button").disabled = false;			
+					this.refButtonTiming.set('disabled', true);
+					//MM $("queryPanelTimingB" + (this.panelCurrentIndex+1) +  "-button").disabled = false;			
 				}
 				Element.removeClassName(this.refDispContents,'queryPanelHover');
 				Element.removeClassName(this.refDispContents,'queryPanelDisabled');
@@ -335,7 +336,10 @@ function i2b2_PanelController(parentCtrlr) {
 	this.doDrop = function(sdxConceptOrig) {	// function to handle drag and drop
 	
 		//Clone it
-		var sdxConcept  = this.clone(sdxConceptOrig)
+		//var sdxConcept  = this.clone(sdxConceptOrig);
+		
+		var sdxConcept = i2b2.sdx.TypeControllers.CONCPT.MakeObject(sdxConceptOrig.origData.xmlOrig, sdxConceptOrig.origData.isModifier, null, sdxConceptOrig.origData.parent, sdxConceptOrig.sdxInfo.sdxType);
+		
 		// insert concept into our panel's items array;
 		var dm = i2b2.CRC.model.queryCurrent;
 		var repos = false;
@@ -353,9 +357,9 @@ function i2b2_PanelController(parentCtrlr) {
 		//}
 		
 		//Delete any lab or modifiers that exist
-		delete sdxConcept.LabValues;
-		delete sdxConcept.ModValues;
-		//sdxConcept.origData.itemNumber = this.itemNumber++;
+		//delete sdxConcept.LabValues;
+		//delete sdxConcept.ModValues;
+		sdxConcept.itemNumber = this.itemNumber++;
 		
 		// save data
 		this._addConcept(sdxConcept,this.yuiTree.root, true);
@@ -394,17 +398,21 @@ function i2b2_PanelController(parentCtrlr) {
 									break;
 								case "VALUE":
 									if ((values.GeneralValueType=="ENUM") || (values.GeneralValueType=="TEXT")) {
-										var sEnum = [];
-										for (var i2=0;i2<values.ValueEnum.length;i2++) {
-											sEnum.push(i2b2.h.Escape(values.ValueEnum[i2]));
+										try {
+											var sEnum = [];
+											for (var i2=0;i2<values.ValueEnum.length;i2++) {
+												sEnum.push(i2b2.h.Escape(values.ValueEnum[i2]));
+											}
+											sEnum = sEnum.join("\", \"");
+											sEnum = ' =  ('+sEnum+')';
+											//tvChildren[i].html =  sEnum + "</div></div>"
+											title = sEnum;
+										} catch (e) {
+											
 										}
-										sEnum = sEnum.join("\", \"");
-										sEnum = ' =  ('+sEnum+')';
-										//tvChildren[i].html =  sEnum + "</div></div>"
-										title = sEnum;
 									} else {
 										if (values.NumericOp == 'BETWEEN') {
-											title =  ' '+i2b2.h.Escape(values.ValueLow)+' and '+i2b2.h.Escape(values.ValueHigh);
+											title =  ' '+i2b2.h.Escape(values.ValueLow)+' - '+i2b2.h.Escape(values.ValueHigh);
 										} else {
 											switch(values.NumericOp) {
 											case "LT":
@@ -437,6 +445,7 @@ function i2b2_PanelController(parentCtrlr) {
 			
 			if (sdxConcept.origData.isModifier) {
 
+				i2b2.CRC.ctrlr.QT.hasModifier = true;
 				//Get the blob for this now.
 				if (isDragged) {
 					var cdetails = i2b2.ONT.ajax.GetModifierInfo("CRC:QueryTool", {modifier_applied_path:sdxConcept.origData.applied_path, modifier_key_value:sdxConcept.origData.key, ont_synonym_records: true, ont_hidden_records: true} );
@@ -444,19 +453,55 @@ function i2b2_PanelController(parentCtrlr) {
 					var c = i2b2.h.XPath(cdetails.refXML, 'descendant::modifier');
 					if (c.length > 0) {
 							sdxConcept.origData.xmlOrig = c[0];
+							
+					}
+				}
+				
+				// Add option to temperal Constaint
+				//<option value="SAMEINSTANCENUM">Items Instance will be the same</option>
+				//this.QTController.enableSameTiming
+				//i2b2.CRC.view.QT.enableSameTiming();
+				
+				sdxConcept.origData.newName = sdxConcept.origData.parent.name + " [" + sdxConcept.origData.name + title + "]";
+				
+				var hasContainer = false;
+				var data = sdxConcept.origData;
+				while (hasContainer || !Object.isUndefined(data.parent))
+				{
+					if ((data.hasChildren == "OAE") || (data.hasChildren == "OA"))
+					{
+						hasContainer = true;	
+						
+						var realdata = sdxConcept.origData;
+						while (realdata.hasChildren != "FA") {
+							realdata  = realdata.parent;	
+						}
+						sdxConcept.origData.level = realdata.level;
+						sdxConcept.origData.parent.key = realdata.key;
+						//sdxConcept.origData.parent.name = sdxConcept.origData.name;
+						//sdxConcept.origData.name = realdata.name;
+						sdxConcept.origData.newName = realdata.name + " [" + sdxConcept.origData.name + title + "]";
+		//mm				sdxConcept.origData.tooltip = realdata.tooltip;	
+						sdxConcept.origData.hasChildren = realdata.hasChildren;	
+					}
+					if (!Object.isUndefined(data.parent)) {
+						data = data.parent;	
+						
+					} else {
+						break;
 					}
 				}
 
-				sdxConcept.origData.newName = sdxConcept.origData.parent.name + " [" + sdxConcept.origData.name + title + "]";
+				
 				var renderOptions = {
-					title: sdxConcept.origData.parent.name + " [" + sdxConcept.origData.name + title + "]",
+					title: sdxConcept.origData.newName, //name + " [" + sdxConcept.origData.name + title + "]",
 					dblclick: "i2b2.CRC.ctrlr.QT.ToggleNode(this,'"+tvTree.id+"')",
 					icon: {
 						root: "sdx_ONT_CONCPT_root.gif",
 						rootExp: "sdx_ONT_CONCPT_root-exp.gif",
 						branch: "sdx_ONT_CONCPT_branch.gif",
 						branchExp: "sdx_ONT_CONCPT_branch-exp.gif",
-						leaf: "sdx_ONT_CONCPT_leaf.gif"
+						leaf: "sdx_ONT_CONCPT_branch.gif"
 					}
 				};
 				
@@ -627,8 +672,28 @@ function i2b2_PanelController(parentCtrlr) {
 										}
 										sEnum = sEnum.join("\", \"");
 										sEnum = ' =  ("'+sEnum+'")';
-										tvChildren[i].html = tt2 + sEnum + tt3 + "</div></div>"
+										tvChildren[i].html = tt2 + sEnum + tt3 + "</div></div>";
 										rto.origData.newName += sEnum + tt3 ;
+									} else if (values.GeneralValueType=="STRING") {
+										switch(values.StringOp) {
+											case "LIKE[exact]":
+												var  stringOp = "Exact: ";
+												break;
+											case "LIKE[begin]":
+												var  stringOp = "Starts With: ";
+												break;
+											case "LIKE[end]":
+												var  stringOp = "Ends With: ";
+												break;
+											case "LIKE[contains]":
+												var  stringOp = "Contains: ";
+												break;
+											case "":
+												var stringOp = "";
+												break;
+										}
+										tvChildren[i].html = tt2 + ' ['+stringOp + i2b2.h.Escape(values.ValueString) + "]" + tt3 + "</div></div>";
+										rto.origData.newName += ' ['+stringOp + i2b2.h.Escape(values.ValueString) + "]" +  tt3;
 									} else {
 										if (!Object.isUndefined(values.UnitsCtrl))
 										{
@@ -636,14 +701,14 @@ function i2b2_PanelController(parentCtrlr) {
 										}
 										
 										if (values.NumericOp == 'BETWEEN') {
-											tvChildren[i].html = tt2 + ' '+i2b2.h.Escape(values.ValueLow)+' and '+i2b2.h.Escape(values.ValueHigh) + tt3 + "</div></div>"
-											rto.origData.newName += ' '+i2b2.h.Escape(values.ValueLow)+' and '+i2b2.h.Escape(values.ValueHigh) + tt3;
+											tvChildren[i].html = tt2 + ' '+i2b2.h.Escape(values.ValueLow)+' - '+i2b2.h.Escape(values.ValueHigh) + tt3 + "</div></div>";
+											rto.origData.newName += ' '+i2b2.h.Escape(values.ValueLow)+' - '+i2b2.h.Escape(values.ValueHigh) + tt3;
 										} else {
 											switch(values.NumericOp) {
 											case "LT":
 												var numericOp = " < ";
 												break;
-											case "LTEQ":
+											case "LE":
 												var numericOp = " <= ";
 												break;
 											case "EQ":
@@ -652,7 +717,7 @@ function i2b2_PanelController(parentCtrlr) {
 											case "GT":
 												var numericOp = " > ";
 												break;
-											case "GTEQ":
+											case "GE":
 												var numericOp = " >= ";
 												break;
 												

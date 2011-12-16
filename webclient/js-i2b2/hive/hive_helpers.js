@@ -103,12 +103,16 @@ i2b2.h.XPath = function(xmlDoc, xPath) {
 	return retArray;
 };
 
-i2b2.h.getXNodeVal = function(xmlElement, nodeName) {
+i2b2.h.getXNodeVal = function(xmlElement, nodeName, includeChildren) {
 	var gotten = i2b2.h.XPath(xmlElement, "descendant-or-self::"+nodeName+"/text()");
 	var final = "";
 	if (gotten.length > 0) {
-		for (var i=0; i<gotten.length; i++) {
-			final += gotten[i].nodeValue;
+		if (includeChildren == true || includeChildren == true) {
+			for (var i=0; i<gotten.length; i++) {
+				final += gotten[i].nodeValue;
+			}
+		} else {
+				final = gotten[0].nodeValue;			
 		}
 	} else {
 		final = undefined;

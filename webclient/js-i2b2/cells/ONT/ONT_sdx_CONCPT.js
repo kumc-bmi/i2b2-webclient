@@ -58,17 +58,27 @@ i2b2.sdx.TypeControllers.CONCPT.RenderHTML= function(sdxData, options, targetDiv
 
 	// process allowing children to be viewed
 	var bCanExp = false;
-	if (sdxData.origData.hasChildren == 'CA') {
+	if ((sdxData.origData.hasChildren == 'CA') ||
+	    (sdxData.origData.hasChildren == 'CAE')){
 		// render as category
 		icon = 'root';
 		sDD = '';
 		sIG = ' isGroup="Y"';
 		bCanExp = true;
-	} else if (sdxData.origData.hasChildren == 'FA') {
+	} else if ((sdxData.origData.hasChildren == 'FA') ||
+		(sdxData.origData.hasChildren == 'FAE') 
+		)  {
 		// render as possibly having children
 		icon = 'branch';
 		bCanExp = true;
 		//var sCanExpand = ' canExpand="Y"';
+	} else if ((sdxData.origData.hasChildren == 'OA') || 
+		(sdxData.origData.hasChildren == 'OAE') 
+		)  {
+		// render as possibly having children
+		icon = 'root';
+		bCanExp = true;
+		//var sCanExpand = ' canExpand="Y"';		
 	} else if (sdxData.origData.hasChildren == 'DA') {
 		// render as possibly having children
 		icon = 'branch';
@@ -237,9 +247,9 @@ i2b2.sdx.TypeControllers.CONCPT.AppendTreeNode = function(yuiTree, yuiRootNode, 
 //	GET CHILD RECORDS (DEFAULT HANDELER)
 // *********************************************************************************
 i2b2.sdx.TypeControllers.CONCPT.LoadChildrenFromTreeview = function(node, onCompleteCallback) {
-	 if (!$('ONTNAVdisableModifiers').checked && node.tree.id == 'ontNavResults') {
-		i2b2.sdx.TypeControllers.CONCPT.LoadModifiers(node, onCompleteCallback, true);
- 	 } else {
+	 if ((node.tree.id == 'ontSearchModifiersResults') || (!$('ONTNAVdisableModifiers').checked && node.tree.id == 'ontNavResults')) {
+			i2b2.sdx.TypeControllers.CONCPT.LoadModifiers(node, onCompleteCallback, true);
+		} else {
 			i2b2.sdx.TypeControllers.CONCPT.LoadConcepts(node, onCompleteCallback, false);
 	 }
 }
@@ -271,9 +281,26 @@ i2b2.sdx.TypeControllers.CONCPT.LoadConcepts = function(node, onCompleteCallback
 		// handle any errors in the message
 		if (results.error) {
 			// process the specific error
+			switch (node.tree.id) {
+				case "ontNavResults":
+					var t = i2b2.ONT.view.nav.params;
+					break;
+				case "ontSearchCodesResults":
+					var t = i2b2.ONT.view.find.params;
+					break;
+				case "ontSearchModifiersResults":
+					var t = i2b2.ONT.view.find.params;
+					break;
+				case "ontSearchNamesResults":
+					var t = i2b2.ONT.view.find.params;
+					break;
+				default:
+					var t = i2b2.ONT.params;
+			}
 			var errorCode = results.refXML.getElementsByTagName('status')[0].firstChild.nodeValue;
+			var eaction = false;
 			if (errorCode == "MAX_EXCEEDED") {
-				var eaction = confirm("The number of children in this node exceeds the maximum number you specified in options.\n Displaying all children may take a long time to do.");
+				var eaction = confirm("The number of terms that were returned exceeds the maximum number currently set as " + t.max + ". Would you like to increase it to " + (t.max * 5) + " so you can try again?");
 			}
 			else {
 				alert("The following error has occurred:\n" + errorCode);
@@ -281,10 +308,11 @@ i2b2.sdx.TypeControllers.CONCPT.LoadConcepts = function(node, onCompleteCallback
 			// re-fire the call with no max limit if the user requested so
 			if (eaction) {
 				// TODO: Implement param routing from node's container
-				var mod_options = Object.clone(cl_options);
-				delete mod_options.ont_max_records;
-				i2b2.ONT.ajax.GetChildConcepts("ONT:SDX:Concept", mod_options, scopedCallback );
-				return true;
+				//var mod_options = Object.clone(cl_options);
+				//delete mod_options.ont_max_records;
+				//i2b2.ONT.ajax.GetChildConcepts("ONT:SDX:Concept", mod_options, scopedCallback );
+				//   return true;
+				t.max = t.max * 2;
 			}
 			// ROLLBACK the tree changes
 			cl_onCompleteCB();
@@ -310,6 +338,7 @@ i2b2.sdx.TypeControllers.CONCPT.LoadConcepts = function(node, onCompleteCallback
 			var c = results.refXML.getElementsByTagName('concept');			
 		}
 		for(var i=0; i<1*c.length; i++) {
+			/*
 			var o = new Object;
 			o.xmlOrig = c[i];
 			o.parent = this.origData;
@@ -341,9 +370,11 @@ i2b2.sdx.TypeControllers.CONCPT.LoadConcepts = function(node, onCompleteCallback
 			}
 			// append the data node
 			var sdxDataNode = i2b2.sdx.Master.EncapsulateData('CONCPT',o);
+			*/
+			var sdxDataNode = i2b2.sdx.TypeControllers.CONCPT.MakeObject(c[i], modifier, cl_options, this.origData);
 			if (modifier) {				
 				var renderOptions = {
-					title: o.name,
+					title: i2b2.h.getXNodeVal(c[i],'name'),
 					dragdrop: "i2b2.sdx.TypeControllers.CONCPT.AttachDrag2Data",
 					dblclick: "i2b2.ONT.view.nav.ToggleNode(this,'"+cl_node.tree.id+"')",
 					icon: {
@@ -356,7 +387,7 @@ i2b2.sdx.TypeControllers.CONCPT.LoadConcepts = function(node, onCompleteCallback
 				};
 			} else {
 				var renderOptions = {
-					title: o.name,
+					title: i2b2.h.getXNodeVal(c[i],'name'),
 					dragdrop: "i2b2.sdx.TypeControllers.CONCPT.AttachDrag2Data",
 					dblclick: "i2b2.ONT.view.nav.ToggleNode(this,'"+cl_node.tree.id+"')",
 					icon: {
@@ -401,10 +432,62 @@ i2b2.sdx.TypeControllers.CONCPT.LoadConcepts = function(node, onCompleteCallback
 	options.ont_short_tooltip = t.shortTooltip;
 	options.ont_show_concept_code = t.showConceptCode;
 	options.concept_key_value = key;
+	if (t.modifiers == undefined || t.modifiers == false)
+	{
+		options.version = i2b2.ClientVersion;	
+	} else {
+		options.version = "1.5";	
+	}
 	i2b2.ONT.ajax.GetChildConcepts("ONT:SDX:Concept", options, scopedCallback );		
 	
 }
 
+i2b2.sdx.TypeControllers.CONCPT.MakeObject = function(c, modifier, cl_options, origData, objectType) {
+			var o = new Object;
+			o.xmlOrig = c;
+			o.parent = origData;
+			if (modifier) {	
+				o.isModifier = true;
+				o.applied_path = i2b2.h.getXNodeVal(c,'applied_path');
+			} else {
+				o.isModifier = false;				
+			}
+			o.name = i2b2.h.getXNodeVal(c,'name');
+			if (objectType != undefined && objectType == "QM") {
+				o.id = i2b2.h.getXNodeVal(c,'query_master_id');
+				o.title = "(PrevQuery)" + o.name;
+			} else 			if (objectType != undefined && (objectType == "PRS" || objectType == "ENS")) {
+				o.result_instance_id = i2b2.h.getXNodeVal(c,'result_instance_id');
+				o.title = i2b2.h.getXNodeVal(c,'description');
+			}
+			//o.hasChildren = i2b2.h.getXNodeVal(c[i],'visualattributes').substring(0,2);
+			if (i2b2.h.getXNodeVal(c,'visualattributes') != undefined) {
+				o.hasChildren = YAHOO.lang.trim(i2b2.h.getXNodeVal(c,'visualattributes').substring(0,3)); 
+			} 
+			o.level = i2b2.h.getXNodeVal(c,'level');
+			o.key = i2b2.h.getXNodeVal(c,'key');
+			if (cl_options != undefined && cl_options.ont_short_tooltip) {
+				o.tooltip = o.name;
+			} else {
+				o.tooltip = i2b2.h.getXNodeVal(c,'tooltip');
+			}
+			o.icd9 = '';
+			o.table_name = i2b2.h.getXNodeVal(c,'tablename');
+			o.column_name = i2b2.h.getXNodeVal(c,'columnname');
+			o.operator = i2b2.h.getXNodeVal(c,'operator');
+			o.total_num = i2b2.h.getXNodeVal(c,'totalnum');
+			o.dim_code = i2b2.h.getXNodeVal(c,'dimcode');
+			o.basecode = i2b2.h.getXNodeVal(c,'basecode');
+			if (cl_options != undefined && cl_options.ont_show_concept_code && o.basecode != undefined) {
+				o.tooltip  += "(" + o.basecode + ")";
+			}
+			// append the data node
+			if (objectType != undefined && (objectType == "QM" || objectType == "PRS" || objectType == "ENS")) {
+				return (i2b2.sdx.Master.EncapsulateData(objectType,o));				
+			} else {
+				return (i2b2.sdx.Master.EncapsulateData('CONCPT',o));
+			}
+}
 
 i2b2.sdx.TypeControllers.CONCPT.LoadModifiers = function(node, onCompleteCallback, modifier) {
 	var scopedCallback = new i2b2_scopedCallback();
@@ -432,21 +515,6 @@ i2b2.sdx.TypeControllers.CONCPT.LoadModifiers = function(node, onCompleteCallbac
 		// handle any errors in the message
 		if (results.error) {
 			// process the specific error
-			var errorCode = results.refXML.getElementsByTagName('status')[0].firstChild.nodeValue;
-			if (errorCode == "MAX_EXCEEDED") {
-				var eaction = confirm("The number of children in this node exceeds the maximum number you specified in options.\n Displaying all children may take a long time to do.");
-			}
-			else {
-				alert("The following error has occurred:\n" + errorCode);
-			}
-			// re-fire the call with no max limit if the user requested so
-			if (eaction) {
-				// TODO: Implement param routing from node's container
-				var mod_options = Object.clone(cl_options);
-				delete mod_options.ont_max_records;
-				i2b2.ONT.ajax.GetChildConcepts("ONT:SDX:Concept", mod_options, scopedCallback );
-				return true;
-			}
 			// ROLLBACK the tree changes
 			cl_onCompleteCB();
 			// reset dynamic load state for the node (total hack of YUI Treeview)
@@ -463,40 +531,15 @@ i2b2.sdx.TypeControllers.CONCPT.LoadModifiers = function(node, onCompleteCallbac
 			var img = node.getContentEl();
 			img = Element.select(img, 'img')[0];
 			img.src = node.data.i2b2_SDX.renderData.icon;
+			i2b2.sdx.TypeControllers.CONCPT.LoadConcepts(node, onCompleteCallback, false);
 			return false;
 		}
-			var c = results.refXML.getElementsByTagName('modifier');
-			for(var i=0; i<1*c.length; i++) {
-			var o = new Object;
-			o.xmlOrig = c[i];
-			o.parent = this.origData;
-					o.isModifier = true;
-				o.applied_path = i2b2.h.getXNodeVal(c[i],'applied_path');
-			o.name = i2b2.h.getXNodeVal(c[i],'name');
-			//o.hasChildren = i2b2.h.getXNodeVal(c[i],'visualattributes').substring(0,2);
-			o.hasChildren = YAHOO.lang.trim(i2b2.h.getXNodeVal(c[i],'visualattributes').substring(0,3)); 
-			o.level = i2b2.h.getXNodeVal(c[i],'level');
-			o.key = i2b2.h.getXNodeVal(c[i],'key');
-			if (cl_options.ont_short_tooltip) {
-				o.tooltip = o.name;
-			} else {
-				o.tooltip = i2b2.h.getXNodeVal(c[i],'tooltip');
-			}
-			o.icd9 = '';
-			o.table_name = i2b2.h.getXNodeVal(c[i],'tablename');
-			o.column_name = i2b2.h.getXNodeVal(c[i],'columnname');
-			o.operator = i2b2.h.getXNodeVal(c[i],'operator');
-			o.total_num = i2b2.h.getXNodeVal(c[i],'totalnum');
-			o.dim_code = i2b2.h.getXNodeVal(c[i],'dimcode');
-			o.basecode = i2b2.h.getXNodeVal(c[i],'basecode');
-			if (cl_options.ont_show_concept_code && o.basecode != undefined) {
-				o.tooltip  += "(" + o.basecode + ")";
-			}
-			// append the data node
-			var sdxDataNode = i2b2.sdx.Master.EncapsulateData('CONCPT',o);
+		var c = results.refXML.getElementsByTagName('modifier');
+		for(var i=0; i<1*c.length; i++) {
+			var sdxDataNode = i2b2.sdx.TypeControllers.CONCPT.MakeObject(c[i], modifier, cl_options, this.origData);
 			if (modifier) {				
 				var renderOptions = {
-					title: o.name,
+					title: i2b2.h.getXNodeVal(c[i],'name'),
 					dragdrop: "i2b2.sdx.TypeControllers.CONCPT.AttachDrag2Data",
 					dblclick: "i2b2.ONT.view.nav.ToggleNode(this,'"+cl_node.tree.id+"')",
 					icon: {
@@ -509,7 +552,7 @@ i2b2.sdx.TypeControllers.CONCPT.LoadModifiers = function(node, onCompleteCallbac
 				};
 			} else {
 				var renderOptions = {
-					title: o.name,
+					title: i2b2.h.getXNodeVal(c[i],'name'),
 					dragdrop: "i2b2.sdx.TypeControllers.CONCPT.AttachDrag2Data",
 					dblclick: "i2b2.ONT.view.nav.ToggleNode(this,'"+cl_node.tree.id+"')",
 					icon: {
@@ -523,12 +566,16 @@ i2b2.sdx.TypeControllers.CONCPT.LoadModifiers = function(node, onCompleteCallbac
 			}
 
 			var sdxRenderData = i2b2.sdx.Master.RenderHTML(cl_node.tree.id, sdxDataNode, renderOptions);
+	
 			i2b2.sdx.Master.AppendTreeNode(cl_node.tree, cl_node, sdxRenderData);
 		}
 		// handle the YUI treeview	
-		cl_onCompleteCB();
-		if (node.data.i2b2_SDX.origData.hasChildren != "DA") {
+		//mm 10-7 cl_onCompleteCB();
+		if ((node.data.i2b2_SDX.origData.hasChildren != "DA") && (node.data.i2b2_SDX.origData.hasChildren != "OAE") &&
+		(node.data.i2b2_SDX.origData.hasChildren != "OA") ){
 			i2b2.sdx.TypeControllers.CONCPT.LoadConcepts(node, onCompleteCallback, false);
+		} else {
+			cl_onCompleteCB();
 		}
 	}
 	var key = node.data.i2b2_SDX.sdxInfo.sdxKeyValue;
@@ -559,10 +606,19 @@ i2b2.sdx.TypeControllers.CONCPT.LoadModifiers = function(node, onCompleteCallbac
 	options.ont_show_concept_code = t.showConceptCode;
 	options.concept_key_value = key;
 	
-	if (node.data.i2b2_SDX.origData.hasChildren == "DA") {
+	if ((node.data.i2b2_SDX.origData.hasChildren == "DA") ||
+	(node.data.i2b2_SDX.origData.hasChildren == "DAE") ||
+	(node.data.i2b2_SDX.origData.hasChildren == "OA") ||
+	(node.data.i2b2_SDX.origData.hasChildren == "OAE") 	
+	){
 		options.modifier_key_value = node.data.i2b2_SDX.origData.key;
 		options.modifier_applied_path = node.data.i2b2_SDX.origData.applied_path;
-		options.modifier_applied_concept = node.data.i2b2_SDX.origData.parent.key;
+		
+		var realdata = node.data.i2b2_SDX.origData;
+		while ((realdata.hasChildren != "FA") && (realdata.hasChildren != "CA")) {
+			realdata  = realdata.parent;	
+		}		
+		options.modifier_applied_concept = realdata.key;//node.data.i2b2_SDX.origData.parent.key;
 		i2b2.ONT.ajax.GetChildModifiers("ONT:SDX:Concept", options, scopedCallback );	
 	} else {
 		i2b2.ONT.ajax.GetModifiers("ONT:SDX:Concept", options, scopedCallback );
@@ -688,7 +744,7 @@ i2b2.sdx.TypeControllers.CONCPT.DragDrop.prototype.onDragDrop = function(e, id) 
 	// retreive the concept data from the dragged element
 	draggedData = this.yuiTreeNode.data.i2b2_SDX;
 	// exit if we are a root node
-	if (draggedData.origData.hasChildren=="CA") { return false; }
+	if ((draggedData.origData.hasChildren=="CA") || (draggedData.origData.hasChildren=="OA") || (draggedData.origData.hasChildren=="OAE"))  { return false; }
 	i2b2.sdx.Master.ProcessDrop(draggedData, id);
 };
 

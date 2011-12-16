@@ -24,6 +24,7 @@ i2b2.ONT.view.nav.showOptions = function(subScreen) {
 				i2b2.ONT.view['nav'].params.max = parseInt($('ONTNAVMaxQryDisp').value,10);
 				i2b2.ONT.view['nav'].params.synonyms = $('ONTNAVshowSynonyms').checked;
 				i2b2.ONT.view['nav'].params.hiddens = $('ONTNAVshowHiddens').checked;
+				i2b2.ONT.view['nav'].params.modifiers = $('ONTNAVdisableModifiers').checked;
 				i2b2.ONT.view.nav.doRefreshAll();
 			}
 		}
@@ -99,6 +100,7 @@ i2b2.ONT.view.nav.PopulateCategories = function() {
 		}
 		var renderOptions = {
 			title: catData.name,
+			dragdrop: "i2b2.sdx.TypeControllers.CONCPT.AttachDrag2Data",			
 			dblclick: "i2b2.ONT.view.nav.ToggleNode(this,'"+this.yuiTree.id+"')",
 			icon: {
 				root: "sdx_ONT_CONCPT_root.gif",
