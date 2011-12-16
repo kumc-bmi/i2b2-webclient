@@ -167,9 +167,13 @@ function initI2B2() {
 					// by editing the CSS file.  You can remark out the lines below with no ill effect.  Use the following
 					// javascript function to display the modal login form: i2b2.hive.PM.doLoginDialog();
 					//cellObj.doConnectForm($('loginusr'),$('loginpass'),$('logindomain'), $('loginsubmit'));
-                                        var domain = 'localhost'; //@@HARDCODED
-                                        i2b2.PM.doCASLogin(domain);
-					break;
+				        var creds = i2b2.PM.pre_authz();
+				        if (creds) {
+						i2b2.PM.authz_login(creds);
+					} else {
+						i2b2.PM.doLoginDialog();
+					}
+				        break;
 			}
 		})
 	);

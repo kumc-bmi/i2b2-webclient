@@ -8,7 +8,7 @@
 		"PM_admin_ctrlr.js",
 		"PM_admin_view.js",
 		"i2b2_msgs.js",
-		"cas_login.js"
+		"pre_authz.js"
 	],
 	css: ["modProjects.css"],  // ONLY USE 1 STYLE SHEET: http://support.microsoft.com/kb/262161
 	config: {
