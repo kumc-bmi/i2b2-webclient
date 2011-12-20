@@ -58,14 +58,14 @@ i2b2.ONT.cfg.msgs.GetChildConcepts = '<?xml version="1.0" encoding="UTF-8" stand
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Ontology </application_name>\n'+
-'            <application_version>1.2</application_version>\n'+
+'            <application_version>{{{version}}}</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Ontology Cell</application_name>\n'+
-'            <application_version>1.0</application_version>\n'+
+'            <application_version>{{{version}}}</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -116,14 +116,14 @@ i2b2.ONT.cfg.msgs.GetChildModifiers = '<?xml version="1.0" encoding="UTF-8" stan
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Ontology </application_name>\n'+
-'            <application_version>1.2</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Ontology Cell</application_name>\n'+
-'            <application_version>1.0</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -177,14 +177,14 @@ i2b2.ONT.cfg.msgs.GetCategories = '<?xml version="1.0" encoding="UTF-8" standalo
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Ontology</application_name>\n'+
-'            <application_version>1.2</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Ontology Cell</application_name>\n'+
-'            <application_version>1.0</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -255,14 +255,14 @@ i2b2.ONT.cfg.msgs.GetModifiers = '<?xml version="1.0" encoding="UTF-8" standalon
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Ontology</application_name>\n'+
-'            <application_version>1.2</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Ontology Cell</application_name>\n'+
-'            <application_version>1.0</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -313,6 +313,7 @@ i2b2.ONT.cfg.parsers.GetModifiers = function(){
 	} else {
 		this.model = false;
 		console.error("[GetModifiers] Could not parse() data!");
+		return null;
 	}
 	return this;
 };
@@ -333,14 +334,14 @@ i2b2.ONT.cfg.msgs.GetSchemes = '<?xml version="1.0" encoding="UTF-8" standalone=
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Ontology</application_name>\n'+
-'            <application_version>1.2</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Ontology Cell</application_name>\n'+
-'            <application_version>1.0</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -408,14 +409,14 @@ i2b2.ONT.cfg.msgs.GetNameInfo = '<?xml version="1.0" encoding="UTF-8" standalone
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Ontology</application_name>\n'+
-'            <application_version>1.2</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Ontology Cell</application_name>\n'+
-'            <application_version>1.0</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -443,7 +444,7 @@ i2b2.ONT.cfg.msgs.GetNameInfo = '<?xml version="1.0" encoding="UTF-8" standalone
 '        <result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
 '    </request_header>\n'+
 '    <message_body>\n'+
-'        <ns4:get_name_info blob="true" type="core" {{{ont_max_records}}} category="{{{ont_category}}}">\n'+
+'        <ns4:get_name_info blob="true" type="core" {{{ont_max_records}}} synonyms="{{{ont_synonym_records}}}" category="{{{ont_category}}}">\n'+
 '            <match_str strategy="{{{ont_search_strategy}}}">{{{ont_search_string}}}</match_str>\n'+
 '        </ns4:get_name_info>\n'+
 '    </message_body>\n'+
@@ -464,14 +465,14 @@ i2b2.ONT.cfg.msgs.GetModifierCodeInfo = '<?xml version="1.0" encoding="UTF-8" st
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Ontology</application_name>\n'+
-'            <application_version>1.2</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Ontology Cell</application_name>\n'+
-'            <application_version>1.0</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -520,14 +521,14 @@ i2b2.ONT.cfg.msgs.GetModifierNameInfo = '<?xml version="1.0" encoding="UTF-8" st
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Ontology</application_name>\n'+
-'            <application_version>1.2</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Ontology Cell</application_name>\n'+
-'            <application_version>1.0</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -577,14 +578,14 @@ i2b2.ONT.cfg.msgs.GetCodeInfo = '<?xml version="1.0" encoding="UTF-8" standalone
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Ontology</application_name>\n'+
-'            <application_version>1.2</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Ontology Cell</application_name>\n'+
-'            <application_version>1.0</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -633,14 +634,14 @@ i2b2.ONT.cfg.msgs.GetTermInfo = '<?xml version="1.0" encoding="UTF-8" standalone
 '		<hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '		<sending_application>\n'+
 '			<application_name>i2b2 Ontology</application_name>\n'+
-'			<application_version>1.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>i2b2 Hive</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>Ontology Cell</application_name>\n'+
-'			<application_version>1.0</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '			<facility_name>i2b2 Hive</facility_name>\n'+
@@ -688,14 +689,14 @@ i2b2.ONT.cfg.msgs.GetModifierInfo = '<?xml version="1.0" encoding="UTF-8" standa
 '		<hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '		<sending_application>\n'+
 '			<application_name>i2b2 Ontology</application_name>\n'+
-'			<application_version>1.2</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</sending_application>\n'+
 '		<sending_facility>\n'+
 '			<facility_name>i2b2 Hive</facility_name>\n'+
 '		</sending_facility>\n'+
 '		<receiving_application>\n'+
 '			<application_name>Ontology Cell</application_name>\n'+
-'			<application_version>1.0</application_version>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '		</receiving_application>\n'+
 '		<receiving_facility>\n'+
 '			<facility_name>i2b2 Hive</facility_name>\n'+

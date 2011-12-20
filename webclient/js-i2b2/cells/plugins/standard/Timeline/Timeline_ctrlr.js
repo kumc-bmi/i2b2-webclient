@@ -263,9 +263,9 @@ i2b2.Timeline.getResults = function() {
 			'<filter_list>\n'+
 				filterList+
 			'</filter_list>\n'+
-			'<output_option>\n'+
-			'	<patient_set select="using_input_list" onlykeys="false"/>\n'+
+			'<output_option names="asattributes">\n'+
 			'	<observation_set blob="false" onlykeys="false"/>\n'+
+			'	<patient_set select="using_input_list" onlykeys="false"/>\n'+
 			'</output_option>\n';
 
 
@@ -301,7 +301,7 @@ i2b2.Timeline.getResults = function() {
 				var patientName = '';
 				patientName += 'Person_#';
 				patientName += patientID;
-				var sex_cd = i2b2.h.XPath(pData[i1], 'descendant-or-self::param[@name="sex_cd"]/text()');
+				var sex_cd = i2b2.h.XPath(pData[i1], 'descendant-or-self::param[@column="sex_cd"]/text()');
 				if (sex_cd.length) {
 					patientName += '__';
 					var sex_cd_val = sex_cd[0].nodeValue;
@@ -310,12 +310,12 @@ i2b2.Timeline.getResults = function() {
 					if (sex_cd_val == 'U') {sex_cd_val = 'Unknown';}
 					patientName += sex_cd_val;
 				}
-				var age_in_years = i2b2.h.XPath(pData[i1], 'descendant-or-self::param[@name="age_in_years_num"]/text()');
+				var age_in_years = i2b2.h.XPath(pData[i1], 'descendant-or-self::param[@column="age_in_years_num"]/text()');
 				if (age_in_years.length) {
 					patientName += '__';
 					patientName += age_in_years[0].nodeValue + 'yrold';
 				}
-				var race_cd = i2b2.h.XPath(pData[i1], 'descendant-or-self::param[@name="race_cd"]/text()');
+				var race_cd = i2b2.h.XPath(pData[i1], 'descendant-or-self::param[@column="race_cd"]/text()');
 				if (race_cd.length) {
 					patientName += '__';
 					patientName += race_cd[0].nodeValue.substring(0,1).toUpperCase() + race_cd[0].nodeValue.substring(1);

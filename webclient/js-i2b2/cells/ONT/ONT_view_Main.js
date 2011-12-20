@@ -67,7 +67,8 @@ i2b2.ONT.view.main.Resize = function(e) {
 				
 				break;
 			case "Analysis":
-				w = parseInt(w/3) + 300;
+				w = parseInt(w/3); 
+				   // + 300;
 				ve.width = w-10;				
 				if (i2b2.WORK && i2b2.WORK.isLoaded) {
 					var z = parseInt((h - 321)/2) + 16;

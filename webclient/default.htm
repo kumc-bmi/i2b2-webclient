@@ -6,16 +6,19 @@
 <!--
  *  *************************
  *       i2b2 Web Client
- *           v1.6
+ *           v1.6.02
  *  *************************
- *  @modified: 4/30/2009
+ *  @modified: 12/15/2011
  *  Contributors:
  *     Nick Benik
  *     Griffin Weber, MD, PhD
+ *     Mike Mendis
  *
  */-->
 
-
+<script type="text/javascript">
+	var i2b2build = "1.6.0031   [11/2/2011 4:07 PM] ";
+</script>
 
 <!-- LOAD YUI FROM Yahoo's CDN
 <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo.js" ></script>
@@ -30,7 +33,7 @@
 <script type="text/javascript" src="js-ext/yui/build/dom/dom.js"></script>
 <script type="text/javascript" src="js-ext/yui/build/yuiloader/yuiloader.js"></script>
 <script type="text/javascript" src="js-ext/yui/build/dragdrop/dragdrop.js" ></script>
-<script type="text/javascript" src="js-ext/yui/build/element/element-beta.js"></script>
+<!-- <script type="text/javascript" src="js-ext/yui/build/element/element.js"></script> -->
 <script type="text/javascript" src="js-ext/yui/build/container/container_core.js"></script>
 <script type="text/javascript" src="js-ext/yui/build/container/container.js"></script>
 <script type="text/javascript" src="js-ext/yui/build/resize/resize.js"></script>
@@ -69,6 +72,8 @@
 	@import url(assets/msg_sniffer.css);
 
 </style>
+
+<script type="text/javascript" src="js-ext/idle-timer.js"></script>
 
 <script type="text/javascript" src="js-ext/YUI_DataTable_PasswordCellEditor.js"></script>
 <script type="text/javascript" src="js-ext/YUI_DataTable_MD5CellEditor.js"></script>
@@ -252,7 +257,7 @@ YAHOO.util.Event.addListener(window, "load", init);
 <div id="help-viewer-panel" style="display:none;">
 	<div class="hd">i2b2 Web Client Help</div>
 	<div class="bd" id="help-viewer-body">
-		<p>Lorem Ipsum...</p>
+		<p>Please wait loading help.</p>
 	</div>
 	<div class="ft"></div>
 </div>
@@ -356,7 +361,7 @@ YAHOO.util.Event.addListener(window, "load", init);
 					</tr>
 					<tr><td colspan="2" style="height:5px;overflow:hidden;"></td></tr>
 					<tr>
-						<td valign="middle" style="width:100px;"><div class="ontFindButton"><a href="JavaScript:i2b2.ONT.ctrlr.FindBy.clickSearchName();">Find</a></div><div id="ontFindNameButtonWorking" style="display:none;"><img src="js-i2b2/cells/ONT/assets/loadera16.gif"/></div></td>
+						<td valign="middle" style="width:135px;"><div class="ontFindButton"><a href="JavaScript:i2b2.ONT.ctrlr.FindBy.clickSearchName();">Find</a></div><div id="ontFindNameButtonWorking" style="display:none">Searching...</div></td>
 						<td valign="middle"><select id="ontFindCategory" name="ontFindCategory" style="font-size:11px;"><option value="i2b2">Any Category</option></select></td>
 					</tr>
 					</table>
@@ -562,8 +567,8 @@ YAHOO.util.Event.addListener(window, "load", init);
 						<input type="submit" id="queryTiming" name="queryTiming" value="Treat all groups independently"> 
                         <select id="menubutton1select" name="menubutton1select"> 
                             <option value="ANY">Treat all groups independently</option> 
-                            <option value="SAME">Selected groups occur in the same financial encounter</option> 
-                            <option value="SAMEINSTANCENUM">Items Instance will be the same</option> 
+                            <option value="SAMEVISIT">Selected groups occur in the same financial encounter</option> 
+                         <!--   <option value="SAMEINSTANCENUM">Items Instance will be the same</option>  -->
                         </select>   
                 </div>
 			</div>
@@ -770,7 +775,7 @@ YAHOO.util.Event.addListener(window, "load", init);
 				<div style="font-size:12px; margin-left:50px" >Maximum Number of Children to Display: <input id="ONTNAVMaxQryDisp" style="width:35px" value="200" /></div>
 				<div style="margin-left:50px"><input type="checkbox" id="ONTNAVshowHiddens" /> Show Hidden Terms</div>
 				<div style="margin-left:50px"><input type="checkbox" id="ONTNAVshowSynonyms" /> Show Synonymous Terms</div>
-				<div style="margin-left:50px"><input type="checkbox" id="ONTNAVshowPatientCounts" /> Enable Patient Counts</div>
+				<div style="margin-left:50px"><input type="checkbox" checked id="ONTNAVshowPatientCounts" /> Enable Patient Counts</div>
 				<div style="margin-left:50px"><input type="checkbox" id="ONTNAVshowShortTooltips" /> Use Short Tooltips</div>
 				<div style="margin-left:50px"><input type="checkbox" id="ONTNAVshowCodeTooltips" /> Show Concept Codes in Tooltips</div>
     			<div style="margin-left:50px"><input type="checkbox" id="ONTNAVdisableModifiers" /> Disable Modifiers</div>                
@@ -782,10 +787,10 @@ YAHOO.util.Event.addListener(window, "load", init);
 				<br />
 				<div style="font-size:12px; margin-left:50px" >Maximum Number of Children to Display: <input id="ONTFINDMaxQryDisp" style="width:35px" value="200" /></div>
 				<div style="margin-left:50px"><input type="checkbox" id="ONTFINDshowHiddens" /> Show Hidden Terms</div>
-				<div style="margin-left:50px"><input type="checkbox" id="ONTFINDshowSynonyms" /> Show Synonymous Terms</div>
+				<div style="margin-left:50px"><input type="checkbox" checked id="ONTFINDshowSynonyms" /> Show Synonymous Terms</div>
 				<div style="margin-left:50px"><input type="checkbox" id="ONTFINDshowPatientCounts" /> Enable Patient Counts</div>
 				<div style="margin-left:50px"><input type="checkbox" id="ONTFINDshowShortTooltips" /> Use Short Tooltips</div>
-				<div style="margin-left:50px"><input type="checkbox" id="ONTFINDshowCodeTooltips" /> Show Concept Codes in Tooltips</div> 		
+				<div style="margin-left:50px"><input type="checkbox" checked id="ONTFINDshowCodeTooltips" /> Show Concept Codes in Tooltips</div> 		
     			<div style="margin-left:50px"><input type="checkbox" id="ONTFINDdisableModifiers" /> Disable Modifiers</div>                
          </div>
 	</div>
@@ -861,7 +866,7 @@ YAHOO.util.Event.addListener(window, "load", init);
 	<div id="itemLabRange" style="display:none;">
 		<div class="hd" style="background:#6677AA;">Lab Range Constraint</div>
 		<div class="bd modLabValues">
-			<div style="margin: 0px 5% 12px; text-align: center;">Searches by Lab values can be constrained by the high/low flag set by the performing laboratory, or by the values themselves.</div>
+			<div style="margin: 0px 5% 12px; text-align: center;" id="valueContraintText"></div>
 			<div class="mlvBody">
 				<div class="mlvtop">
 					<div class="mlvModesGroup">
@@ -886,6 +891,15 @@ YAHOO.util.Event.addListener(window, "load", init);
 									<option value="GE">GREATER THAN OR EQUAL (&gt;=)</option>
 								</select>
 							</p>
+							<p id="mlvfrmEnterStringOperator">
+								Please select operator:<br />
+								<select id='mlvfrmStringOperator'>
+									<option value="LIKE[contains]">Contains</option>
+									<option value="LIKE[exact]">Exact</option>
+									<option value="LIKE[begin]">Starts With</option>
+									<option value="LIKE[end]">Ends With</option>
+								</select>
+							</p>                            
 							<p id="mlvfrmEnterVal">
 								Please enter a value:<br />
 								<input id="mlvfrmNumericValue" class="numInput" />
@@ -980,7 +994,16 @@ YAHOO.util.Event.addListener(window, "load", init);
 	</div>
 <!-- ############### </Query Run Dialog> ############### -->
 
-
+<!-- ############### <Timeout Dialog> ############### -->
+	<div id="dialogTimeout" style="display:none;">
+		<div class="hd" style="background:#6677AA;">Session Timing Out</div>
+		<div class="bd">
+			<br />
+			<div style="font-size:12px; margin-left:10px" >Your session will automatically time out in 5 minutes due to inactivity.  Please click "OK" to continue your session, or click cancel to log out.</div>
+			<div style="height:15px;"></div>
+		</div>
+	</div>
+<!-- ############### </Timeout Dialog> ############### -->
 
 </div>
 </body>

@@ -7,11 +7,11 @@
 <title>Default TreeView</title>
 
 
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/fonts/fonts-min.css" />
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/treeview/assets/skins/sam/treeview.css" />
-<script type="text/javascript" src="http://yui.yahooapis.com/2.8.2r1/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<link rel="stylesheet" type="text/css" href="../js-ext/yui/build/fonts/fonts-min.css" />
+<link rel="stylesheet" type="text/css" href="../js-ext/yui/build/treeview/assets/skins/sam/treeview.css" />
+<script type="text/javascript" src="../js-ext/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
 
-<script type="text/javascript" src="http://yui.yahooapis.com/2.8.2r1/build/treeview/treeview-min.js"></script>
+<script type="text/javascript" src="../js-ext/yui/build/treeview/treeview-min.js"></script>
 
 
 <!--begin custom header content for this example-->
@@ -53,6 +53,7 @@ var tree;
 		 new YAHOO.widget.TextNode({ label:"Introduction", href:"ft.html#ftIntro", target:"right"},  tmpNode, false)
 		 new YAHOO.widget.TextNode({ label:"Navigation", href:"ft.html#ftNavigation", target:"right"},  tmpNode, false)
 		 new YAHOO.widget.TextNode({ label:"Searching Terms", href:"ft.html#ftSearch", target:"right"},  tmpNode, false)
+		 new YAHOO.widget.TextNode({ label:"Searching Modifiers", href:"ft.html#ftModSearch", target:"right"},  tmpNode, false)
 		 new YAHOO.widget.TextNode({ label:"Using Terms", href:"ft.html#ftUseTerms", target:"right"},  tmpNode, false)
 		 var tmpNode = new YAHOO.widget.TextNode({label:"i2b2 Navigate Terms", href:"navTerms.html#ntView", target:"right"}, tree.getRoot(), false);
 		 new YAHOO.widget.TextNode({ label:"Introduction", href:"navTerms.html#ntIntro", target:"right"},  tmpNode, false)
@@ -70,7 +71,7 @@ var tree;
 	 	 new YAHOO.widget.TextNode({ label:"Saving a Query", href:"qt.html#qtSaveQuery", target:"right"},  tmpNode, false)
 	 	 new YAHOO.widget.TextNode({ label:"Printing a Query", href:"qt.html#qtPrintQuery", target:"right"},  tmpNode, false)
 		 var tmpNode = new YAHOO.widget.TextNode({label:"i2b2 Workplace", href:"wp.html", target:"right"}, tree.getRoot(), false);
-		 new YAHOO.widget.TextNode({ label:"Introduction", href:"wp.html#wpView", target:"right"},  tmpNode, false)
+		 new YAHOO.widget.TextNode({ label:"Introduction", href:"wp.html#wpIntro", target:"right"},  tmpNode, false)
 		 new YAHOO.widget.TextNode({ label:"Navigation", href:"wp.html#wpNavigation", target:"right"},  tmpNode, false)
 		 new YAHOO.widget.TextNode({ label:"Adding Items to Workplace view", href:"wp.html#wpAddToWp", target:"right"},  tmpNode, false)
 		 new YAHOO.widget.TextNode({ label:"Using Items in Workplace view", href:"wp.html#wpUseItems", target:"right"},  tmpNode, false)

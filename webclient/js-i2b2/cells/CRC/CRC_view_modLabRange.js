@@ -109,6 +109,7 @@ i2b2.CRC.view.modalLabValues = {
 			YAHOO.util.Event.addListener("mlvfrmFlagValue", "change", this.changeHandler);
 			YAHOO.util.Event.addListener("mlvfrmEnumValue", "change", this.changeHandler);
 			YAHOO.util.Event.addListener("mlvfrmOperator", "change", this.changeHandler);
+			YAHOO.util.Event.addListener("mlvfrmStringOperator", "change", this.changeHandler);
 			YAHOO.util.Event.addListener("mlvfrmUnits", "change", this.changeHandler);
 			YAHOO.util.Event.addListener("mlvfrmStrValue", "keypress", (function(e) {
 				// anonymous function
@@ -189,6 +190,14 @@ i2b2.CRC.view.modalLabValues = {
 					}
 					if (tmpLab.ValueString) {
 						$('mlvfrmStrValue').value = tmpLab.ValueString;
+						var tn = $("mlvfrmStringOperator");
+						for (var i=0; i<tn.options.length; i++) {
+							if (tn.options[i].value == tmpLab.StringOp) {
+								tn.selectedIndex = i;
+								fd.numericOperator = tmpLab.StringOp;
+								break;
+							}
+						}
 					}
 					if (tmpLab.ValueEnum) 	{ 
 						var tn = $("mlvfrmEnumValue");
@@ -242,6 +251,9 @@ i2b2.CRC.view.modalLabValues = {
 				var i1 = $('mlvfrmUnits');
 				fd.numericOperator = tn.options[tn.selectedIndex].value;
 				fd.valueUnitsCurrent = i1.selectedIndex;
+				break;
+			case "mlvfrmStringOperator":
+				fd.stringOperator = tn.options[tn.selectedIndex].value;	
 				break;
 			case "mlvfrmEnumValue":
 				fd.enumIndex = tn.selectedIndex;
@@ -300,6 +312,11 @@ i2b2.CRC.view.modalLabValues = {
 		// set the title bar (TestName and TestID are assumed to be mandatory)
 		this.sd.setHeader("Choose value of "+i2b2.h.getXNodeVal(refXML, 'TestName')+" (Test:"+i2b2.h.getXNodeVal(refXML, 'TestID')+")");
 		
+		if (i2b2.CRC.view.modalLabValues.isModifier) {
+				$('valueContraintText').innerHTML = "Searches by Modifier values can be constrained by either a flag set by the sourcesystem or by the values themselves.";
+		} else {
+			 $('valueContraintText').innerHTML = "Searches by Lab values can be constrained by the high/low flag set by the performing laboratory, or by the values themselves.";
+		}
 		// process flag info
 		dm.flag = false;
 		try { 
@@ -600,6 +617,7 @@ i2b2.CRC.view.modalLabValues = {
 		$('mlvfrmFLAG').hide();
 		$('mlvfrmVALUE').hide();
 		$('mlvfrmOperator').selectedIndex = 0;
+		$('mlvfrmStringOperator').selectedIndex = 0;
 		$('mlvfrmFlagValue').selectedIndex = 0;
 		$('mlvfrmNumericValueLow').value = '';
 		$('mlvfrmNumericValueHigh').value = '';
@@ -610,6 +628,8 @@ i2b2.CRC.view.modalLabValues = {
 		// save the initial values into the data model
 		var tn = $("mlvfrmOperator");
 		fd.numericOperator = tn.options[tn.selectedIndex].value;
+		var tn = $("mlvfrmStringOperator");
+		fd.stringOperator = tn.options[tn.selectedIndex].value;		
 		var tn = $("mlvfrmOperator");
 		fd.flagValue = tn.options[tn.selectedIndex].value;
 		fd.unitIndex = $('mlvfrmUnits').selectedIndex;
@@ -710,7 +730,8 @@ i2b2.CRC.view.modalLabValues = {
 				$('mlvfrmVALUE').show();
 				$('mlvfrmFLAG').hide();
 				// hide all inputs panels
-				$('mlvfrmEnterOperator').hide();					
+				$('mlvfrmEnterOperator').hide();
+				$('mlvfrmEnterStringOperator').hide();					
 				$('mlvfrmEnterVal').hide();
 				$('mlvfrmEnterVals').hide();
 				$('mlvfrmEnterStr').hide();
@@ -731,6 +752,7 @@ i2b2.CRC.view.modalLabValues = {
 						i2b2.CRC.view.modalLabValues.setUnits();
 						break;
 					case "STR":
+						$('mlvfrmEnterStringOperator').show();
 						$('mlvfrmEnterStr').show();
 						break;
 					case "ENUM":
@@ -844,6 +866,7 @@ i2b2.CRC.view.modalLabValues = {
 					case "STR":
 						tmpLabValue.GeneralValueType = "STRING";
 						tmpLabValue.SpecificValueType = "STRING";
+						tmpLabValue.StringOp = fd.stringOperator;
 						var sv = $('mlvfrmStrValue').value;
 						if (dm.valueValidate.maxString && (sv.length > dm.valueValidate.maxString)) {
 							errorMsg.push(" - Input is over the "+dm.valueValidate.maxString+" character limit.\n");

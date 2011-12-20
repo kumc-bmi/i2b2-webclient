@@ -26,10 +26,20 @@ i2b2.ONT.ctrlr.FindBy = {
 		} else {
 		search_info.Category = f.ontFindCategory.options[f.ontFindCategory.selectedIndex].value;
 		search_info.Strategy = f.ontFindStrategy.options[f.ontFindStrategy.selectedIndex].value;
-		i2b2.ONT.ctrlr.FindBy.doNameSearch(search_info);
+		
+		treeObj = i2b2.ONT.view.find.yuiTreeName;
+		 treeObj.removeChildren(treeObj.getRoot());
+		treeObj.setDynamicLoad(i2b2.sdx.Master.LoadChildrenFromTreeview,1);
+		treeObj.draw();
+		i2b2.ONT.ctrlr.FindBy.ButtonOn();
+		setTimeout(function(){i2b2.ONT.ctrlr.FindBy.doNameSearch(search_info);},0);
+		//i2b2.ONT.ctrlr.FindBy.doNameSearch(search_info);
 		}
 	},
 
+	ButtonOn: function() {
+				document.getElementById('ontFindNameButtonWorking').style.display = 'block';
+	},
 // ================================================================================================== //
 	doNameSearch: function(inSearchData) {
 		// inSearchData is expected to have the following attributes:
@@ -68,9 +78,11 @@ i2b2.ONT.ctrlr.FindBy = {
 			// build list of all categories to search 
 			for (var i=0; i<l; i++) {
 				var cid = d[i].key;
-				cid = /\\\\\w*\\/.exec(cid);
-				cid = cid[0].replace(/\\/g,'');
-				searchCats.push(cid);
+				cid = cid.substring(2);
+				cid = cid.substring(0,cid.indexOf("\\"));
+				if (cid != null) {
+					searchCats.push(cid);
+				}
 			}
 		} else {
 			// just a single category to search
@@ -107,13 +119,15 @@ i2b2.ONT.ctrlr.FindBy = {
 		searchOptions.ont_search_strategy = inSearchData.Strategy;
 		searchOptions.ont_search_string = inSearchData.SearchStr;
 			
-		document.getElementById('ontFindNameButtonWorking').style.display = 'block';
+		i2b2.ONT.ctrlr.FindBy.ButtonOn();
 		// fire multiple AJAX calls
 		l = searchCats.length;
 		var totalCount = 0;
 		for (var i=0; i<l; i++) {
 			searchOptions.ont_category = searchCats[i];
 			var results = i2b2.ONT.ajax.GetNameInfo("ONT:FindBy", searchOptions);
+
+			
 			
 						//Determine if a error occured
 			// <result_status>  <status type="ERROR">MAX_EXCEEDED</status>  </result_status> 
@@ -122,10 +136,10 @@ i2b2.ONT.ctrlr.FindBy = {
 				// we have a proper error msg
 				try {
 					if (s[0].firstChild.nodeValue == "MAX_EXCEEDED")
-						alert("Max number of terms exceeded please try with a more specific query.");
+						alert("The number of terms that were returned exceeded the maximum number currently set as " + i2b2.ONT.view['find'].params.max+ ".  Please try again with a more specific search or increase the maximum number of terms that can be returned as defined in the options screen.");
 					else
 						alert("ERROR: "+s[0].firstChild.nodeValue);	
-					document.getElementById('ontFindButtonWorking').style.display = 'none';						
+					document.getElementById('ontFindNameButtonWorking').style.display = 'none';						
 					return;
 				} catch (e) {
 					alert("An unknown error has occured during your rest call attempt!");
@@ -292,7 +306,7 @@ i2b2.ONT.ctrlr.FindBy = {
 						alert("Max number of terms exceeded please try with a more specific query.");
 					else
 						alert("ERROR: "+s[0].firstChild.nodeValue);	
-					document.getElementById('ontFindButtonWorking').style.display = 'none';						
+					document.getElementById('ontFindNameButtonWorking').style.display = 'none';						
 					return;
 				} catch (e) {
 					alert("An unknown error has occured during your rest call attempt!");

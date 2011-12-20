@@ -18,6 +18,7 @@ function QueryToolController() {
 	this.queryIsRunning = false;
 	this.queryNamePrompt = false;
 	this.queryTiming = 'ANY';
+	this.hasModifier = false;
 	this.queryNameDefault = 'New Query';
 	this.queryStatusDefaultText = 'Drag query items to one or more groups then click Run Query.';
 	this.panelControllers = [];
@@ -43,6 +44,7 @@ function QueryToolController() {
 		this._redrawPanelCount();
 		this.queryNamePrompt = false;
 		this.queryIsDirty = true;
+		this.hasModifier = false;
 		$('infoQueryStatusText').innerHTML = "";
 		i2b2.CRC.view.QT.setQueryTiming(0);
 	}
@@ -161,32 +163,7 @@ function QueryToolController() {
 							
 							
 							// WE MUST QUERY THE ONT CELL TO BE ABLE TO DISPLAY THE TREE STRUCTURE CORRECTLY
-							/* load on right clicks 
-							var cdetails = i2b2.ONT.ajax.GetTermInfo("CRC:QueryTool", {concept_key_value:ckey, ont_synonym_records: true, ont_hidden_records: true} );
-							
-							// this is what comes out of the old AJAX call
-							var c = i2b2.h.XPath(cdetails.refXML, 'descendant::concept');
-							if (c.length > 0) {
-								c = c[0];
-								var o = new Object;
-								o.xmlOrig = c;
-								o.table_name = i2b2.h.getXNodeVal(c,'tablename');
-								o.column_name = i2b2.h.getXNodeVal(c,'columnname');
-								o.operator = i2b2.h.getXNodeVal(c,'operator');
-								o.icd9 = i2b2.h.getXNodeVal(c,'basecode');
-								o.level = i2b2.h.getXNodeVal(c,'level');
-								o.name = i2b2.h.getXNodeVal(c,'name');
-								o.key = i2b2.h.getXNodeVal(c,'key');
-								o.tooltip = i2b2.h.getXNodeVal(c,'tooltip');
-								o.dim_code = i2b2.h.getXNodeVal(c,'dimcode');
-								o.visual_attribs = i2b2.h.getXNodeVal(c,'visualattributes');
-								o.hasChildren = i2b2.h.getXNodeVal(c,'visualattributes').substring(0,2);
-								// these are not needed?
-								o.fact_table_column = i2b2.h.getXNodeVal(c,'facttablecolumn');
-								o.column_name_datatype = i2b2.h.getXNodeVal(c,'columndatatype');
-								o.synonym_cd = i2b2.h.getXNodeVal(c,'synonym_cd');
-								o.totalnum = i2b2.h.getXNodeVal(c,'totalnum');
-								*/
+
 								var o = new Object;
 								o.level = i2b2.h.getXNodeVal(pi[i2],'hlevel');
 								o.name = i2b2.h.getXNodeVal(pi[i2],'item_name');
@@ -199,17 +176,9 @@ function QueryToolController() {
 								
 								// Lab Values processing
 								var lvd = i2b2.h.XPath(pi[i2], 'descendant::constrain_by_value');
-								if (lvd.length>0){
+								if ((lvd.length>0) && (i2b2.h.XPath(pi[i2], 'descendant::constrain_by_modifier').length == 0)){
 									lvd = lvd[0];
 									// pull the LabValue definition for concept
-									/*
-									var lvdef = i2b2.h.XPath(c, "descendant::metadataxml/ValueMetadata[Loinc]");
-									if (lvdef.length > 0) {
-										lvdef = lvdef[0];
-									} else {
-										lvdef = false;
-									}
-									*/
 									// extract & translate
 									var t = i2b2.h.getXNodeVal(lvd,"value_constraint");
 									o.LabValues = {};
@@ -235,7 +204,12 @@ function QueryToolController() {
 											o.LabValues.MatchBy = "VALUE";
 											try {
 												o.LabValues.ValueEnum = eval("(Array"+t+")");
+												o.LabValues.GeneralValueType = "ENUM";																									
 											} catch(e) {
+												//is a string
+												o.LabValues.StringOp = i2b2.h.getXNodeVal(lvd,"value_operator");
+												o.LabValues.ValueString = t;
+												o.LabValues.GeneralValueType = "STRING";	
 												//i2b2.h.LoadingMask.hide();
 												//("Conversion Failed: Lab Value data = "+t);
 											}
@@ -254,58 +228,27 @@ function QueryToolController() {
 									// We do want 2 copies of the Lab Values: one is original from server while the other one is for user manipulation
 									sdxDataNode.LabValues = o.LabValues;
 								}
-								
-								//If modifier than get modfier info
-								//if (po.modifier_key !=  null) {
-									/*
-									var cdetails = i2b2.ONT.ajax.GetModifierInfo("CRC:QueryTool", {modifier_applied_path:po.modifier_path, modifier_key_value:po.modifier_key, ont_synonym_records: true, ont_hidden_records: true} );
-									// this is what comes out of the old AJAX call
-									var c = i2b2.h.XPath(cdetails.refXML, 'descendant::modifier');
-									if (c.length > 0) {
-										c = c[0];
-										var o = new Object;
-										o.xmlOrig = c;
-										o.parent = sdxDataNode.origData;
-										o.isModifier = true;
-										o.table_name = i2b2.h.getXNodeVal(c,'tablename');
-										o.column_name = i2b2.h.getXNodeVal(c,'columnname');
-										o.operator = i2b2.h.getXNodeVal(c,'operator');
-										o.icd9 = i2b2.h.getXNodeVal(c,'basecode');
-										o.level = i2b2.h.getXNodeVal(c,'level');
-										o.name = i2b2.h.getXNodeVal(c,'name');
-										o.key = i2b2.h.getXNodeVal(c,'key');
-										o.tooltip = i2b2.h.getXNodeVal(c,'tooltip');
-										o.dim_code = i2b2.h.getXNodeVal(c,'dimcode');
-										o.visual_attribs = i2b2.h.getXNodeVal(c,'visualattributes');
-										o.hasChildren = i2b2.h.getXNodeVal(c,'visualattributes').substring(0,2);
-										// these are not needed?
-										o.fact_table_column = i2b2.h.getXNodeVal(c,'facttablecolumn');
-										o.column_name_datatype = i2b2.h.getXNodeVal(c,'columndatatype');
-										o.synonym_cd = i2b2.h.getXNodeVal(c,'synonym_cd');
-										o.totalnum = i2b2.h.getXNodeVal(c,'totalnum');
-										*/
-										
 										//o.xmlOrig = c;
-									if (i2b2.h.getXNodeVal(pi[i2],'constrain_by_modifier') != null) {
-										
-										o.key = i2b2.h.getXNodeVal(pi[i2],'constrain_by_modifier/modifier_key');
-										o.applied_path = i2b2.h.getXNodeVal(pi[i2],'constrain_by_modifier/applied_path');
-										o.name = i2b2.h.getXNodeVal(pi[i2],'constrain_by_modifier/modifier_name');
-										o.parent = sdxDataNode.origData;
-										o.isModifier = true;
+										if (i2b2.h.XPath(pi[i2], 'descendant::constrain_by_modifier').length > 0) {
+									//if (i2b2.h.getXNodeVal(pi[i2],'constrain_by_modifier') != null) {
+										sdxDataNode.origData.parent = {};
+										sdxDataNode.origData.parent.key = o.key;
+										//sdxDataNode.origData.parent.LabValues = o.LabValues;
+										sdxDataNode.origData.parent.hasChildren = o.hasChildren;
+										sdxDataNode.origData.parent.level = o.level;
+										sdxDataNode.origData.parent.name = o.name;
+										sdxDataNode.origData.key = i2b2.h.getXNodeVal(pi[i2],'constrain_by_modifier/modifier_key');
+										sdxDataNode.origData.applied_path = i2b2.h.getXNodeVal(pi[i2],'constrain_by_modifier/applied_path');
+										sdxDataNode.origData.name = i2b2.h.getXNodeVal(pi[i2],'constrain_by_modifier/modifier_name');
+										sdxDataNode.origData.isModifier = true;
+										this.hasModifier = true;
 										
 										// Lab Values processing
 										var lvd = i2b2.h.XPath(pi[i2], 'descendant::constrain_by_modifier/constrain_by_value');
 										if (lvd.length>0){
 											lvd = lvd[0];
 											// pull the LabValue definition for concept
-											/*var lvdef = i2b2.h.XPath(c, "descendant::metadataxml/ValueMetadata[Loinc]");
-											if (lvdef.length > 0) {
-												lvdef = lvdef[0];
-											} else {
-												lvdef = false;
-											}
-											*/
+
 											// extract & translate
 											var t = i2b2.h.getXNodeVal(lvd,"value_constraint");
 											o.ModValues = {};
@@ -331,7 +274,11 @@ function QueryToolController() {
 													o.ModValues.MatchBy = "VALUE";
 													try {
 														o.ModValues.ValueEnum = eval("(Array"+t+")");
+														o.ModValues.GeneralValueType = "ENUM";													
 													} catch(e) {
+														o.LabValues.StringOp = i2b2.h.getXNodeVal(lvd,"value_operator");
+														o.LabValues.ValueString = t;
+														
 													//	i2b2.h.LoadingMask.hide();
 													//	console.error("Conversion Failed: Lab Value data = "+t);
 													}
@@ -345,7 +292,7 @@ function QueryToolController() {
 											}		
 										}
 										// sdx encapsulate
-										var sdxDataNode = i2b2.sdx.Master.EncapsulateData('CONCPT',o);
+										//var sdxDataNode = i2b2.sdx.Master.EncapsulateData('CONCPT',o);
 										if (o.ModValues) {
 											// We do want 2 copies of the Lab Values: one is original from server while the other one is for user manipulation
 											sdxDataNode.ModValues = o.ModValues;
@@ -448,6 +395,8 @@ function QueryToolController() {
 						options['chk_'+t2[i].value] = t2[i].checked;
 					}
 				}				
+				$('queryName').innerHTML = queryNameInput.value;
+				i2b2.CRC.model.queryCurrent.name = queryNameInput.value;
 				i2b2.CRC.ctrlr.QT._queryRun(queryNameInput.value, options);
 			}
 		}
@@ -455,8 +404,22 @@ function QueryToolController() {
 		this._queryPromptRun(handleSubmit);
 		// autogenerate query name
 		var myDate=new Date();
-		var ds = myDate.toUTCString();
-		var ts = ds.substring(ds.length-4,ds.length-12);
+		
+		
+		var hours = myDate.getHours()
+		if (hours < 10){
+			hours = "0" + hours
+		}
+		var minutes = myDate.getMinutes()
+		if (minutes < 10){
+			minutes = "0" + minutes
+		}
+		var seconds = myDate.getSeconds()
+		if (seconds < 10){
+			seconds = "0" + seconds
+		}
+		//var ds = myDate.toLocaleString();
+		var ts = hours + ":" + minutes + ":" + seconds; //ds.substring(ds.length-5,ds.length-13);
 		var defQuery = this._getQueryXML.call(this);
 		var qn = defQuery.queryAutoName+'@'+ts;
 		// display name
@@ -652,9 +615,9 @@ function QueryToolController() {
 		// build Query XML
 		var s = '<query_definition>\n';
 		s += '\t<query_name>' + i2b2.h.Escape(queryName) + '</query_name>\n';
-		if (this.queryTiming == "SAME")
+		if (this.queryTiming == "SAMEVISIT")
 		{
-			s += '\t<query_timing>SAME</query_timing>\n';			
+			s += '\t<query_timing>SAMEVISIT</query_timing>\n';			
 		} else if (this.queryTiming == "ANY") {
 			s += '\t<query_timing>ANY</query_timing>\n';						
 		} else {
@@ -689,25 +652,32 @@ function QueryToolController() {
 				s += '\t\t<item>\n';
 					switch(sdxData.sdxInfo.sdxType) {
 					case "QM":	
-						s += '\t\t\t<item_key>query_master_id:' + sdxData.origData.id + '</item_key>\n';
-						s += '\t\t\t<item_name>' + sdxData.origData.name + '</item_name>\n';
+						s += '\t\t\t<item_key>masterid:' + sdxData.origData.id + '</item_key>\n';
+						s += '\t\t\t<item_name>' + sdxData.origData.title + '</item_name>\n';
 						s += '\t\t\t<tooltip>' + sdxData.origData.name + '</tooltip>\n';
+						s += '\t\t\t<item_is_synonym>false</item_is_synonym>\n';
+						s += '\t\t\t<hlevel>0</hlevel>\n';
 					break;
 					case "PRS":	
-						s += '\t\t\t<item_key>patient_set_coll_id:' + sdxData.origData.PRS_id + '</item_key>\n';
-						s += '\t\t\t<item_name>' + sdxData.origData.titleCRC + '</item_name>\n';
-						s += '\t\t\t<tooltip>' + sdxData.origData.titleCRC + '</tooltip>\n';
+						s += '\t\t\t<item_key>patient_set_coll_id:' + sdxData.sdxInfo.sdxKeyValue + '</item_key>\n';
+						s += '\t\t\t<item_name>' + sdxData.sdxInfo.sdxDisplayName + '</item_name>\n';
+						s += '\t\t\t<tooltip>' + sdxData.sdxInfo.sdxDisplayName + '</tooltip>\n';
+						s += '\t\t\t<item_is_synonym>false</item_is_synonym>\n';
+						s += '\t\t\t<hlevel>0</hlevel>\n';
 					break;
 					case "ENS":	
-						s += '\t\t\t<item_key>patient_set_enc_id:' + sdxData.origData.PRS_id + '</item_key>\n';
-						s += '\t\t\t<item_name>' + sdxData.origData.titleCRC + '</item_name>\n';
-						s += '\t\t\t<tooltip>' + sdxData.origData.titleCRC + '</tooltip>\n';
+						s += '\t\t\t<item_key>patient_set_enc_id:' + sdxData.sdxInfo.sdxKeyValue + '</item_key>\n';
+						s += '\t\t\t<item_name>' + sdxData.sdxInfo.sdxDisplayName + '</item_name>\n';
+						s += '\t\t\t<tooltip>' + sdxData.sdxInfo.sdxDisplayName + '</tooltip>\n';
+						s += '\t\t\t<item_is_synonym>false</item_is_synonym>\n';
+						s += '\t\t\t<hlevel>0</hlevel>\n';
 					break;
 					default:
 						if (sdxData.origData.isModifier) {
 							s += '\t\t\t<hlevel>' + sdxData.origData.level + '</hlevel>\n';
 							s += '\t\t\t<item_key>' + sdxData.origData.parent.key + '</item_key>\n';
-							s += '\t\t\t<item_name>' + (sdxData.origData.newName != null ? sdxData.origData.newName : sdxData.origData.name) + '</item_name>\n';
+							s += '\t\t\t<item_name>' +  (sdxData.origData.parent.name != null ? sdxData.origData.parent.name : sdxData.origData.name) + '</item_name>\n';
+							// (sdxData.origData.newName != null ? sdxData.origData.newName : sdxData.origData.name) + '</item_name>\n';
 							s += '\t\t\t<tooltip>' + sdxData.origData.tooltip + '</tooltip>\n';
 							s += '\t\t\t<item_icon>' + sdxData.origData.hasChildren + '</item_icon>\n';
 							s += '\t\t\t<class>ENC</class>';
@@ -804,6 +774,10 @@ function QueryToolController() {
 										s += '\t\t\t\t<value_type>TEXT</value_type>\n';
 										s += '\t\t\t\t<value_constraint>'+sEnum+'</value_constraint>\n';
 										s += '\t\t\t\t<value_operator>IN</value_operator>\n';								
+									} else if (lvd.GeneralValueType=="STRING") {
+										s += '\t\t\t\t<value_type>TEXT</value_type>\n';
+										s += '\t\t\t\t<value_operator>'+lvd.StringOp+'</value_operator>\n';
+										s += '\t\t\t\t<value_constraint><![CDATA['+i2b2.h.Escape(lvd.ValueString)+']]></value_constraint>\n';
 									} else {
 										s += '\t\t\t\t<value_type>'+lvd.GeneralValueType+'</value_type>\n';
 										s += '\t\t\t\t<value_unit_of_measure>'+lvd.UnitsCtrl+'</value_unit_of_measure>\n';
@@ -1170,16 +1144,27 @@ function QueryToolController() {
 			"<tr>"+
 			"<td style='background:#6677AA none repeat scroll 0%;border:1px solid #667788;'>"+
 			"<span style='color:#FFFFFF;font-weight:bold;font-family:arial,helvetica;font-size:13px;'>"+
-			"Query Name: "+ v_i2b2_quey_name +"</span></td></tr>";
-			
-			
+			"Query Name: "+ v_i2b2_quey_name + "<br>Temporal Constraint: ";
+				
+			var v_querytiming = i2b2.CRC.ctrlr.QT.queryTiming;
+			if  (v_querytiming == "ANY")
+			{
+					win_html_inner += "Treat all groups independently";
+			} else if  (v_querytiming == "SAMEVISIT") {
+					win_html_inner += "Selected groups occur in the same financial encounter";
+			} else {
+					win_html_inner +=  "Items Instance will be the same";
+			}
+
+			win_html_inner += "</span></td></tr>";
+		
 			//Get information for each query panel
 			for(x =0; x < v_cnt_panels; x++){
 				var v_dateTo 	= i2b2.CRC.model.queryCurrent.panels[x].dateTo;
 				var v_dateFrom 	= i2b2.CRC.model.queryCurrent.panels[x].dateFrom;
 				var v_exclude	= i2b2.CRC.model.queryCurrent.panels[x].exclude;
 				var v_occurs	= i2b2.CRC.model.queryCurrent.panels[x].occurs;
-				
+				var v_timing	= i2b2.CRC.model.queryCurrent.panels[x].timing;
 				var v_items 	= i2b2.CRC.model.queryCurrent.panels[x].items;
 				
 				if((x % 2) == 0){
@@ -1196,7 +1181,7 @@ function QueryToolController() {
 				   (v_dateTo == undefined)  ||
 				   (v_dateTo == false)
 				){
-				  v_strDateTo = false;				   
+				  v_strDateTo = "none";				   
 				}
 				else{
 				  v_strDateTo = 
@@ -1205,12 +1190,37 @@ function QueryToolController() {
 				  	v_dateTo.Year;
 				}
 
+
+				//QueryTiming
+				if (v_querytiming == "ANY")
+				{
+						v_timing = "Treat Independently";
+						
+				} else if (v_querytiming == "SAMEVISIT")
+				{
+					if (v_timing == "ANY")
+					{
+						v_timing = "Treat Independently";							
+					} else {
+						v_timing = "Occurs in Same Encounter";													
+					}
+				} else 
+				{
+					if (v_timing == "ANY")
+					{
+						v_timing = "Treat Independently";							
+					} else {
+						v_timing = "Items Instance will be the same";													
+					}
+				}
+
+
 				//Handle JS Dates
 				if((v_dateFrom == null) ||
 				   (v_dateFrom == undefined)  ||
 				   (v_dateFrom == false)
 				){
-				  v_strDateFrom = false;				   
+				  v_strDateFrom = "none";				   
 				}
 				else{
 				  v_strDateFrom =
@@ -1239,25 +1249,31 @@ function QueryToolController() {
 				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'>"+
 				v_strDateFrom +
 				"</span>"+
-				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'> | </span>"+
+				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'> </span>"+
 				"<span style='color:black;font-weight:bold;font-family:arial,helvetica;font-size:11px;'>"+
 				"&nbsp; Date To: &nbsp;</span>"+
 				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'>"+
 				v_strDateTo +
 				"</span>"+
-				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'> | </span>"+
+				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'> </span>"+
 				"<!--Excluded-->"+
 				"<span style='color:black;font-weight:bold;font-family:arial,helvetica;font-size:11px;'>"+
 				"&nbsp; Excluded? &nbsp;</span>"+
 				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'>"+
 				v_exclude +
 				"</span>"+
-				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'> | </span>"+
+				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'> </span>"+
 				"<span style='color:black;font-weight:bold;font-family:arial,helvetica;font-size:11px;'>"+
 				"&nbsp; Occurs X times: &nbsp;</span>"+
-				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'>"+
+				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'>&gt; "+
 				v_occurs +
 				"</span>"+
+				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'> </span>"+
+				"<span style='color:black;font-weight:bold;font-family:arial,helvetica;font-size:11px;'>"+
+				"&nbsp; Temporal Constraint: &nbsp;</span>"+
+				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'>"+
+				v_timing +
+				"</span>"+				
 				"</td>"+
 				"</tr>";
 				

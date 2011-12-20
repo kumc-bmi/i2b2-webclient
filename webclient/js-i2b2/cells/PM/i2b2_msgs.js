@@ -23,14 +23,14 @@ i2b2.PM.cfg.msgs.getUserAuth = '<?xml version="1.0" encoding="UTF-8" standalone=
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -77,14 +77,14 @@ i2b2.PM.cfg.msgs.setProjectRequest = '<?xml version="1.0" encoding="UTF-8" stand
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -154,14 +154,14 @@ i2b2.PM.cfg.msgs.getAllProjectRequest = '<?xml version="1.0" encoding="UTF-8" st
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -231,14 +231,14 @@ i2b2.PM.cfg.msgs.getProjectRequest = '<?xml version="1.0" encoding="UTF-8" stand
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -311,14 +311,14 @@ i2b2.PM.cfg.msgs.getApproval = '<?xml version="1.0" encoding="UTF-8" standalone=
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -395,14 +395,14 @@ i2b2.PM.cfg.msgs.getAllHive = '<?xml version="1.0" encoding="UTF-8" standalone="
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -469,14 +469,14 @@ i2b2.PM.cfg.msgs.getAllParam = '<?xml version="1.0" encoding="UTF-8" standalone=
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -546,14 +546,14 @@ i2b2.PM.cfg.msgs.getAllCell = '<?xml version="1.0" encoding="UTF-8" standalone="
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -621,14 +621,14 @@ i2b2.PM.cfg.msgs.getAllProject = '<?xml version="1.0" encoding="UTF-8" standalon
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -696,14 +696,14 @@ i2b2.PM.cfg.msgs.getAllRole = '<?xml version="1.0" encoding="UTF-8" standalone="
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -768,14 +768,14 @@ i2b2.PM.cfg.msgs.getAllRoleUser = '<?xml version="1.0" encoding="UTF-8" standalo
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -842,14 +842,14 @@ i2b2.PM.cfg.msgs.getAllUser = '<?xml version="1.0" encoding="UTF-8" standalone="
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -893,6 +893,7 @@ i2b2.PM.cfg.parsers.getAllUser = function() {
 			tmpRec.user_name = i2b2.h.getXNodeVal(c[i], "user_name");
 			tmpRec.email = i2b2.h.getXNodeVal(c[i], "email");
 			tmpRec.password = i2b2.h.getXNodeVal(c[i], "password");
+			tmpRec.is_admin = i2b2.h.getXNodeVal(c[i], "is_admin");
 			this.model.push(tmpRec);
 		}
 	} else {
@@ -914,14 +915,14 @@ i2b2.PM.cfg.msgs.getAllApproval = '<?xml version="1.0" encoding="UTF-8" standalo
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -996,14 +997,14 @@ i2b2.PM.cfg.msgs.getAllGlobal = '<?xml version="1.0" encoding="UTF-8" standalone
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1067,14 +1068,14 @@ i2b2.PM.cfg.msgs.getUser = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1117,6 +1118,7 @@ i2b2.PM.cfg.parsers.getUser = function() {
 			tmpRec.user_name = i2b2.h.getXNodeVal(c[i], "user_name");
 			tmpRec.email = i2b2.h.getXNodeVal(c[i], "email");
 			tmpRec.password = i2b2.h.getXNodeVal(c[i], "password");
+			tmpRec.is_admin = i2b2.h.getXNodeVal(c[i], "is_admin");			
 			this.model.push(tmpRec);
 		}
 	} else {
@@ -1136,14 +1138,14 @@ i2b2.PM.cfg.msgs.getCell = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1208,14 +1210,14 @@ i2b2.PM.cfg.msgs.getParam = '<?xml version="1.0" encoding="UTF-8" standalone="ye
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1281,14 +1283,14 @@ i2b2.PM.cfg.msgs.getGlobal = '<?xml version="1.0" encoding="UTF-8" standalone="y
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1355,14 +1357,14 @@ i2b2.PM.cfg.msgs.getProject = '<?xml version="1.0" encoding="UTF-8" standalone="
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1446,14 +1448,14 @@ i2b2.PM.cfg.msgs.setRole = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1502,14 +1504,14 @@ i2b2.PM.cfg.msgs.setHive = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1557,14 +1559,14 @@ i2b2.PM.cfg.msgs.setGlobal = '<?xml version="1.0" encoding="UTF-8" standalone="y
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1612,14 +1614,14 @@ i2b2.PM.cfg.msgs.setParam = '<?xml version="1.0" encoding="UTF-8" standalone="ye
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1668,14 +1670,14 @@ i2b2.PM.cfg.msgs.setCell = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1725,14 +1727,14 @@ i2b2.PM.cfg.msgs.setProject = '<?xml version="1.0" encoding="UTF-8" standalone="
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1782,14 +1784,14 @@ i2b2.PM.cfg.msgs.setUser = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1821,6 +1823,7 @@ i2b2.PM.cfg.msgs.setUser = '<?xml version="1.0" encoding="UTF-8" standalone="yes
 '			<user_name>{{{user_name}}}</user_name>\n'+
 '			<full_name>{{{full_name}}}</full_name>\n'+
 '			<email>{{{email}}}</email>\n'+
+'			<is_admin>{{{is_admin}}}</is_admin>\n'+
 '			{{{password}}}\n'+
 '        </pm:set_user>\n'+
 '    </message_body>\n'+
@@ -1839,14 +1842,14 @@ i2b2.PM.cfg.msgs.setApproval = '<?xml version="1.0" encoding="UTF-8" standalone=
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1897,14 +1900,14 @@ i2b2.PM.cfg.msgs.deleteGlobal = '<?xml version="1.0" encoding="UTF-8" standalone
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1948,14 +1951,14 @@ i2b2.PM.cfg.msgs.deleteHive = '<?xml version="1.0" encoding="UTF-8" standalone="
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -1999,14 +2002,14 @@ i2b2.PM.cfg.msgs.deleteCell = '<?xml version="1.0" encoding="UTF-8" standalone="
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -2051,14 +2054,14 @@ i2b2.PM.cfg.msgs.deleteProject = '<?xml version="1.0" encoding="UTF-8" standalon
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -2102,14 +2105,14 @@ i2b2.PM.cfg.msgs.deleteRole = '<?xml version="1.0" encoding="UTF-8" standalone="
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -2157,14 +2160,14 @@ i2b2.PM.cfg.msgs.deleteUser = '<?xml version="1.0" encoding="UTF-8" standalone="
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -2207,14 +2210,14 @@ i2b2.PM.cfg.msgs.deleteApproval = '<?xml version="1.0" encoding="UTF-8" standalo
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -2257,14 +2260,14 @@ i2b2.PM.cfg.msgs.deleteParam = '<?xml version="1.0" encoding="UTF-8" standalone=
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
@@ -2308,14 +2311,14 @@ i2b2.PM.cfg.msgs.setPassword = '<?xml version="1.0" encoding="UTF-8" standalone=
 '        <hl7_version_compatible>2.4</hl7_version_compatible>\n'+
 '        <sending_application>\n'+
 '            <application_name>i2b2 Project Management</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </sending_application>\n'+
 '        <sending_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+
 '        </sending_facility>\n'+
 '        <receiving_application>\n'+
 '            <application_name>Project Management Cell</application_name>\n'+
-'            <application_version>1.1</application_version>\n'+
+'            <application_version>' + i2b2.ClientVersion + '</application_version>\n'+
 '        </receiving_application>\n'+
 '        <receiving_facility>\n'+
 '            <facility_name>i2b2 Hive</facility_name>\n'+

@@ -262,6 +262,11 @@ i2b2.ProjectRequest.Init = function(loadedDiv) {
 		}
 	});
 	*/
+		z = $('anaPluginViewFrame').getHeight() - 34;
+	$$('DIV#ProjectRequest-TABS DIV.ProjectRequest-MainContent')[0].style.height = z;
+	$$('DIV#ProjectRequest-TABS DIV.ProjectRequest-MainContent')[1].style.height = z;
+	$$('DIV#ProjectRequest-TABS DIV.ProjectRequest-MainContent')[2].style.height = z;
+
 
 };
 

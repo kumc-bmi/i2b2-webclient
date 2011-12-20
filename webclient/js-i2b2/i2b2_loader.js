@@ -19,6 +19,9 @@ if (undefined==i2b2.hive.cfg) { i2b2.hive.cfg = {}; }
 if (undefined==i2b2.h) { i2b2.h = {}; }
 if (undefined==i2b2.hive.base_classes) { i2b2.hive.base_classes = {}; }
 
+
+i2b2.ClientVersion = "1.6"; 
+
 //     ||
 //     ||		
 //   \\||//		Configure the loading of cells BELOW
@@ -38,31 +41,26 @@ i2b2.hive.tempCellsList = [
 		   forceLoading: true,
 		   forceConfigMsg: { params: [] }
 		},
-		{ code:	"ExampHello",
-		   forceLoading: true,
-		   forceConfigMsg: { params: [] },
-		   forceDir: "cells/plugins/examples"
-		},
-		{ code:	"ExampTabs",
-		   forceLoading: true,
-		   forceConfigMsg: { params: [] },
-		   forceDir: "cells/plugins/examples"
-		},
-		{ code:	"ExampPDO",
-		   forceLoading: true,
-		   forceConfigMsg: { params: [] },
-		   forceDir: "cells/plugins/examples"
-		},
-		{ code:	"ExampComm",
-		   forceLoading: true,
-		   forceConfigMsg: { params: [] },
-		   forceDir: "cells/plugins/examples"
-		},
-                { code: "ProjectRequest",
-                   forceLoading: true,
-                   forceConfigMsg: { params: [] },
-                   forceDir: "cells/plugins/standard"
-                },
+//		{ code:	"ExampHello",
+//		   forceLoading: true,
+//		   forceConfigMsg: { params: [] },
+//		   forceDir: "cells/plugins/examples"
+//		},
+//		{ code:	"ExampTabs",
+//		   forceLoading: true,
+//		   forceConfigMsg: { params: [] },
+//		   forceDir: "cells/plugins/examples"
+//		},
+//		{ code:	"ExampPDO",
+//		   forceLoading: true,
+//		   forceConfigMsg: { params: [] },
+//		   forceDir: "cells/plugins/examples"
+//		},
+//		{ code:	"ExampComm",
+//		   forceLoading: true,
+//		   forceConfigMsg: { params: [] },
+//		   forceDir: "cells/plugins/examples"
+//		},
 		{ code:	"Dem1Set",
 		   forceLoading: true,
 		   forceConfigMsg: { params: [] },
@@ -77,7 +75,13 @@ i2b2.hive.tempCellsList = [
 		   forceLoading: true,
 		   forceConfigMsg: { params: [] },
 		   forceDir: "cells/plugins/standard"
-		}
+		},
+        { code: "ProjectRequest",
+            forceLoading: true,
+            forceConfigMsg: { params: [] },
+            forceDir: "cells/plugins/standard"
+        }
+		
 	];
 // ================================================================================================== //
 //     ^^
@@ -130,6 +134,7 @@ i2b2.Init = function() {
 		return false;
 	} else {
 		var successHandler = function(oData) { 
+		
 			//code to execute when all requested scripts have been 
 			//loaded; this code can make use of the contents of those 
 			//scripts, whether it's functional code or JSON data. 
