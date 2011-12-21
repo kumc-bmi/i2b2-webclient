@@ -102,3 +102,8 @@ function _make_dialog() {
 	}
     }
 }
+
+//Override logout
+i2b2.PM.doLogout = function() {
+    window.location.href = '/heron/';
+}
