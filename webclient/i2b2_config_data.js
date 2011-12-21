@@ -6,22 +6,32 @@
 	lstDomains: [
 		{ 
 		  domain: "i2b2demo",
-		  name: "I2B2 Query and Analysis",
+		  name: "I2B2 1.6 Query/Analysis Debug",
 		  urlCellPM: "http://127.0.0.1:8080/i2b2/rest/PMService/",
 		  allowAnalysis: true,
 		  adminOnly: false,
-		  debug: false,
-		  isSHRINE: true
+		  debug: true,
+		  isSHRINE: false
 			},
 		{ 
 		  domain: "i2b2demo",
-		  name: "I2B2 Admin",
+		  name: "I2B2 1.6 Query/Analysis",
 		  urlCellPM: "http://127.0.0.1:8080/i2b2/rest/PMService/",
-		  allowAnalysis: false,
-		  adminOnly: true,
+		  allowAnalysis: true,
+		  adminOnly: false,
+			/*debug: true,*/
 		  debug: false,
-		  isSHRINE: true
-		}
+		  isSHRINE: false
+			},
+		{ 
+		  domain: "i2b2demo",
+		  name: "I2B2 1.6 Admin",
+		  urlCellPM: "http://127.0.0.1:8080/i2b2/rest/PMService/",
+		  allowAnalysis: true,
+		  adminOnly: false,
+		  debug: true,
+		  isSHRINE: false
+			},
 	]
 	//-------------------------------------------------------------------------------------------
 }
