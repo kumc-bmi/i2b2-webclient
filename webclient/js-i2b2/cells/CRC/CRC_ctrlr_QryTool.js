@@ -93,7 +93,9 @@ function QueryToolController() {
 					po.panel_num = i2b2.h.getXNodeVal(qp[i1],'panel_number');
 					var t = i2b2.h.getXNodeVal(qp[i1],'invert');
 					po.exclude = (t=="1");
-					po.timing = i2b2.h.getXNodeVal(qp[i1],'panel_timing');
+					// 1.4 queries don't have panel_timing, and undefined doesn't work
+					// so default to ANY
+					po.timing = i2b2.h.getXNodeVal(qp[i1],'panel_timing') || 'ANY';
 					i2b2.CRC.view.QT.setPanelTiming(po.panel_num, po.timing);
 					var t = i2b2.h.getXNodeVal(qp[i1],'total_item_occurrences');
 					po.occurs = (1*t)-1;
