@@ -214,6 +214,7 @@ i2b2.ONT.view.nav.setChecked = function(here) {
 
 
 i2b2.ONT.view.nav.doRefreshAll = function() { 
+	i2b2.ONT.ctrlr.gen.loadCategories();
 	i2b2.ONT.view.nav.PopulateCategories();
 }
 
