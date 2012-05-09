@@ -33,9 +33,9 @@ i2b2.hive.tempCellsList = [
 		{ code: "PM",
 		  forceLoading: true 			// <----- this must be set to true for the PM cell!
 		},
-		{ code: "ONT"	},
-		{ code: "CRC"	},
-		{ code: "WORK"},
+//		{ code: "ONT"	},
+//		{ code: "CRC"	},
+//		{ code: "WORK"},
 //		{ code: "SHRINE"},
 		{ code:	"PLUGINMGR",
 		   forceLoading: true,
@@ -64,21 +64,25 @@ i2b2.hive.tempCellsList = [
 		{ code:	"Dem1Set",
 		   forceLoading: true,
 		   forceConfigMsg: { params: [] },
+		   roles: [ "DATA_LDS", "DATA_DEID", "DATA_PROT" ],
 		   forceDir: "cells/plugins/standard"
 		},
 		{ code:	"Dem2Set",
 		   forceLoading: true,
 		   forceConfigMsg: { params: [] },
+		   roles: [ "DATA_LDS", "DATA_DEID", "DATA_PROT" ],
 		   forceDir: "cells/plugins/standard"
 		},
 		{ code:	"Timeline",
 		   forceLoading: true,
 		   forceConfigMsg: { params: [] },
+		   roles: [ "DATA_LDS", "DATA_DEID", "DATA_PROT" ],
 		   forceDir: "cells/plugins/standard"
 		},
 		{ code: "ProjectRequest",
 		  forceLoading: true,
 		  forceConfigMsg: { params: [] },
+		   roles: [ "DATA_LDS", "DATA_DEID", "DATA_PROT" ],
 		  forceDir: "cells/plugins/standard"
 		},
                 { code: "KaplanMeierStat",
@@ -126,6 +130,11 @@ i2b2.Init = function() {
 			i2b2.hive.cfg.lstCells[i2b2.hive.tempCellsList[i].code].forceConfigMsg = false;
 			if (i2b2.hive.tempCellsList[i].forceConfigMsg) {
 				i2b2.hive.cfg.lstCells[i2b2.hive.tempCellsList[i].code].forceConfigMsg = Object.clone(i2b2.hive.tempCellsList[i].forceConfigMsg);
+			}
+			if (i2b2.hive.tempCellsList[i].roles) {
+				i2b2.hive.cfg.lstCells[i2b2.hive.tempCellsList[i].code].roles = i2b2.hive.tempCellsList[i].roles;
+			} else {
+				i2b2.hive.cfg.lstCells[i2b2.hive.tempCellsList[i].code].roles = ["DATA_OBFSC"];							
 			}
 			i2b2.hive.cfg.lstCells[i2b2.hive.tempCellsList[i].code].params = {};
 		}

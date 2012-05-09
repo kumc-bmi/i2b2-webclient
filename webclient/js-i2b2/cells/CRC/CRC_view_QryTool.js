@@ -137,11 +137,12 @@ i2b2.CRC.view.QT.ContextMenuPreprocess = function(p_oEvent) {
 					} else {
 						// For lab tests...
 						
-
-						var cdetails = i2b2.ONT.ajax.GetTermInfo("CRC:QueryTool", {concept_key_value:i2b2.CRC.view.QT.contextRecord.origData.key, ont_synonym_records: true, ont_hidden_records: true} );
-										var c = i2b2.h.XPath(cdetails.refXML, 'descendant::concept');
-						if (c.length > 0) {
-								i2b2.CRC.view.QT.contextRecord.origData.xmlOrig = c[0];
+						if (!Object.isUndefined(i2b2.CRC.view.QT.contextRecord.origData.key)) {
+							var cdetails = i2b2.ONT.ajax.GetTermInfo("CRC:QueryTool", {concept_key_value:i2b2.CRC.view.QT.contextRecord.origData.key, ont_synonym_records: true, ont_hidden_records: true} );
+											var c = i2b2.h.XPath(cdetails.refXML, 'descendant::concept');
+							if (c.length > 0) {
+									i2b2.CRC.view.QT.contextRecord.origData.xmlOrig = c[0];
+							}
 						}
 
 						var lvMetaDatas = i2b2.h.XPath(i2b2.CRC.view.QT.contextRecord.origData.xmlOrig, 'metadataxml/ValueMetadata[string-length(Version)>0]');
@@ -288,7 +289,7 @@ i2b2.CRC.view.QT.Resize = function(e) {
 	// resize our visual components
 	$('crcQueryToolBox').style.left = w-550;
 	if (i2b2.WORK && i2b2.WORK.isLoaded) {
-		var z = h - 392 + 44 - 17 - 25;
+		var z = h - 400; //392 + 44 - 17 - 25;
 		if (i2b2.CRC.view.QT.isZoomed) { z += 196 - 44; }	
 	} else {
 		var z = h - 392 - 17 - 25;
@@ -740,73 +741,86 @@ i2b2.events.afterCellInit.subscribe(
 			
 				queryTimingButton.set("label", sText);		
 				
-			if (sValue == "SAMEVISIT") {
+				if (sValue == "SAMEVISIT") {
 					i2b2.CRC.ctrlr.QT.queryTiming = "SAMEVISIT";
 					for (var i=0; i<length; i++) {
 						//$("queryPanelTimingB" + (i+1) +  "-button").disabled = false;					
 						//$("queryPanelTimingB" + (i+1) +  "-button").innerHTML = "Occurs in Same Encounter";	
-				i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set('disabled', false);					
-				i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set("label",  "Occurs in Same Encounter");	
-				//if (i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().getItem(1) != undefined) {
-				//	i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().getItem(1).cfg.setProperty("text", "Occurs in Same Encounter");
-				//}
-				
-				if (YAHOO.util.Dom.inDocument(i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().element)) {
-
-					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().clearContent();
-					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
-										{ text: "Treat Independently", value: "ANY"}]);	
-					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
-										{ text: "Occurs in Same Encounter", value: "SAME" }]);	 
-					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().render();
-				} else {
-					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.itemData ={ text: "Treat Independently", value: "ANY",
-										text: "Occurs in Same Encounter", value: "SAME" };
-				}
-				//i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().removeItem(1);		
-				//i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
-			//				        { text: "Occurs in Same Encounter", value: "SAME" } 	 
-			 //   ]); 
-						
-						i2b2.CRC.ctrlr.QT.panelControllers[i].doTiming(sValue);
+						i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set('disabled', false);					
+						i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set("label",  "Occurs in Same Encounter");	
+						if (YAHOO.util.Dom.inDocument(i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().element)) {
+		
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().clearContent();
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
+												{ text: "Treat Independently", value: "ANY"}]);	
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
+												{ text: "Occurs in Same Encounter", value: "SAMEVISIT" }]);	 
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 												
+												{ text: "Items Instance will be the same", value: "SAMEINSTANCENUM" }]);	 
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().render();
+						} else {
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.itemData ={ text: "Treat Independently", value: "ANY",
+												text: "Occurs in Same Encounter", value: "SAMEVISIT",
+											    text: "Items Instance will be the same", value: "SAMEINSTANCENUM"  };
+						}
+								i2b2.CRC.ctrlr.QT.panelControllers[i].doTiming(sValue);
 					}
 	
 				} else if (sValue == "ANY") {
 					i2b2.CRC.ctrlr.QT.queryTiming = "ANY";
 					
 					for (var i=0; i<length; i++) {
-			//			$("queryPanelTimingB" + (i+1) +  "-button").disabled = true;	
-			//			$("queryPanelTimingB" + (i+1) +  "-button").innerHTML = "Treat Independently";	
 						i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set("label", "Treat Independently");		
 						i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set('disabled', true);				
 						i2b2.CRC.ctrlr.QT.panelControllers[i].doTiming(sValue);
-	
 					}
+				} else if (sValue == "ENCOUNTER") {
+					i2b2.CRC.ctrlr.QT.queryTiming = "ENCOUNTER";
+					for (var i=0; i<length; i++) {
+						//$("queryPanelTimingB" + (i+1) +  "-button").disabled = false;					
+						//$("queryPanelTimingB" + (i+1) +  "-button").innerHTML = "Occurs in Same Encounter";	
+						i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set('disabled', false);					
+						i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set("label",  "Treat Independently");	
+						if (YAHOO.util.Dom.inDocument(i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().element)) {
+		
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().clearContent();
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
+												{ text: "Treat Independently", value: "ANY"}]);	
+							for (var j=0; j<length; j++) {
+								i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
+												{ text: "Occurs (" + (j+1) + ")", value: "OCCUR"+j }]);	 
+							}
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().render();
+						} else {
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.itemData ={ text: "Treat Independently", value: "ANY",
+												text: "Occurs", value: "OCCUR0" };
+						}
+						i2b2.CRC.ctrlr.QT.panelControllers[i].doTiming(sValue);
+					}					
+								
 				} else {
 					i2b2.CRC.ctrlr.QT.queryTiming = "SAMEINSTANCENUM";
 					for (var i=0; i<length; i++) {
-	//		  i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming =  new YAHOO.widget.Button("queryPanelTimingB"+(i+1), 
-	//						{ type: "menu", menu: "menubutton1select", name:"querytiming" });
-				//qryButtonTiming.set('disabled', true);
-	//			 i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.on("selectedMenuItemChange", onSelectedMenuItemChange); 
+
+						i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set('disabled', false);					
+						i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set("label", sText);
 						
-
-				i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set('disabled', false);					
-				i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.set("label", sText);
-				
-				if (YAHOO.util.Dom.inDocument(i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().element)) {
-
-					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().clearContent();
-					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
-										{ text: "Treat Independently", value: "ANY"}]);	
-					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
-										{ text: "Items Instance will be the same", value: "SAME" }]);	 
-					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().render();
-				} else {
-					i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.itemData =[{ text: "Treat Independently", value: "ANY"},
-										{text: "Items Instance will be the same", value: "SAME" }];
-				}				
-			
+						if (YAHOO.util.Dom.inDocument(i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().element)) {
+		
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().clearContent();
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
+												{ text: "Treat Independently", value: "ANY"}]);	
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 	 
+												{ text: "Occurs in Same Encounter", value: "SAMEVISIT" }]);	 
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().addItems([ 												
+												{ text: "Items Instance will be the same", value: "SAMEINSTANCENUM" }]);	 
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.getMenu().render();
+						} else {
+							i2b2.CRC.ctrlr.QT.panelControllers[i].refTiming.itemData =[{ text: "Treat Independently", value: "ANY"},
+												{ text: "Occurs in Same Encounter", value: "SAMEVISIT"} ,
+											    { text: "Items Instance will be the same", value: "SAMEINSTANCENUM"  }];
+						}				
+					
 					
 						i2b2.CRC.ctrlr.QT.panelControllers[i].doTiming(sValue);
 					}
@@ -828,6 +842,16 @@ i2b2.events.afterCellInit.subscribe(
 						panelNumber = panelNumber.substring( panelNumber.length-1, panelNumber.length-0);
 				 			i2b2.CRC.ctrlr.QT.panelControllers[panelNumber-1].doTiming(oMenuItem.value);	
 					}
+					if (oMenuItem.value.substring(0,5) == "OCCUR") {
+						this.setStyle('width', 130);
+						$("qryButtonLimitB1").show();
+						//$('qryPanelTiming Button').style.width = 120;
+					} else {
+						this.setStyle('width', 160);
+						$("qryButtonLimitB1").hide();
+						//$('qryPanelTiming Button').style.width = 160;
+						//$(this._button.id).clientWidth = 160;
+					}
 				}; 
 				
 				//var panelControl = t.panelControllers[i];
@@ -848,6 +872,7 @@ i2b2.events.afterCellInit.subscribe(
 							{ type: "menu", menu: "menubutton1select", name:"querytiming" });
 				//qryButtonTiming.set('disabled', true);
 				 qryButtonTiming.on("selectedMenuItemChange", onSelectedMenuItemChange); 
+				 qryButtonTiming.setStyle('width', 160);
 
 				t.panelControllers[i].refTiming = qryButtonTiming;
 				t.panelControllers[i].refTiming.set('disabled', true);				

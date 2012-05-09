@@ -183,14 +183,87 @@ function i2b2_PanelController(parentCtrlr) {
 		if (i2b2.CRC.model.queryCurrent.panels.length==0) { return;}
 		var dm = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex];
 		if (undefined!==dm) {
+			
+			if (i2b2.CRC.ctrlr.QT.queryTiming == "ENCOUNTER")
+			{
+				$('constraintEncounterBased').show();
+				$('constraintTextBased').hide();
+			} else {
+					$('constraintEncounterBased').hide();
+					$('constraintTextBased').hide();
+			}
 			// load value
 			$('constraintOccursInput').value = dm.occurs;
 			// prep variables for JS closure
 			var qpi = this.panelCurrentIndex;
 			var cpc = this;
 			// show occurs window
+			if (!Object.isUndefined(this.modalOccurs)) { delete this.modalOccurs; } 
 			if (!this.modalOccurs) {
 				if (!Object.isUndefined(handleSubmit)) { delete handleSubmit; } 
+				
+				//init slider
+				var slider, 
+				 bg="slider-bg", thumb="slider-thumb", 
+				valuearea="slider-value", textfield="slider-converted-value";
+		
+				// The slider can move 0 pixels up
+				var topConstraint = 0;
+			
+				// The slider can move 200 pixels down
+				var bottomConstraint = 200;
+			
+				// Custom scale factor for converting the pixel offset into a real value
+				var scaleFactor = 2;
+			
+				// The amount the slider moves when the value is changed with the arrow
+				// keys
+				var keyIncrement = 10;
+			
+				var tickSize = 10;
+			
+				Event.onDOMReady(function() {
+			
+					slider = YAHOO.widget.Slider.getHorizSlider(bg, 
+									 thumb, topConstraint, bottomConstraint);
+			
+					// Sliders with ticks can be animated without YAHOO.util.Anim
+					slider.animate = true;
+					slider.setValue(dm.relevance * 2);
+			
+					slider.getRealValue = function() {
+						return Math.round(this.getValue() / scaleFactor);
+					}
+			
+					slider.subscribe("change", function(offsetFromStart) {
+			
+						var valnode = Dom.get(valuearea);
+						
+			
+						// Display the pixel value of the control
+						valnode.innerHTML =  slider.getRealValue()// offsetFromStart ;
+			// slider.getRealValue(); 
+			
+						//var fld = Dom.get(textfield);
+					});
+					Event.on(textfield, "keydown", function(e) {
+			
+						// set the value when the 'return' key is detected
+						if (Event.getCharCode(e) === 13) {
+							var v = parseFloat(this.value, 10);
+							v = (lang.isNumber(v)) ? v : 0;
+			
+							// convert the real value into a pixel offset
+							slider.setValue(Math.round(v/scaleFactor));
+						}
+					});
+					
+					// Use setValue to reset the value to white:
+					Event.on("putval", "click", function(e) {
+						slider.setValue(100, false); //false here means to animate if possible
+					});
+				});		
+				
 				var handleSubmit = function(){
 					var closure_qpi = qpi;
 					var closure_cpc = cpc;
@@ -198,12 +271,18 @@ function i2b2_PanelController(parentCtrlr) {
 					if (this.submit()) {
 						var pd = i2b2.CRC.model.queryCurrent.panels[closure_qpi];
 						pd.occurs = parseInt($('constraintOccursInput').value, 10);
+						pd.relevance = slider.getRealValue();
+						slider.setValue(0);
+						delete(slider);
 						closure_cpc._redrawButtons(pd);
 						i2b2.CRC.ctrlr.QT.doSetQueryName.call(this, '');
 					}
 				}
 				var handleCancel = function(){
 					this.cancel();
+				}
+				var handleHelp = function(){
+					alert("Help soon");
 				}
 				this.modalOccurs = new YAHOO.widget.SimpleDialog("constraintOccurs", {
 					width: "400px",
@@ -240,9 +319,72 @@ function i2b2_PanelController(parentCtrlr) {
 				};
 				this.modalOccurs.render(document.body);
 			}
+			//$('constraintOccurs_c').show();
 			this.modalOccurs.show();
+			//this.modalOccurs.visible = true;
 		}
 	}
+	
+	this.showLimit = function(iMinCount) {
+		if (i2b2.CRC.model.queryCurrent.panels.length==0) { return;}
+		var dm = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex];
+		if (undefined!==dm) {
+			
+			// prep variables for JS closure
+			var qpi = this.panelCurrentIndex;
+			var cpc = this;
+			// show occurs window
+			if (!Object.isUndefined(this.modalLimits)) { delete this.modalLimits } 
+			if (!this.modalLimits) {
+				if (!Object.isUndefined(handleSubmit)) { delete handleSubmit; } 
+			
+				var handleSubmit = function(){
+					var closure_qpi = qpi;
+					var closure_cpc = cpc;
+					// submit value(s)
+					if (this.submit()) {
+						var pd = i2b2.CRC.model.queryCurrent.panels[closure_qpi];
+						closure_cpc._redrawButtons(pd);
+						i2b2.CRC.ctrlr.QT.doSetQueryName.call(this, '');
+					}
+				}
+				var handleCancel = function(){
+					this.cancel();
+				}
+				var handleHelp = function(){
+					alert("Help soon");
+				}
+				this.modalLimits = new YAHOO.widget.SimpleDialog("constraintLimits", {
+					width: "400px",
+					fixedcenter: true,
+					constraintoviewport: true,
+					modal: true,
+					zindex: 700,
+					buttons: [{
+						text: "OK",
+						handler: handleSubmit,
+						isDefault: true
+					}, {
+						text: "Cancel",
+						handler: handleCancel
+					}, {
+						text: "Help",
+						handler: handleHelp
+					}]
+				});
+				$('constraintLimits').show();
+				this.modalLimits.validate = function(){
+					// now process the form data
+
+					return true;
+				};
+				this.modalLimits.render(document.body);
+			}
+			//$('constraintOccurs_c').show();
+			this.modalLimits.show();
+			//this.modalOccurs.visible = true;
+		}
+	}	
 
 // ================================================================================================== //
 	this.doExclude = function(bExclude) { 
@@ -397,7 +539,9 @@ function i2b2_PanelController(parentCtrlr) {
 								//mm ??not sure tvChildren[i].html = ' = '+i2b2.h.Escape(values.ValueFlag) + "</div></div>";
 									break;
 								case "VALUE":
-									if ((values.GeneralValueType=="ENUM") || (values.GeneralValueType=="TEXT")) {
+									if (values.GeneralValueType== "LARGESTRING") {
+										title = "";
+									} else if ((values.GeneralValueType=="ENUM") || (values.GeneralValueType=="TEXT")) {
 										try {
 											var sEnum = [];
 											for (var i2=0;i2<values.ValueEnum.length;i2++) {
@@ -418,7 +562,7 @@ function i2b2_PanelController(parentCtrlr) {
 											case "LT":
 												var numericOp = " < ";
 												break;
-											case "LTEQ":
+											case "LE":
 												var numericOp = " <= ";
 												break;
 											case "EQ":
@@ -427,7 +571,7 @@ function i2b2_PanelController(parentCtrlr) {
 											case "GT":
 												var numericOp = " > ";
 												break;
-											case "GTEQ":
+											case "GE":
 												var numericOp = " >= ";
 												break;
 												
@@ -674,7 +818,14 @@ function i2b2_PanelController(parentCtrlr) {
 										sEnum = ' =  ("'+sEnum+'")';
 										tvChildren[i].html = tt2 + sEnum + tt3 + "</div></div>";
 										rto.origData.newName += sEnum + tt3 ;
-									} else if (values.GeneralValueType=="STRING") {
+									} else if (values.GeneralValueType=="LARGESTRING") {
+										tvChildren[i].html = tt2 + ' [contains "' + i2b2.h.Escape(values.ValueString) + '"]' + tt3 + "</div></div>";
+										rto.origData.newName += ' [contains "' + i2b2.h.Escape(values.ValueString) + '"]' +  tt3;							
+									} else if (values.GeneralValueType=="STRING")  {
+										if (values.StringOp == undefined )
+										{
+											var stringOp = "";
+										} else {
 										switch(values.StringOp) {
 											case "LIKE[exact]":
 												var  stringOp = "Exact: ";
@@ -688,9 +839,10 @@ function i2b2_PanelController(parentCtrlr) {
 											case "LIKE[contains]":
 												var  stringOp = "Contains: ";
 												break;
-											case "":
+											default:
 												var stringOp = "";
 												break;
+										}
 										}
 										tvChildren[i].html = tt2 + ' ['+stringOp + i2b2.h.Escape(values.ValueString) + "]" + tt3 + "</div></div>";
 										rto.origData.newName += ' ['+stringOp + i2b2.h.Escape(values.ValueString) + "]" +  tt3;

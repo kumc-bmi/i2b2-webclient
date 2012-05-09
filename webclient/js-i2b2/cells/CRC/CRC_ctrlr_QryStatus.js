@@ -148,15 +148,13 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 						// found the query instance, extract the info
 						this.QI.status = i2b2.h.XPath(temp, 'descendant-or-self::query_status_type/name')[0].firstChild.nodeValue;
 						this.QI.statusID = i2b2.h.XPath(temp, 'descendant-or-self::query_status_type/status_type_id')[0].firstChild.nodeValue;
-					//	if (this.QI.status == "INCOMPLETE") {
-					//		// another poll is required
-					//		setTimeout("i2b2.CRC.ctrlr.currentQueryStatus.pollStatus()", this.polling_interval);
-					//	} else {
-							private_singleton_isRunning = false;
+						private_singleton_isRunning = false;
+						
+						i2b2.CRC.ajax.getQueryResultInstanceList_fromQueryInstanceId("CRC:QueryStatus", {qi_key_value: self.QI.id}, scopedCallbackQRS);
 							// force a final redraw
-							i2b2.CRC.ctrlr.currentQueryStatus.refreshStatus();
+					//		i2b2.CRC.ctrlr.currentQueryStatus.refreshStatus();
 							// refresh the query history window
-							i2b2.CRC.ctrlr.history.Refresh();
+					//		i2b2.CRC.ctrlr.history.Refresh();
 					//		}
 						break;
 					}
@@ -215,23 +213,13 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 					// deal with time/status setting
 					if (!rec.QRS_time) { rec.QRS_time = exetime; }
 					
-				//	if (rec.QRS_Status == "INCOMPLETE" || rec.QRS_Status == "WAITTOPROCESS" || rec.QRS_Status == "PROCESSING") {
-				//		// increment the running time only for parts that are still pending/processing
-				//		rec.QRS_time = exetime;
-				//	}
 					// set the proper title if it was not already set
 					if (!rec.title) {
 						rec.title = i2b2.CRC.ctrlr.QueryStatus._GetTitle(rec.QRS_Type, rec, temp);
 					}				
 					self.QRS[qrs_id] = rec;
 				}
-				// see if we need to poll another time
-			//	if (self.QI.status == "INCOMPLETE") { 
-			//		setTimeout("i2b2.CRC.ctrlr.currentQueryStatus.pollStatus()", self.polling_interval);
-			//	} else {
-					// refresh the query history window
-					i2b2.CRC.ctrlr.history.Refresh();
-			//	}
+				i2b2.CRC.ctrlr.history.Refresh();
 			}
 			// force a redraw
 			i2b2.CRC.ctrlr.currentQueryStatus.refreshStatus();
@@ -240,7 +228,6 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 		
 		// fire off the ajax calls
 		i2b2.CRC.ajax.getQueryInstanceList_fromQueryMasterId("CRC:QueryStatus", {qm_key_value: self.QM.id}, scopedCallbackQI);
-		i2b2.CRC.ajax.getQueryResultInstanceList_fromQueryInstanceId("CRC:QueryStatus", {qi_key_value: self.QI.id}, scopedCallbackQRS);
 
 }
 	
@@ -358,6 +345,56 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 					i2b2.CRC.ajax.getQueryResultInstanceList_fromQueryResultInstanceId("CRC:QueryStatus", {qr_key_value: rec.QRS_ID}, scopedCallbackQRSI);
 				} else if ((rec.QRS_DisplayType == "LIST") && (foundError == false)) {
 					self.dispDIV.innerHTML += "<div style=\"clear: both; padding-top: 10px; font-weight: bold;\">" + rec.QRS_Description + "</div>";
+				} 
+				if (rec.QRS_Type == "PATIENTSET") {
+				
+					// Check to see if timeline is checked off, if so switch to timeline
+					var t2 = $('dialogQryRun').select('INPUT.chkQueryType');
+					for (var i=0;i<t2.length; i++) {
+						var curItem = t2[i].nextSibling.data;
+						if (curItem != undefined)
+						{
+							curItem = curItem.toLowerCase();
+							//curitem = curItem.trim();
+						}
+						if ((t2[i].checked == true) && (rec.size > 0) && (curItem == " timeline")  
+						&& !(i2b2.h.isBadObjPath('i2b2.Timeline.cfg.config.plugin'))
+						) {
+
+							i2b2.hive.MasterView.setViewMode('Analysis');
+							i2b2.PLUGINMGR.ctrlr.main.selectPlugin("Timeline");
+					
+							//Process PatientSet
+							rec.QM_id = self.QM.id;
+							rec.QI_id = self.QI.id;
+							rec.PRS_id = rec.QRS_ID;
+							rec.result_instance_id = rec.PRS_id;
+							var sdxData = {};
+							sdxData[0] = i2b2.sdx.Master.EncapsulateData('PRS', rec);							
+							i2b2.Timeline.prsDropped(sdxData);
+							
+							i2b2.Timeline.setShowMetadataDialog(false);
+							
+							//Process Concepts, put all concepts in one large set
+							sdxData = {};
+							var panel_list = i2b2.CRC.model.queryCurrent.panels
+							var panel_cnt = panel_list.length;
+							
+							for (var p2 = 0; p2 < panel_cnt; p2++) {
+								// Concepts
+								for (var i2=0; i2 < panel_list[p2].items.length; i2++) {
+									sdxData[0] = panel_list[p2].items[i2];
+									i2b2.Timeline.conceptDropped(sdxData);
+								}
+							}
+							//$('Timeline-pgstart').value = '1';
+							//$('Timeline-pgsize').value = '10';
+							//i2b2.Timeline.pgGo(0);
+							i2b2.Timeline.yuiTabs.set('activeIndex', 1);
+							
+							i2b2.Timeline.setShowMetadataDialog(true);
+						}
+					} 
 				}
 			}
 		}

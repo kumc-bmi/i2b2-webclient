@@ -676,7 +676,7 @@ i2b2.CRC.cfg.msgs.renameQueryMaster = '<?xml version="1.0" encoding="UTF-8" stan
 '</ns6:request>';
 i2b2.CRC.ajax._addFunctionCall("renameQueryMaster","{{{URL}}}request", i2b2.CRC.cfg.msgs.renameQueryMaster);
 
-			
+
 // ================================================================================================== //
 i2b2.CRC.cfg.msgs.getPDO_fromInputList = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r'+
 '<ns6:request xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/"\r'+
@@ -798,6 +798,101 @@ i2b2.CRC.ajax._addFunctionCall(	"getPDO_fromInputList",
 								i2b2.CRC.cfg.msgs.getPDO_fromInputList,
 								["PDO_Request"],
 								i2b2.CRC.cfg.parsers.getPDO_fromInputList);
+
+
+// ================================================================================================== //
+i2b2.CRC.cfg.msgs.getIbservationfact_byPrimaryKey = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r'+
+'<ns6:request xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/"\r'+
+'  xmlns:ns7="http://www.i2b2.org/xsd/cell/crc/psm/querydefinition/1.1/"\r'+
+'  xmlns:ns3="http://www.i2b2.org/xsd/cell/crc/pdo/1.1/"\r'+
+'  xmlns:ns5="http://www.i2b2.org/xsd/hive/plugin/"\r'+
+'  xmlns:ns2="http://www.i2b2.org/xsd/hive/pdo/1.1/"\r'+
+'  xmlns:ns6="http://www.i2b2.org/xsd/hive/msg/1.1/">\r'+
+'	<message_header>\n'+
+'		{{{proxy_info}}}'+
+'		<sending_application>\n'+
+'			<application_name>i2b2_QueryTool</application_name>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
+'		</sending_application>\n'+
+'		<sending_facility>\n'+
+'			<facility_name>PHS</facility_name>\n'+
+'		</sending_facility>\n'+
+'		<receiving_application>\n'+
+'			<application_name>i2b2_DataRepositoryCell</application_name>\n'+
+'			<application_version>' + i2b2.ClientVersion + '</application_version>\n'+
+'		</receiving_application>\n'+
+'		<receiving_facility>\n'+
+'			<facility_name>PHS</facility_name>\n'+
+'		</receiving_facility>\n'+
+'		<message_type>\n'+
+'			<message_code>Q04</message_code>\n'+
+'			<event_type>EQQ</event_type>\n'+
+'		</message_type>\n'+
+'		<security>\n'+
+'			<domain>{{{sec_domain}}}</domain>\n'+
+'			<username>{{{sec_user}}}</username>\n'+
+'			{{{sec_pass_node}}}\n'+
+'		</security>\n'+
+'		<message_control_id>\n'+
+'			<message_num>{{{header_msg_id}}}</message_num>\n'+
+'			<instance_num>0</instance_num>\n'+
+'		</message_control_id>\n'+
+'		<processing_id>\n'+
+'			<processing_id>P</processing_id>\n'+
+'			<processing_mode>I</processing_mode>\n'+
+'		</processing_id>\n'+
+'		<accept_acknowledgement_type>messageId</accept_acknowledgement_type>\n'+
+'		<project_id>{{{sec_project}}}</project_id>\n'+
+'	</message_header>\n'+
+'	<request_header>\n'+
+'		<result_waittime_ms>{{{result_wait_time}}}000</result_waittime_ms>\n'+
+'	</request_header>\n'+
+'	<message_body>\n'+
+'		<ns3:pdoheader>\n'+
+'			<request_type>get_observationfact_by_primary_key</request_type>\n'+
+'		</ns3:pdoheader>\n'+
+'		<ns3:request xsi:type="ns3:GetObservationFactByPrimaryKey_requestType" \n'+
+'		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n'+
+'			{{{PDO_Request}}}'+
+'		</ns3:request>\n'+
+'	</message_body>\n'+
+'</ns6:request>';
+i2b2.CRC.cfg.parsers.getIbservationfact_byPrimaryKey = function(){
+	if (!this.error) {
+		this.model = {
+			observations: []
+		};		
+		// extract observation records
+		var ps = this.refXML.getElementsByTagName('observation');
+		for(var i1=0; i1<ps.length; i1++) {
+			var o = new Object;
+			o.xmlOrig = ps[i1];
+			o.event_id = i2b2.h.getXNodeVal(ps[i1],'event_id');
+			o.patient_id = i2b2.h.getXNodeVal(ps[i1],'patient_id');
+			o.concept_cd = i2b2.h.getXNodeVal(ps[i1],'concept_cd');
+			o.observer_cd = i2b2.h.getXNodeVal(ps[i1],'observer_cd');
+			o.start_date = i2b2.h.getXNodeVal(ps[i1],'start_date');
+			o.modifier_cd = i2b2.h.getXNodeVal(ps[i1],'modifier_cd');
+			o.tval_char = i2b2.h.getXNodeVal(ps[i1],'tval_char');
+			o.nval_num = i2b2.h.getXNodeVal(ps[i1],'nval_num');
+			o.valueflag_cd = i2b2.h.getXNodeVal(ps[i1],'valueflag_cd');
+			o.units_cd = i2b2.h.getXNodeVal(ps[i1],'units_cd');
+			o.end_date = i2b2.h.getXNodeVal(ps[i1],'end_date');
+			o.location_cd = i2b2.h.getXNodeVal(ps[i1],'location_cd');
+			this.model.observations.push(o);
+		}
+	} else {
+		this.model = false;
+		console.error("[getIbservationfact_byPrimaryKey] Could not parse() data!");
+	}
+	return this;
+}
+i2b2.CRC.ajax._addFunctionCall(	"getIbservationfact_byPrimaryKey",
+								"{{{URL}}}pdorequest",
+								i2b2.CRC.cfg.msgs.getIbservationfact_byPrimaryKey,
+								["PDO_Request"],
+								i2b2.CRC.cfg.parsers.getIbservationfact_byPrimaryKey);
+
 
 
 // ================================================================================================== //

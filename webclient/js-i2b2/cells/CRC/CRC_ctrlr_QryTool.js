@@ -93,12 +93,15 @@ function QueryToolController() {
 					po.panel_num = i2b2.h.getXNodeVal(qp[i1],'panel_number');
 					var t = i2b2.h.getXNodeVal(qp[i1],'invert');
 					po.exclude = (t=="1");
+					//po.timing = i2b2.h.getXNodeVal(qp[i1],'panel_timing');
 					// 1.4 queries don't have panel_timing, and undefined doesn't work
-					// so default to ANY
-					po.timing = i2b2.h.getXNodeVal(qp[i1],'panel_timing') || 'ANY';
+                    // so default to ANY
+                    po.timing = i2b2.h.getXNodeVal(qp[i1],'panel_timing') || 'ANY';				
 					i2b2.CRC.view.QT.setPanelTiming(po.panel_num, po.timing);
 					var t = i2b2.h.getXNodeVal(qp[i1],'total_item_occurrences');
 					po.occurs = (1*t)-1;
+					var t = i2b2.h.getXNodeVal(qp[i1],'panel_accuracy_scale');
+					po.relevance = t;					
 					var t = i2b2.h.getXNodeVal(qp[i1],'panel_date_from');
 					if (t) {
 						t = t.replace('Z','');
@@ -202,6 +205,12 @@ function QueryToolController() {
 											o.LabValues.MatchBy = "VALUE";
 											o.LabValues.ValueString = t;
 											break;
+										case "LARGETEXT":
+											o.LabValues.MatchBy = "VALUE";
+											o.LabValues.GeneralValueType = "LARGESTRING";
+											o.LabValues.DbOp = (i2b2.h.getXNodeVal(lvd,"value_operator") == "CONTAINS[database]" ? true : false );													
+											o.LabValues.ValueString = t;
+											break;
 										case "TEXT":	// this means Enum?
 											o.LabValues.MatchBy = "VALUE";
 											try {
@@ -272,14 +281,20 @@ function QueryToolController() {
 													o.ModValues.MatchBy = "VALUE";
 													o.ModValues.ValueString = t;
 													break;
+												case "LARGETEXT":
+													o.ModValues.MatchBy = "VALUE";
+													o.ModValues.GeneralValueType = "LARGESTRING";
+													o.ModValues.DbOp = (i2b2.h.getXNodeVal(lvd,"value_operator") == "CONTAINS[database]" ? true : false );													
+													o.ModValues.ValueString = t;
+													break;
 												case "TEXT":	// this means Enum?
 													o.ModValues.MatchBy = "VALUE";
 													try {
 														o.ModValues.ValueEnum = eval("(Array"+t+")");
 														o.ModValues.GeneralValueType = "ENUM";													
 													} catch(e) {
-														o.LabValues.StringOp = i2b2.h.getXNodeVal(lvd,"value_operator");
-														o.LabValues.ValueString = t;
+														o.ModValues.StringOp = i2b2.h.getXNodeVal(lvd,"value_operator");
+														o.ModValues.ValueString = t;
 														
 													//	i2b2.h.LoadingMask.hide();
 													//	console.error("Conversion Failed: Lab Value data = "+t);
@@ -632,12 +647,12 @@ function QueryToolController() {
 			s += '\t\t<panel_number>' + (p+1) + '</panel_number>\n';
 			// date range constraints
 			if (panel_list[p].dateFrom) {
-				s += '\t\t<panel_date_from>'+panel_list[p].dateFrom.Year+'-'+padNumber(panel_list[p].dateFrom.Month,2)+'-'+padNumber(panel_list[p].dateFrom.Day,2)+'Z</panel_date_from>\n';
+				s += '\t\t<panel_date_from>'+panel_list[p].dateFrom.Year+'-'+padNumber(panel_list[p].dateFrom.Month,2)+'-'+padNumber(panel_list[p].dateFrom.Day,2)+'</panel_date_from>\n';
 			}
 			if (panel_list[p].dateTo) {
-				s += '\t\t<panel_date_to>'+panel_list[p].dateTo.Year+'-'+padNumber(panel_list[p].dateTo.Month,2)+'-'+padNumber(panel_list[p].dateTo.Day,2)+'Z</panel_date_to>\n';
+				s += '\t\t<panel_date_to>'+panel_list[p].dateTo.Year+'-'+padNumber(panel_list[p].dateTo.Month,2)+'-'+padNumber(panel_list[p].dateTo.Day,2)+'</panel_date_to>\n';
 			}
-			s += "\t\t<panel_accuracy_scale>0</panel_accuracy_scale>\n";
+			s += "\t\t<panel_accuracy_scale>" + panel_list[p].relevance + "</panel_accuracy_scale>\n";
 			// Exclude constraint (invert flag)
 			if (panel_list[p].exclude) {
 				s += '\t\t<invert>1</invert>\n';
@@ -678,7 +693,7 @@ function QueryToolController() {
 						if (sdxData.origData.isModifier) {
 							s += '\t\t\t<hlevel>' + sdxData.origData.level + '</hlevel>\n';
 							s += '\t\t\t<item_key>' + sdxData.origData.parent.key + '</item_key>\n';
-							s += '\t\t\t<item_name>' +  (sdxData.origData.parent.name != null ? sdxData.origData.parent.name : sdxData.origData.name) + '</item_name>\n';
+							s += '\t\t\t<item_name>' +  (sdxData.origData.parent.name != null ? i2b2.h.Escape(sdxData.origData.parent.name) : i2b2.h.Escape(sdxData.origData.name)) + '</item_name>\n';
 							// (sdxData.origData.newName != null ? sdxData.origData.newName : sdxData.origData.name) + '</item_name>\n';
 							s += '\t\t\t<tooltip>' + sdxData.origData.tooltip + '</tooltip>\n';
 							s += '\t\t\t<item_icon>' + sdxData.origData.hasChildren + '</item_icon>\n';
@@ -696,7 +711,7 @@ function QueryToolController() {
                         	s += '\t\t\t\t</constrain_by_modifier>\n';					
 						} else {
 							s += '\t\t\t<hlevel>' + sdxData.origData.level + '</hlevel>\n';
-							s += '\t\t\t<item_name>' + (sdxData.origData.newName != null ? sdxData.origData.newName : sdxData.origData.name) + '</item_name>\n';
+							s += '\t\t\t<item_name>' + (sdxData.origData.newName != null ? i2b2.h.Escape(sdxData.origData.newName) : i2b2.h.Escape(sdxData.origData.name)) + '</item_name>\n';
 							s += '\t\t\t<item_key>' + sdxData.origData.key + '</item_key>\n';
 							s += '\t\t\t<tooltip>' + sdxData.origData.tooltip + '</tooltip>\n';
 							s += '\t\t\t<class>ENC</class>\n';
@@ -780,6 +795,14 @@ function QueryToolController() {
 										s += '\t\t\t\t<value_type>TEXT</value_type>\n';
 										s += '\t\t\t\t<value_operator>'+lvd.StringOp+'</value_operator>\n';
 										s += '\t\t\t\t<value_constraint><![CDATA['+i2b2.h.Escape(lvd.ValueString)+']]></value_constraint>\n';
+									} else if (lvd.GeneralValueType=="LARGESTRING") {
+										if (lvd.DbOp) {
+											s += '\t\t\t\t<value_operator>CONTAINS[database]</value_operator>\n';
+										} else {
+											s += '\t\t\t\t<value_operator>CONTAINS</value_operator>\n';											
+										}
+										s += '\t\t\t\t<value_type>LARGETEXT</value_type>\n';
+										s += '\t\t\t\t<value_constraint><![CDATA['+lvd.ValueString+']]></value_constraint>\n';
 									} else {
 										s += '\t\t\t\t<value_type>'+lvd.GeneralValueType+'</value_type>\n';
 										s += '\t\t\t\t<value_unit_of_measure>'+lvd.UnitsCtrl+'</value_unit_of_measure>\n';
@@ -811,6 +834,7 @@ function QueryToolController() {
 		dm.panels[pi].dateFrom = false;
 		dm.panels[pi].exclude = false;
 		dm.panels[pi].occurs = '0';
+		dm.panels[pi].relevance = '100';
 		dm.panels[pi].timing = i2b2.CRC.ctrlr.QT.queryTiming; //'ANY';
 		dm.panels[pi].items = [];
 		// create a treeview root node and connect it to the treeview controller
@@ -1166,6 +1190,7 @@ function QueryToolController() {
 				var v_dateFrom 	= i2b2.CRC.model.queryCurrent.panels[x].dateFrom;
 				var v_exclude	= i2b2.CRC.model.queryCurrent.panels[x].exclude;
 				var v_occurs	= i2b2.CRC.model.queryCurrent.panels[x].occurs;
+				var v_relevance	= i2b2.CRC.model.queryCurrent.panels[x].relevance;
 				var v_timing	= i2b2.CRC.model.queryCurrent.panels[x].timing;
 				var v_items 	= i2b2.CRC.model.queryCurrent.panels[x].items;
 				
@@ -1270,6 +1295,12 @@ function QueryToolController() {
 				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'>&gt; "+
 				v_occurs +
 				"</span>"+
+				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'> </span>"+
+				"<span style='color:black;font-weight:bold;font-family:arial,helvetica;font-size:11px;'>"+
+				"&nbsp; Relevance %: &nbsp;</span>"+
+				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'> "+
+				v_relevance +
+				"</span>"+				
 				"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'> </span>"+
 				"<span style='color:black;font-weight:bold;font-family:arial,helvetica;font-size:11px;'>"+
 				"&nbsp; Temporal Constraint: &nbsp;</span>"+

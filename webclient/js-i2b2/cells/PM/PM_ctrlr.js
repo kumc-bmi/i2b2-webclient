@@ -479,6 +479,25 @@ i2b2.PM._processLaunchFramework = function() {
 				deleteKeys[cellKey] = true;
 			}
 		} else {
+			//Remove cells.plugins that dont have right access to
+			 //if (i2b2.PM.model.userRoles.indexOf(i2b2.hive.cfg.lstCells[cellKey].roles) == -1) {
+			//	deleteKeys[cellKey] = true;				 
+			 //}
+             if (!i2b2.PM.model.admin_only) {
+			 var roleFound = -1;
+			for (var i=0; i<i2b2.hive.cfg.lstCells[cellKey].roles.length; i++) {
+				roleFound = 0;
+				 if (i2b2.PM.model.userRoles.indexOf(i2b2.hive.cfg.lstCells[cellKey].roles[i]) != -1)
+				 {
+					roleFound = 1;
+					break; 
+				 }
+			 }
+			 if (roleFound == 0)
+			 {
+				 deleteKeys[cellKey] = true;				 
+			 }
+			 }
 			// no need to load the cell unless forced
 			if (cellKey != "PM" && !i2b2.hive.cfg.lstCells[cellKey].forceLoading) {
 				// add to the delete list

@@ -118,13 +118,14 @@ DIV#crcQueryToolBox DIV.qryPanelButtonBar DIV {
 DIV#crcQueryToolBox DIV.qryButtonDate 	 {width:38px;}
 DIV#crcQueryToolBox DIV.qryButtonOccurs  {width:80px; margin:0px -1px;}
 DIV#crcQueryToolBox DIV.qryButtonExclude {width:46px;}
-DIV#crcQueryToolBox DIV.qryPanelTiming   {width:166px;text-align:center;}
+DIV#crcQueryToolBox DIV.qryPanelTiming   {width:166px;text-align:left;}
 
 DIV#crcQueryToolBox DIV.qryPanelTiming .yuimenuitemlabel {width:120px;} 
 
 DIV#crcQueryToolBox DIV.qryPanelTiming Button {
 line-height:1;
-width:160px;
+float:left;
+//width:160px;
 min-height:1em;
 }
 
@@ -134,7 +135,7 @@ DIV#crcQueryToolBox DIV.qryTemporalConstraint .yuimenuitemlabel {width:200px;}
 
 DIV#crcQueryToolBox DIV.qryTemporalConstraint Button {
 line-height:1;
-width:300px;
+width:375px;
 min-height:1em;
 }
 DIV#crcQueryToolBox DIV#qryToolFooter {

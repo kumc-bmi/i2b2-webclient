@@ -58,28 +58,23 @@ i2b2.sdx.TypeControllers.CONCPT.RenderHTML= function(sdxData, options, targetDiv
 
 	// process allowing children to be viewed
 	var bCanExp = false;
-	if ((sdxData.origData.hasChildren == 'CA') ||
-	    (sdxData.origData.hasChildren == 'CAE')){
+	if (sdxData.origData.hasChildren.substring(1,0) === "C"){
 		// render as category
 		icon = 'root';
 		sDD = '';
 		sIG = ' isGroup="Y"';
 		bCanExp = true;
-	} else if ((sdxData.origData.hasChildren == 'FA') ||
-		(sdxData.origData.hasChildren == 'FAE') 
-		)  {
+	} else if (sdxData.origData.hasChildren.substring(1,0) === "F")  {
 		// render as possibly having children
 		icon = 'branch';
 		bCanExp = true;
 		//var sCanExpand = ' canExpand="Y"';
-	} else if ((sdxData.origData.hasChildren == 'OA') || 
-		(sdxData.origData.hasChildren == 'OAE') 
-		)  {
+	} else if (sdxData.origData.hasChildren.substring(1,0) === "O")  {
 		// render as possibly having children
 		icon = 'root';
 		bCanExp = true;
 		//var sCanExpand = ' canExpand="Y"';		
-	} else if (sdxData.origData.hasChildren == 'DA') {
+	} else if (sdxData.origData.hasChildren.substring(1,0) === "D") {
 		// render as possibly having children
 		icon = 'branch';
 		bCanExp = true;
@@ -94,6 +89,19 @@ i2b2.sdx.TypeControllers.CONCPT.RenderHTML= function(sdxData, options, targetDiv
 	if (Object.isBoolean(options.showchildren)) { 
 		if (!options.showchildren) bCanExp = false;
 	}
+	if (sdxData.origData.hasChildren.substring(2,1) === "I")
+	{
+		bCanExp = false;
+		sDD = " style='color: #c0c0c0;' ";		
+	}
+	else if (sdxData.origData.hasChildren.substring(2,1) === "H")
+	{
+		sDD += " style='color: #c00000;' ";
+	}
+	else if (sdxData.origData.hasChildren.substring(2,1) === "S")
+	{
+		sDD += " style='color: #00ff00;' ";
+	}		
 	render.canExpand = bCanExp;
 	render.iconType = 'CONCPT_'+icon;
 	if (!Object.isUndefined(icon)) {

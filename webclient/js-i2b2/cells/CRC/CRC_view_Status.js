@@ -56,7 +56,11 @@ i2b2.CRC.view.status.Resize = function(e) {
 				ve.width = 524;
 				if (i2b2.WORK && i2b2.WORK.isLoaded) {
 					$('infoQueryStatusText').style.height = '100px';
-					ve.top = h-196+44;
+					if (YAHOO.env.ua.ie > 0) {  
+						ve.top = h-135; //196+44;
+					} else {
+						ve.top = h-152; //196+44;
+					}
 				} else {
 					$('infoQueryStatusText').style.height = '144px';
 					ve.top = h-196;

@@ -116,9 +116,10 @@ i2b2.ONT.view.find.PopulateCategories = function() {
 	for (var i=0; i<i2b2.ONT.model.Categories.length; i++) {
 		var cat = i2b2.ONT.model.Categories[i];
 		// ONT options dropdown
-		var cid = cat.key;
-		cid = /\\\\\w*\\/.exec(cid);
-		cid = cid[0].replace(/\\/g,'');
+		//var cid = cat.key;
+		//cid = /\\\\\w*\\/.exec(cid);
+		//cid = cid[0].replace(/\\/g,'');
+		var cid = cat.key.substring(2,cat.key.indexOf('\\',3))
 		tno = document.createElement('OPTION');
 		tno.setAttribute('value', cid);
 		var tnt = document.createTextNode(cat.name);

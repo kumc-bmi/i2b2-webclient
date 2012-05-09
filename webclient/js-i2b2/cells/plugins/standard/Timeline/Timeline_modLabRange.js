@@ -1,7 +1,7 @@
 /**
  * @projectDescription	(GUI-only) Controller for CRC Query Tool's Lab Values constraint dialog box.
- * @inherits 	i2b2.CRC.view
- * @namespace	i2b2.CRC.view.modalLabValues
+ * @inherits 	i2b2.Timeline.view
+ * @namespace	i2b2.Timeline.view.modalLabValues
  * @author		Nick Benik, Griffin Weber MD PhD
  * @version 	1.3
  * ----------------------------------------------------------------------------------------
@@ -9,7 +9,7 @@
  */
 
 
-i2b2.CRC.view.modalLabValues = {
+i2b2.Timeline.view.modalLabValues = {
 	formdata: {},
 	cfgTestInfo: {
 		name: 'RND-TEST',
@@ -38,15 +38,15 @@ i2b2.CRC.view.modalLabValues = {
 	},
 	
 // ================================================================================================== //
-	show: function(panelIndex, queryPanelController, key, extData, isModifier) {
-		if (Object.isUndefined(i2b2.CRC.model.queryCurrent.panels[panelIndex])) { return; }
-		var fd = i2b2.CRC.view.modalLabValues.formdata;
-		var dm = i2b2.CRC.model.queryCurrent.panels[panelIndex];
+	show: function( queryPanelController, key, extData, isModifier) {
+		//if (Object.isUndefined(i2b2.Timeline.model.queryCurrent.panels[panelIndex])) { return; }
+		var fd = i2b2.Timeline.view.modalLabValues.formdata;
+		//var dm = i2b2.Timeline.model.queryCurrent.panels[panelIndex];
 		// save info for callback
-		this.qpi = panelIndex;
+		//this.qpi = panelIndex;
 		this.cpc = queryPanelController;
-		i2b2.CRC.view.modalLabValues.isModifier = isModifier;
-		i2b2.CRC.view.modalLabValues.itemNumber = extData.itemNumber;
+		i2b2.Timeline.view.modalLabValues.isModifier = isModifier;
+		//i2b2.Timeline.view.modalLabValues.itemNumber = extData.itemNumber;
 		//this.isModifier = isMod;
 		this.key = key;
 		this.i2b2Data = extData;
@@ -63,34 +63,27 @@ i2b2.CRC.view.modalLabValues = {
 					isDefault: true,
 					handler: 
 						(function() {
-							var closure_qpi = i2b2.CRC.view.modalLabValues.qpi;
-							var closure_cpc = i2b2.CRC.view.modalLabValues.cpc;
-							var closure_key = i2b2.CRC.view.modalLabValues.key;
-							var closure_number = i2b2.CRC.view.modalLabValues.itemNumber;
+							var closure_qpi = i2b2.Timeline.view.modalLabValues.qpi;
+							var closure_cpc = i2b2.Timeline.view.modalLabValues.cpc;
+							var closure_key = i2b2.Timeline.view.modalLabValues.key;
+							var closure_number = i2b2.Timeline.view.modalLabValues.itemNumber;
 							// submit value(s)
 							if (this.submit()) {
-								var pd = i2b2.CRC.model.queryCurrent.panels[closure_qpi];
-								// find the correct item in the panel
-								for (var i=0; i<pd.items.length; i++) {
-									//if (pd.items[i].sdxInfo.sdxKeyValue==closure_key) {
-									if (pd.items[i].itemNumber==closure_number) {
-										if (i2b2.CRC.view.modalLabValues.isModifier) {
-											pd.items[i].ModValues = i2b2.CRC.view.modalLabValues.i2b2Data.ModValues;
+								
+								if (i2b2.Timeline.view.modalLabValues.isModifier) {
+											i2b2.Timeline.model.concepts.ModValues = i2b2.Timeline.view.modalLabValues.i2b2Data.ModValues;
 										} else {
-											pd.items[i].LabValues = i2b2.CRC.view.modalLabValues.i2b2Data.LabValues;										
+											i2b2.Timeline.model.concepts.LabValues = i2b2.Timeline.view.modalLabValues.i2b2Data.LabValues;										
 										}
-										break;
-									}
-								}
 								// update the panel/query tool GUI
-								i2b2.CRC.ctrlr.QT.doSetQueryName.call(this, '');
+								//i2b2.Timeline.ctrlr.QT.doSetQueryName.call(this, '');
+								i2b2.Timeline.conceptsRender();
+								//queryPanelController._renameConcept(closure_key, i2b2.Timeline.view.modalLabValues.isModifier, pd);
 								
-								//queryPanelController._renameConcept(closure_key, i2b2.CRC.view.modalLabValues.isModifier, pd);
-								
-								queryPanelController._renameConcept(i2b2.CRC.view.modalLabValues.i2b2Data.itemNumber, i2b2.CRC.view.modalLabValues.isModifier, pd);
+								//queryPanelController._renameConcept(i2b2.Timeline.view.modalLabValues.i2b2Data.itemNumber, i2b2.Timeline.view.modalLabValues.isModifier, pd);
 								
 								
-								delete i2b2.CRC.view.modalLabValues.isModifier;
+								delete i2b2.Timeline.view.modalLabValues.isModifier;
 							
 							}
 						})
@@ -115,13 +108,13 @@ i2b2.CRC.view.modalLabValues = {
 			YAHOO.util.Event.addListener("mlvfrmStrValue", "keypress", (function(e) {
 				// anonymous function
 				if (e.keyCode==8 || e.keyCode==46) { return true; }
-				var msl = i2b2.CRC.view.modalLabValues.cfgTestInfo.valueValidate.maxString;
+				var msl = i2b2.Timeline.view.modalLabValues.cfgTestInfo.valueValidate.maxString;
 				if (!msl || this.value.length < msl) {
-					delete i2b2.CRC.view.modalLabValues.formdata.lastValidStr;
+					delete i2b2.Timeline.view.modalLabValues.formdata.lastValidStr;
 					return true;
 				} else {
-					if (!i2b2.CRC.view.modalLabValues.formdata.lastValidStr) {
-						i2b2.CRC.view.modalLabValues.formdata.lastValidStr = this.value;
+					if (!i2b2.Timeline.view.modalLabValues.formdata.lastValidStr) {
+						i2b2.Timeline.view.modalLabValues.formdata.lastValidStr = this.value;
 					}
 					return true;
 				}
@@ -129,8 +122,8 @@ i2b2.CRC.view.modalLabValues = {
 			}));
 			YAHOO.util.Event.addListener("mlvfrmStrValue", "keyup", (function(e) {
 				// anonymous function
-				if (i2b2.CRC.view.modalLabValues.formdata.lastValidStr) {
-					this.value = i2b2.CRC.view.modalLabValues.formdata.lastValidStr;
+				if (i2b2.Timeline.view.modalLabValues.formdata.lastValidStr) {
+					this.value = i2b2.Timeline.view.modalLabValues.formdata.lastValidStr;
 				}
 			}));
 		}
@@ -143,7 +136,7 @@ i2b2.CRC.view.modalLabValues = {
 			// no LabValue configuration
 			return false;
 		}
-		if (i2b2.CRC.view.modalLabValues.isModifier) {
+		if (i2b2.Timeline.view.modalLabValues.isModifier) {
 			if (!this.i2b2Data.ModValues && this.i2b2Data.origData.ModValues) {
 				// copy server delivered Lab Values to our scope
 				this.i2b2Data.ModValues = this.i2b2Data.origData.ModValues;
@@ -227,8 +220,8 @@ i2b2.CRC.view.modalLabValues = {
 	
 // ================================================================================================== //
 	changeHandler: function(e) {
-		var dm = i2b2.CRC.view.modalLabValues.cfgTestInfo;
-		var fd = i2b2.CRC.view.modalLabValues.formdata;
+		var dm = i2b2.Timeline.view.modalLabValues.cfgTestInfo;
+		var fd = i2b2.Timeline.view.modalLabValues.formdata;
 		if (fd.ignoreChanges) { return true; }
 		// get the DOM node that fired the event
 		var tn;
@@ -305,16 +298,16 @@ i2b2.CRC.view.modalLabValues = {
 		}
 		tn.blur();
 		// save the changes
-		i2b2.CRC.view.modalLabValues.formdata = fd;
-		i2b2.CRC.view.modalLabValues.Redraw();
+		i2b2.Timeline.view.modalLabValues.formdata = fd;
+		i2b2.Timeline.view.modalLabValues.Redraw();
 	},
 	
 // ================================================================================================== //
 	cfgByMetadata: function(refXML){
 		// load and process the xml info
-		i2b2.CRC.view.modalLabValues.formdata.ignoreChanges = true;
-		var dm = i2b2.CRC.view.modalLabValues.cfgTestInfo;
-		var fd = i2b2.CRC.view.modalLabValues.formdata;
+		i2b2.Timeline.view.modalLabValues.formdata.ignoreChanges = true;
+		var dm = i2b2.Timeline.view.modalLabValues.cfgTestInfo;
+		var fd = i2b2.Timeline.view.modalLabValues.formdata;
 		fd.selectedType= "NONE";
 		
 
@@ -506,7 +499,7 @@ i2b2.CRC.view.modalLabValues = {
 			this.sd.setHeader("Search within the "+i2b2.h.getXNodeVal(refXML, 'TestName'));
 			$('mlvfrmTypeNONE').nextSibling.nodeValue = "No Search Requested";
 			$('mlvfrmTypeVALUE').nextSibling.nodeValue = "Search within Text";
-		} else if (i2b2.CRC.view.modalLabValues.isModifier) {
+		} else if (i2b2.Timeline.view.modalLabValues.isModifier) {
 				$('valueContraintText').innerHTML = "Searches by Modifier values can be constrained by either a flag set by the sourcesystem or by the values themselves.";
 		} else {
 			 $('valueContraintText').innerHTML = "Searches by Lab values can be constrained by the high/low flag set by the performing laboratory, or by the values themselves.";
@@ -670,9 +663,9 @@ i2b2.CRC.view.modalLabValues = {
 		fd.flagValue = tn.options[tn.selectedIndex].value;
 		fd.unitIndex = $('mlvfrmUnits').selectedIndex;
 		fd.dbOperator = $("mlvfrmDbOperator").checked;
-		i2b2.CRC.view.modalLabValues.formdata.ignoreChanges = false;
-		i2b2.CRC.view.modalLabValues.setUnits();
-		i2b2.CRC.view.modalLabValues.Redraw();
+		i2b2.Timeline.view.modalLabValues.formdata.ignoreChanges = false;
+		i2b2.Timeline.view.modalLabValues.setUnits();
+		i2b2.Timeline.view.modalLabValues.Redraw();
 	},
 	
 // ================================================================================================== //
@@ -724,10 +717,10 @@ i2b2.CRC.view.modalLabValues = {
 	
 // ================================================================================================== //
 	Redraw: function(){
-		if (i2b2.CRC.view.modalLabValues.formdata.ignoreChanges) return;
-		i2b2.CRC.view.modalLabValues.formdata.ignoreChanges = true;
-		var fd = i2b2.CRC.view.modalLabValues.formdata;
-		var dm = i2b2.CRC.view.modalLabValues.cfgTestInfo;
+		if (i2b2.Timeline.view.modalLabValues.formdata.ignoreChanges) return;
+		i2b2.Timeline.view.modalLabValues.formdata.ignoreChanges = true;
+		var fd = i2b2.Timeline.view.modalLabValues.formdata;
+		var dm = i2b2.Timeline.view.modalLabValues.cfgTestInfo;
 		// hide show radios according to configuration
 		if (dm.valueType) {
 			Element.show($('mlvfrmTypeVALUE').parentNode);
@@ -786,7 +779,7 @@ i2b2.CRC.view.modalLabValues = {
 						} else {
 							$('mlvfrmEnterVal').show();
 						}
-						i2b2.CRC.view.modalLabValues.setUnits();
+						i2b2.Timeline.view.modalLabValues.setUnits();
 						break;
 					case "LRGSTR":
 						$('mlvfrmEnterStr').show();
@@ -803,21 +796,21 @@ i2b2.CRC.view.modalLabValues = {
 				}
 				break;
 		}			
-		i2b2.CRC.view.modalLabValues.formdata.ignoreChanges = false;
+		i2b2.Timeline.view.modalLabValues.formdata.ignoreChanges = false;
 	},
 	
 // ================================================================================================== //
 	ValidateSave: function() {
-		var dm = i2b2.CRC.view.modalLabValues.cfgTestInfo;
-		var fd = i2b2.CRC.view.modalLabValues.formdata;
+		var dm = i2b2.Timeline.view.modalLabValues.cfgTestInfo;
+		var fd = i2b2.Timeline.view.modalLabValues.formdata;
 		var tmpLabValue = {};
 		var errorMsg = [];
 		switch (fd.selectedType) {
 			case "NONE":
-			    if (i2b2.CRC.view.modalLabValues.isModifier) {
-					delete i2b2.CRC.view.modalLabValues.i2b2Data.ModValues;
+			    if (i2b2.Timeline.view.modalLabValues.isModifier) {
+					delete i2b2.Timeline.view.modalLabValues.i2b2Data.ModValues;
 				} else {
-					delete i2b2.CRC.view.modalLabValues.i2b2Data.LabValues;					
+					delete i2b2.Timeline.view.modalLabValues.i2b2Data.LabValues;					
 				}
 				return true;
 				break;
@@ -951,17 +944,17 @@ i2b2.CRC.view.modalLabValues = {
 			return false;
 		}
 		// save the labValues data into the node's data element
-		if (i2b2.CRC.view.modalLabValues.isModifier) {
+		if (i2b2.Timeline.view.modalLabValues.isModifier) {
 			if (tmpLabValue) {
-				i2b2.CRC.view.modalLabValues.i2b2Data.ModValues = tmpLabValue;
+				i2b2.Timeline.view.modalLabValues.i2b2Data.ModValues = tmpLabValue;
 			} else {
-				delete i2b2.CRC.view.modalLabValues.i2b2Data.ModValues;
+				delete i2b2.Timeline.view.modalLabValues.i2b2Data.ModValues;
 			}
 		} else { 
 			if (tmpLabValue) {
-				i2b2.CRC.view.modalLabValues.i2b2Data.LabValues = tmpLabValue;
+				i2b2.Timeline.view.modalLabValues.i2b2Data.LabValues = tmpLabValue;
 			} else {
-				delete i2b2.CRC.view.modalLabValues.i2b2Data.LabValues;
+				delete i2b2.Timeline.view.modalLabValues.i2b2Data.LabValues;
 			}
 		}
 		return true;
