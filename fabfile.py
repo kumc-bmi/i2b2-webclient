@@ -1,5 +1,11 @@
 '''fabfile -- automate deployment of i2b2 webclient
+
 '''
+
+__author__ = 'Dan Connolly'
+__copyright__ = '2012 University of Kansas Medical Center'
+__license__ = 'MIT'
+__contact__ = 'http://informatics.kumc.edu/'
 
 from fabric.api import run, task, cd
 
