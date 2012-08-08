@@ -3,9 +3,9 @@
 '''
 
 __author__ = 'Dan Connolly'
+__contact__ = 'http://informatics.kumc.edu/'
 __copyright__ = 'Copyright (c) 2012 University of Kansas Medical Center'
 __license__ = 'MIT'
-__contact__ = 'http://informatics.kumc.edu/'
 
 from fabric.api import run, task, cd
 
