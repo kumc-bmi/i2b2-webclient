@@ -7,14 +7,17 @@ __copyright__ = 'Copyright (c) 2012 University of Kansas Medical Center'
 __license__ = 'MIT'
 __contact__ = 'http://informatics.kumc.edu/'
 
-from fabric.api import task, local, cd
+from fabric.api import task, local
 
 
 @task
-def deploy_hg_tip(localsrc='/usr/local/src/i2b2-webclient',
-                  webspace='/srv/www/htdocs/',
+def deploy_hg_tip(webspace='/srv/www/htdocs/',
                   i2b2path='i2b2/'):
     dest = webspace + i2b2path
     local('mkdir -p %s' % dest)
-    with cd(localsrc):
-        local('hg archive %s' % dest)
+    local('hg archive %s' % dest)
+    # hg archive sets permissions to 755 or 644.
+    # We need them group-writeable.
+    # This should only involve files that this user created.
+    local('find %s -not -perm -g=w -print0 | '
+          'xargs -0 chmod g+w' % dest)

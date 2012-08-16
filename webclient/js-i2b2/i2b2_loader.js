@@ -89,6 +89,11 @@ i2b2.hive.tempCellsList = [
 		  forceLoading: true,
 		  forceConfigMsg: { params: [] },
 		  forceDir: "cells/plugins/fsm"
+                },		
+                { code: "CopperJohnStat",
+		  forceLoading: true,
+		  forceConfigMsg: { params: [] },
+		  forceDir: "cells/plugins/fsm"
                 }		
 	];
 // ================================================================================================== //
