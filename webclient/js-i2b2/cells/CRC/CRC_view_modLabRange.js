@@ -2,12 +2,15 @@
  * @projectDescription	(GUI-only) Controller for CRC Query Tool's Lab Values constraint dialog box.
  * @inherits 	i2b2.CRC.view
  * @namespace	i2b2.CRC.view.modalLabValues
- * @author		Nick Benik, Griffin Weber MD PhD
- * @version 	1.3
+ * @author		Nick Benik, Griffin Weber MD PhD, Shawn Murphy
+ * @version 	1.6
  * ----------------------------------------------------------------------------------------
- * updated 9-15-08: RC4 launch [Nick Benik] 
+ * updated 9-15-08: 1.3 RC4 launch [Nick Benik] 
+ * updated 7-28-12  1.6 [Shawn Murphy]
  */
 
+// Known Bugs:
+// double value to right of concept name when populate previous query
 
 i2b2.CRC.view.modalLabValues = {
 	formdata: {},
@@ -26,17 +29,49 @@ i2b2.CRC.view.modalLabValues = {
 		rangeInfo: {},
 		enumInfo: {}
 	},
-	
-	updateValue: function(e) {
-		posx = 0; posy = 0;
-		 var point = YAHOO.util.Event.getXY(e);
-		 var point2 = YAHOO.util.Dom.getXY('mlvfrmGrp');
 
-		var newvalue = point[0] - point2[0];
-		var newvalue = (520/($('mlvfrmGrpHighOfHigh').innerHTML -  $('mlvfrmGrpLowOfLow').innerHTML)) * newvalue;
-		var newvalue2 = "as";
+// snm0
+//===================================================================================
+// Gets called when a click occurs on the value bar graphic and the operator and 
+// values are set.
+//
+	updateValue: function(e) {
+		// The method is to embed the reference to the value label of the bar
+		// in the anchor of the href and then get it and extract the value and
+		// place it in the select drop down and text box.
+		try {
+			var targ; // href of bar item that was clicked
+			if (!e) var e = window.event;
+			if (e.target) targ = e.target;
+			else if (e.srcElement) targ = e.srcElement;
+			if (targ.nodeType == 3) // defeat Safari bug
+				targ = targ.parentNode;
+			// make href into a string and get the anchor of it
+			var sTarg = targ.toString();
+			var iTargAnchor = sTarg.lastIndexOf("#");
+			if (iTargAnchor < 0) return; // no anchor
+			var sTargAnchor = sTarg.substring(iTargAnchor+1);
+			if (sTargAnchor.length <= 1) return; //no anchor
+			//alert(sTargAnchor);
+			var sTargNumber = $(sTargAnchor).innerHTML;
+			// after getting the bar label get the value and put it in the slots
+			if ((sTargAnchor == 'lblToxL') || (sTargAnchor == 'lblLofL') || (sTargAnchor == 'lblHofL')) {
+				$('mlvfrmOperator').selectedIndex=1;
+				//$('mlvfrmOperator').value='LE';
+				i2b2.CRC.view.modalLabValues.formdata.numericOperator = 'LE';
+				$('mlvfrmNumericValue').value = sTargNumber;
+			}
+			if ((sTargAnchor == 'lblToxH') || (sTargAnchor == 'lblLofH') || (sTargAnchor == 'lblHofH')) {
+				$('mlvfrmOperator').selectedIndex=5;
+				i2b2.CRC.view.modalLabValues.formdata.numericOperator = 'GE';
+				$('mlvfrmNumericValue').value = sTargNumber;
+			}
+		}
+		catch(eError) {
+				alert("Error: updateValue: " + eError.description);
+		}
 	},
-	
+// snm0	
 // ================================================================================================== //
 	show: function(panelIndex, queryPanelController, key, extData, isModifier) {
 		if (Object.isUndefined(i2b2.CRC.model.queryCurrent.panels[panelIndex])) { return; }
@@ -217,8 +252,11 @@ i2b2.CRC.view.modalLabValues = {
 					break;
 			}
 		} else {
-			fd.selectedType = "NONE";
-			$("mlvfrmTypeNONE").checked = true;
+// snm0
+			// set the form to show value selection if available
+			$("mlvfrmTypeVALUE").checked = true;
+			fd.selectedType = 'VALUE';
+// snm0
 		}
 		// show the form
 		this.sd.show();
@@ -499,6 +537,7 @@ i2b2.CRC.view.modalLabValues = {
 		this.sd.setHeader("Choose value of "+i2b2.h.getXNodeVal(refXML, 'TestName')+" (Test:"+i2b2.h.getXNodeVal(refXML, 'TestID')+")");
 	
 		$('mlvfrmTypeNONE').nextSibling.nodeValue = "No Value";
+		$('mlvfrmTypeFLAG').nextSibling.nodeValue = "By FLag"; // snm0
 		$('mlvfrmTypeVALUE').nextSibling.nodeValue = "By Value";
 	
 		if (dm.valueType == "LRGSTR") {
@@ -609,48 +648,158 @@ i2b2.CRC.view.modalLabValues = {
 			Element.show($('mlvfrmUnitsContainer'));
 		}
 
-
-
-		
+// snm0		
 		// Extract the value range info and display it on the range bar
+		// The bar is 520 pixels long, fixed  
+		//
+		var nBarLength = 520; // fixed width of bar
+		fd.bHidebar = false;  // set to true if decide bar not worth showing
+		var nSituation = 0; // how many values are there?
 		dm.rangeInfo = {};
+		//
+		// get preliminary bar length results and set up array
+		try {
+			dm.rangeInfo.LowOfToxic = parseFloat(refXML.getElementsByTagName('LowofToxicValue')[0].firstChild.nodeValue);
+			nSituation = nSituation +1;
+		} catch(e) {}
 		try {
 			dm.rangeInfo.LowOfLow = parseFloat(refXML.getElementsByTagName('LowofLowValue')[0].firstChild.nodeValue);
-			$('mlvfrmGrpLowOfLow').innerHTML = dm.rangeInfo.LowOfLow;
+			if ((isFinite(dm.rangeInfo.LowOfToxic)) && (dm.rangeInfo.LowOfToxic == dm.rangeInfo.LowOfLow)) {
+				dm.rangeInfo.LowOfLowRepeat = true;
+			}
+			else {
+				dm.rangeInfo.LowOfLowRepeat = false;
+				nSituation = nSituation +1;
+			}
 		} catch(e) {}
 		try {
-			dm.rangeInfo.HighOfLow = parseFloat(refXML.getElementsByTagName('HighofLowValue')[0].firstChild.nodeValue);		
-			$('mlvfrmGrpHighOfLow').innerHTML = dm.rangeInfo.HighOfLow;
+			dm.rangeInfo.HighOfLow = parseFloat(refXML.getElementsByTagName('HighofLowValue')[0].firstChild.nodeValue);	
+			if ((isFinite(dm.rangeInfo.LowOfLow)) && (dm.rangeInfo.LowOfLow == dm.rangeInfo.HighOfLow)) {
+				dm.rangeInfo.HighOfLowRepeat = true;
+			}
+			else {
+				dm.rangeInfo.HighOfLowRepeat = false;
+				nSituation = nSituation +1;
+			}
 		} catch(e) {}
 		try {
-			dm.rangeInfo.LowOfHigh = parseFloat(refXML.getElementsByTagName('LowofHighValue')[0].firstChild.nodeValue);
-			$('mlvfrmGrpLowOfHigh').innerHTML = dm.rangeInfo.LowOfHigh;
+			dm.rangeInfo.HighOfToxic = parseFloat(refXML.getElementsByTagName('HighofToxicValue')[0].firstChild.nodeValue);
+			nSituation = nSituation +1;
 		} catch(e) {}
 		try {
 			dm.rangeInfo.HighOfHigh = parseFloat(refXML.getElementsByTagName('HighofHighValue')[0].firstChild.nodeValue);
-			$('mlvfrmGrpHighOfHigh').innerHTML = dm.rangeInfo.HighOfHigh;
-			$('mlvfrmGrpMiddle').innerHTML = dm.rangeInfo.HighOfHigh - dm.rangeInfo.LowOfLow;
-			$('mlvfrmGrpMiddle').style.width = (((520/(dm.rangeInfo.HighOfHigh -  dm.rangeInfo.LowOfLow))* (dm.rangeInfo.LowOfHigh - dm.rangeInfo.HighOfLow))-35) + "px";			
-			
-			
-			$('mlvfrmGrpLowOfLow').style.width= ((520/(dm.rangeInfo.HighOfHigh -  dm.rangeInfo.LowOfLow))* (dm.rangeInfo.HighOfLow - dm.rangeInfo.LowOfLow)) + "px";
-			$('mlvfrmGrpHighOfHigh').style.width= ((520/(dm.rangeInfo.HighOfHigh -  dm.rangeInfo.LowOfLow))* (dm.rangeInfo.HighOfHigh - dm.rangeInfo.LowOfHigh)) + "px";			
-			
-			$('mlvfrmGrpLow').style.width= ((520/(dm.rangeInfo.HighOfHigh -  dm.rangeInfo.LowOfLow))* (dm.rangeInfo.HighOfLow - dm.rangeInfo.LowOfLow)) + "px";
-			$('mlvfrmGrpHigh').style.width= ((520/(dm.rangeInfo.HighOfHigh -  dm.rangeInfo.LowOfLow))* (dm.rangeInfo.HighOfHigh - dm.rangeInfo.LowOfHigh)) + "px";			
-			
+			if ((isFinite(dm.rangeInfo.HighOfToxic)) && (dm.rangeInfo.HighOfToxic == dm.rangeInfo.HighOfHigh)) {
+				dm.rangeInfo.HighOfHighRepeat = true;
+			}
+			else {
+				dm.rangeInfo.HighOfHighRepeat = false;
+				nSituation = nSituation +1;
+			}
 		} catch(e) {}
 		try {
-			dm.rangeInfo.LowOfToxic = parseFloat(refXML.getElementsByTagName('LowOfToxic')[0].firstChild.nodeValue);
+			dm.rangeInfo.LowOfHigh = parseFloat(refXML.getElementsByTagName('LowofHighValue')[0].firstChild.nodeValue);
+			if ((isFinite(dm.rangeInfo.HighOfHigh)) && (dm.rangeInfo.HighOfHigh == dm.rangeInfo.LowOfHigh)) {
+				dm.rangeInfo.LowOfHighhRepeat = true;
+			}
+			else {
+				dm.rangeInfo.LowOfHighRepeat = false;
+				nSituation = nSituation +1;
+			}
 		} catch(e) {}
+		//
+		// get full situation of bar to be shown
 		try {
-			dm.rangeInfo.LowOfLowValue = parseFloat(refXML.getElementsByTagName('HighOfToxic')[0].firstChild.nodeValue);
-		} catch(e) {}
-		
-		// clear the data input elements
-		$('mlvfrmTypeNONE').checked = true;
-		$('mlvfrmFLAG').hide();
-		$('mlvfrmVALUE').hide();
+			if (nSituation != 0) {
+				var nPixelPerBar = nBarLength / (nSituation + 1);
+				$('lblNorm').style.width = nPixelPerBar + "px";
+				$('barNorm').style.width = nPixelPerBar + "px";	
+				if (isFinite(dm.rangeInfo.LowOfToxic)) {
+					$('lblToxL').innerHTML = dm.rangeInfo.LowOfToxic;
+					$('lblToxL').style.width = nPixelPerBar + "px";
+					$('barToxL').style.width = nPixelPerBar + "px";
+				}
+				else {
+					$('lblToxL').innerHTML = "";
+					$('lblToxL').style.width = "0px";
+					$('barToxL').style.width = "0px";
+				}
+				if (isFinite(dm.rangeInfo.LowOfLow) && (dm.rangeInfo.LowOfLowRepeat == false)) {
+					$('lblLofL').innerHTML = dm.rangeInfo.LowOfLow;
+					$('lblLofL').style.width = nPixelPerBar + "px";
+					$('barLofL').style.width = nPixelPerBar + "px";
+				}
+				else {
+					$('lblLofL').innerHTML = "";
+					$('lblLofL').style.width = "0px";
+					$('barLofL').style.width = "0px";
+				}
+				if (isFinite(dm.rangeInfo.HighOfLow) && (dm.rangeInfo.HighOfLowRepeat == false)) {
+					$('lblHofL').innerHTML = dm.rangeInfo.HighOfLow;
+					$('lblHofL').style.width = nPixelPerBar + "px";
+					$('barHofL').style.width = nPixelPerBar + "px";
+				}
+				else {
+					$('lblHofL').innerHTML = "";
+					$('lblHofL').style.width = "0px";
+					$('barHofL').style.width = "0px";
+				}
+				if (isFinite(dm.rangeInfo.LowOfHigh) && (dm.rangeInfo.LowOfHighRepeat == false)) {
+					$('lblLofH').innerHTML = dm.rangeInfo.LowOfHigh;
+					$('lblLofH').style.width = nPixelPerBar + "px";
+					$('barLofH').style.width = nPixelPerBar + "px";
+				}
+				else {
+					$('lblLofH').innerHTML = "";
+					$('lblLofH').style.width = "0px";
+					$('barLofH').style.width = "0px";
+				}
+				if (isFinite(dm.rangeInfo.HighOfHigh) && (dm.rangeInfo.HighOfHighRepeat == false)) {
+					$('lblHofH').innerHTML = dm.rangeInfo.HighOfHigh;
+					$('lblHofH').style.width = nPixelPerBar + "px";
+					$('barHofH').style.width = nPixelPerBar + "px";
+				}
+				else {
+					$('lblHofH').innerHTML = "";
+					$('lblHofH').style.width = "0px";
+					$('barHofH').style.width = "0px";
+				}
+				if (isFinite(dm.rangeInfo.HighOfToxic)) {
+					$('lblToxH').innerHTML = dm.rangeInfo.HighOfToxic;
+					$('lblToxH').style.width = nPixelPerBar + "px";
+					$('barToxH').style.width = nPixelPerBar + "px";
+				}
+				else {
+					$('lblToxH').innerHTML = "";
+					$('lblToxH').style.width = "0px";
+					$('barToxH').style.width = "0px";
+				}
+			}
+			else {
+				fd.bHidebar = true;
+			}
+		} 
+		catch(e) {
+		   	var errString = "Description: " + e.description;
+			alert(errString);
+		}
+		// show the right parts of the form
+		if (dm.valueType) {
+			$('mlvfrmTypeVALUE').checked = true;
+			$('mlvfrmFLAG').hide();
+			$('mlvfrmVALUE').show();
+		}
+		else if (dm.flagType) {
+			$('mlvfrmTypeFLAG').checked = true;
+			$('mlvfrmFLAG').show();
+			$('mlvfrmVALUE').hide();
+		}
+		else {
+			$('mlvfrmTypeNONE').checked = true;
+			$('mlvfrmFLAG').hide();
+			$('mlvfrmVALUE').hide();
+		}
+// snm0
+		// clear the other data input elements
 		$('mlvfrmOperator').selectedIndex = 0;
 		$('mlvfrmStringOperator').selectedIndex = 0;
 		$('mlvfrmFlagValue').selectedIndex = 0;
@@ -734,8 +883,11 @@ i2b2.CRC.view.modalLabValues = {
 //			$('mlvfrmTypeVALUE').parentNode.show();		
 		} else {
 			if (fd.selectedType == "VALUE") {
-				$('mlvfrmTypeNONE').checked=true;
-				fd.selectedType= "NONE";
+// snm0
+				// when value is available, always show the value dialog
+				$('mlvfrmTypeVALUE').checked=true;
+				fd.selectedType= "VALUE";
+// snm0
 			}
 			Element.hide($('mlvfrmTypeVALUE').parentNode);
 //			$('mlvfrmTypeVALUE').parentNode.hide();
@@ -757,10 +909,18 @@ i2b2.CRC.view.modalLabValues = {
 			case "NONE":
 				$('mlvfrmFLAG').hide();
 				$('mlvfrmVALUE').hide();
+// snm0
+				$('mlvfrmBarContainer').hide();
+				$('mlvfrmUnitsContainer').hide();
+//
 				break;
 			case "FLAG":
 				$('mlvfrmVALUE').hide();
 				$('mlvfrmFLAG').show();
+// snm0
+				$('mlvfrmBarContainer').hide();
+				$('mlvfrmUnitsContainer').hide();
+//
 				break;
 			case "VALUE":
 				$('mlvfrmVALUE').show();
@@ -773,6 +933,10 @@ i2b2.CRC.view.modalLabValues = {
 				$('mlvfrmEnterStr').hide();
 				$('mlvfrmEnterEnum').hide();
 				$('mlvfrmEnterDbOperator').hide();
+// snm0
+				$('mlvfrmBarContainer').hide();
+				$('mlvfrmUnitsContainer').hide();
+//
 				// display what we need
 				switch(dm.valueType) {
 					case "POSFLOAT":
@@ -787,6 +951,17 @@ i2b2.CRC.view.modalLabValues = {
 							$('mlvfrmEnterVal').show();
 						}
 						i2b2.CRC.view.modalLabValues.setUnits();
+// snm0
+						// this is the only location that determines to show the 
+						// value bar
+						if (fd.bHidebar) {
+							$('mlvfrmBarContainer').hide();
+						}
+						else {
+							$('mlvfrmBarContainer').show();
+						}
+						$('mlvfrmUnitsContainer').show();
+//
 						break;
 					case "LRGSTR":
 						$('mlvfrmEnterStr').show();
@@ -845,22 +1020,42 @@ i2b2.CRC.view.modalLabValues = {
 							var iv2 = $('mlvfrmNumericValueHigh');							
 							iv1.value = iv1.value.strip();
 							iv2.value = iv2.value.strip();
-							tmpLabValue.ValueLow = Number(iv1.value);
-							tmpLabValue.ValueHigh = Number(iv2.value);
-							valInputs.push(iv1);
-							valInputs.push(iv2);
+//snm0
+							if (iv1.value == "") {
+								tmpLabValue.ValueLow = "";
+								valInputs.push(NaN);
+							}
+							else {
+								tmpLabValue.ValueLow = Number(iv1.value);
+								valInputs.push(iv1);
+							}
+							if (iv2.value == "") {
+								tmpLabValue.ValueHigh = "";
+								valInputs.push(NaN);
+							}
+							else {
+								tmpLabValue.ValueHigh = Number(iv2.value);
+								valInputs.push(iv2);
+							}
 							tmpLabValue.UnitsCtrl = $('mlvfrmUnits'); 
 						} else {
 							var iv1 = $('mlvfrmNumericValue');
-							tmpLabValue.Value = Number(iv1.value);
 							iv1.value = iv1.value.strip();
-							valInputs.push(iv1);
+							if (iv1.value == "") {
+								tmpLabValue.Value = "";
+								valInputs.push(NaN);
+							}
+							else {
+								tmpLabValue.Value = Number(iv1.value);
+								valInputs.push(iv1);
+							}
+//snm0
 							tmpLabValue.UnitsCtrl = $('mlvfrmUnits'); 
 						}
 						// loop through all the 
 						for(var i=0; i<valInputs.length; i++){
 							var tn = Number(valInputs[i].value);
-							if (isNaN(tn)) {
+							if (!isFinite(tn)) {
 								errorMsg.push(" - One or more inputs are not a valid number\n");	
 							}
 							if (dm.valueValidate.onlyInt) {
@@ -878,8 +1073,17 @@ i2b2.CRC.view.modalLabValues = {
 						if (fd.numericOperator=="BETWEEN" && (parseFloat(iv1) > parseFloat(iv2))) {
 							errorMsg.push(" - The low value is larger than the high value\n");
 						}
-						
+//snm0						
 						// CONVERT VALUES TO MASTER UNITS
+						if (fd.unitIndex == -1) { // no units were in XML
+							tmpLabValue.UnitsCtrl = "";
+							break;
+						}
+						if ((dm.valueUnits[fd.unitIndex] == undefined) || (dm.valueUnits[fd.unitIndex] == "")) {
+							alert('The units for this value are blank.');
+							return false;
+						}
+// snm0
 						if (dm.valueUnits[fd.unitIndex].excluded) {
 							alert('You cannot set a numerical value using the current Unit Of Measure.');
 							return false;
@@ -911,6 +1115,8 @@ i2b2.CRC.view.modalLabValues = {
 						var sv = $('mlvfrmStrValue').value;
 						if (dm.valueValidate.maxString && (sv.length > dm.valueValidate.maxString)) {
 							errorMsg.push(" - Input is over the "+dm.valueValidate.maxString+" character limit.\n");
+						} else if (sv.length == 0) {
+							errorMsg.push("The text for this value are blank.");
 						} else {
 							tmpLabValue.ValueString = $('mlvfrmStrValue').value;
 						}
@@ -922,6 +1128,8 @@ i2b2.CRC.view.modalLabValues = {
 						var sv = $('mlvfrmStrValue').value;
 						if (dm.valueValidate.maxString && (sv.length > dm.valueValidate.maxString)) {
 							errorMsg.push(" - Input is over the "+dm.valueValidate.maxString+" character limit.\n");
+						} else if (sv.length == 0) {
+							errorMsg.push("The text for this value are blank.");
 						} else {
 							tmpLabValue.ValueString = $('mlvfrmStrValue').value;
 						}

@@ -33,9 +33,9 @@ i2b2.hive.tempCellsList = [
 		{ code: "PM",
 		  forceLoading: true 			// <----- this must be set to true for the PM cell!
 		},
-//		{ code: "ONT"	},
-//		{ code: "CRC"	},
-//		{ code: "WORK"},
+		{ code: "ONT"	},
+		{ code: "CRC"	},
+		{ code: "WORK"},
 //		{ code: "SHRINE"},
 		{ code:	"PLUGINMGR",
 		   forceLoading: true,

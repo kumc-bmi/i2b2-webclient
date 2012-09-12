@@ -14,6 +14,7 @@ console.time('execute time');
 function i2b2_PanelController(parentCtrlr) {
 	// this is the base class for the single panel controllers
 	this.panelCurrentIndex = false;
+	this.actualPanelIndex = false;
 	this.QTController = parentCtrlr;
 	this.refTitle = undefined;
 	this.refButtonExclude = undefined;
@@ -24,6 +25,8 @@ function i2b2_PanelController(parentCtrlr) {
 	this.refButtonTiming = undefined;
 	this.refBalloon = undefined;
 	this.itemNumber = 0;
+	
+	var Event = YAHOO.util.Event;
 
 // ================================================================================================== //
 	this.doRedraw = function() {
@@ -48,6 +51,7 @@ function i2b2_PanelController(parentCtrlr) {
 		// do redraw
 		this._redrawTree(pd);
 		this._redrawButtons(pd);
+		this._redrawTiming(pd);
 	}
 
 // ================================================================================================== //
@@ -134,6 +138,28 @@ function i2b2_PanelController(parentCtrlr) {
 				this._redrawTreeFix.call(this, tvNode.children[i]);
 			}
 		}
+	}
+
+// ================================================================================================== //
+	this._redrawTiming = function(pd) {
+		// set panel GUI according to data in the "pd" object
+		if (undefined===pd) { pd = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex]; }
+
+
+	if (this.actualPanelIndex > 3) {return}
+	if (pd.timing == "SAMEVISIT" )
+	{ 
+	//this.refTiming.innerHTML = "Occurs in Same Encounter";
+	$("queryPanelTimingB" + (this.actualPanelIndex+1) + "-button").innerHTML = "Occurs in Same Encounter";
+	} else if (pd.timing == "SAMEINSTANCENUM") {
+	//	this.refTiming.innerHTML ="Items Instance will be the same";
+	$("queryPanelTimingB" + (this.actualPanelIndex+1) + "-button").innerHTML = "Items Instance will be the same";
+	} else {
+	//	this.refTiming.innerHTML = "Treat Independently";
+	$("queryPanelTimingB" + (this.actualPanelIndex+1) + "-button").innerHTML = "Treat Independently";
+	} 
+
+//		i2b2.CRC.view.QT.setPanelTiming(this.panelCurrentIndex + 1, pd.timing);
 	}
 
 // ================================================================================================== //
@@ -907,8 +933,9 @@ function i2b2_PanelController(parentCtrlr) {
 
 
 // ================================================================================================== //
-	this.setPanelRecord = function (index) { 
+	this.setPanelRecord = function (index, actual) { 
 		this.panelCurrentIndex = index; 
+		this.actualPanelIndex = actual;
 		this.doRedraw();
 	}
 
