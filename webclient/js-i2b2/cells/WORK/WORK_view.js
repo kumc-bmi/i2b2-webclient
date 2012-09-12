@@ -294,9 +294,6 @@ i2b2.WORK.view.main._generateTvNode = function(title, nodeData, parentNode){
                 ddProxy.isTarget = false;
             } 
             catch (e) {
-                var x = new XMLSerializer();
-                x = x.serializeToString(o.xmlOrig);
-                console.warn(x);
             }
     }
     return renderObj;

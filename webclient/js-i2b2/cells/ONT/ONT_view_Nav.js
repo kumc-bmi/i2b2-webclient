@@ -53,13 +53,13 @@ i2b2.ONT.view.nav.showOptions = function(subScreen) {
 	this.modalOptions.show();
 	// load settings
 	$('ONTNAVMaxQryDisp').value = this.params.max;
-	$('ONTNAVshowSynonyms').checked = parseBoolean(this.params.synonyms);
+	$('ONTNAVshowSynonyms').checked = parseBoolean(!this.params.synonyms);
 	$('ONTNAVshowHiddens').checked = parseBoolean(this.params.hiddens);			
 }
 
 // ================================================================================================== //
 i2b2.ONT.view.nav.showView = function() {
-	$('tabNavigate').addClassName('active');
+	$('tabNavigate').addClassName('active'); 
 	$('ontNavDisp').style.display = 'block';
 }
 

@@ -141,6 +141,14 @@ function QueryToolController() {
 
 							var sdxDataNode = i2b2.sdx.Master.EncapsulateData('QM',o);
 							po.items.push(sdxDataNode);								
+						} else 	if (ckey.startsWith("masterid")) {
+							var o = new Object;
+							o.name =i2b2.h.getXNodeVal(pi[i2],'item_name');
+							o.id = ckey;
+							o.result_instance_id = o.PRS_id ;
+
+							var sdxDataNode = i2b2.sdx.Master.EncapsulateData('QM',o);
+							po.items.push(sdxDataNode);								
 						} else if (ckey.startsWith("patient_set_coll_id")) {
 							var o = new Object;
 							o.titleCRC =i2b2.h.getXNodeVal(pi[i2],'item_name');
@@ -885,7 +893,7 @@ function QueryToolController() {
 		if (index_offset < 0) { index_offset = 0; }
 		for (var i=0; i<3; i++) {
 			this.panelControllers[i].refTitle.innerHTML = "Group "+(index_offset+i+1);
-			this.panelControllers[i].setPanelRecord(index_offset+i);
+			this.panelControllers[i].setPanelRecord(index_offset+i, i);
 			if (i > 0) {
 				if (index_offset+i <= i2b2.CRC.model.queryCurrent.panels.length) {
 					$('queryBalloonAnd'+(i)).style.display = 'block';
