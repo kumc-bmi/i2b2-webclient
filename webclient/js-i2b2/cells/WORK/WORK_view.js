@@ -48,13 +48,55 @@ i2b2.WORK.view.main.Resize = function(e){
     }
 }
 // attach resize events
-YAHOO.util.Event.addListener(window, "resize", i2b2.WORK.view.main.Resize, i2b2.WORK.view.main);
+// YAHOO.util.Event.addListener(window, "resize", i2b2.WORK.view.main.Resize, i2b2.WORK.view.main); // tdw9
+
+//================================================================================================== //
+i2b2.WORK.view.main.splitterDragged = function()
+{
+	var splitter = $( i2b2.hive.mySplitter.name );
+	var work = $("wrkWorkplace");
+	work.style.width	= Math.max((parseInt(splitter.style.left) - work.offsetLeft - 3), 0) + "px";	
+}
+
+//================================================================================================== //
+i2b2.WORK.view.main.ResizeHeight = function(){
+    // this function provides the resize functionality needed for this screen
+    var viewObj = i2b2.WORK.view.main;
+	var t = $('wrkWorkplace');
+    if (viewObj.visible) {
+		$('wrkWorkplace').show();
+        var ds = document.viewport.getDimensions();
+        var h = ds.height;
+		if (h < 517) { h = 517; }
+		// resize our visual components
+		if (viewObj.isZoomed) {
+			t.style.top = '';
+			$('wrkTreeview').style.height = h - 97;
+		} else {
+			var hz = parseInt((h - 321) / 2);
+			t.style.top = hz + 108;
+			$('wrkTreeview').style.height = hz + 8;
+        }
+        t.show();
+	} else {
+		t.hide();
+    }
+}
+
 
 
 // ================================================================================================== //
 i2b2.WORK.view.main.ZoomView = function() {
 	i2b2.hive.MasterView.toggleZoomWindow("WORK");
 }
+
+//================================================================================================== //
+i2b2.events.initView.subscribe((function(eventTypeName, newMode) {
+// -------------------------------------------------------
+	this.visible = true;
+	this.Resize();
+// -------------------------------------------------------
+}),'',i2b2.WORK.view.main);
 
 
 // process view mode changes (via EVENT CAPTURE)
@@ -73,11 +115,19 @@ i2b2.events.changedViewMode.subscribe((function(eventTypeName, newMode){
 				this.visible = true;
 			}
 			break;
+		case "AnalysisZoomed":
+			this.visible = false;
+			break;
 		default:
 			this.visible = false;
 			break;
 	}
-	this.Resize();
+	if ( this.visible )
+		$('wrkWorkplace').show();
+	else
+		$('wrkWorkplace').hide();
+	i2b2.WORK.view.main.splitterDragged();
+	//this.Resize(); // tdw9
 }),'',i2b2.WORK.view.main);
 
 
@@ -105,7 +155,8 @@ i2b2.events.changedZoomWindows.subscribe((function(eventTypeName, zoomMsg) {
 				this.visible = true;
 		}
 	}
-	this.Resize();
+	this.ResizeHeight();
+	this.splitterDragged();
 }),'',i2b2.WORK.view.main);
 
 

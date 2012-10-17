@@ -145,7 +145,6 @@ function i2b2_PanelController(parentCtrlr) {
 		// set panel GUI according to data in the "pd" object
 		if (undefined===pd) { pd = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex]; }
 
-
 	if (this.actualPanelIndex > 3) {return}
 	if (pd.timing == "SAMEVISIT" )
 	{ 
@@ -164,6 +163,8 @@ function i2b2_PanelController(parentCtrlr) {
 
 // ================================================================================================== //
 	this._redrawButtons = function(pd) {
+				$('infoQueryStatusText').innerHTML = "";		
+
 		// set panel GUI according to data in the "pd" object
 		if (undefined===pd) { pd = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex]; }
 		if (pd.exclude) {
@@ -433,6 +434,8 @@ function i2b2_PanelController(parentCtrlr) {
 
 // ================================================================================================== //
 	this.doTiming = function(sTiming) { 
+		$('infoQueryStatusText').innerHTML = "";	
+
 		if (i2b2.CRC.model.queryCurrent.panels.length==0) { return;}
 		var bVal;
 		var dm = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex];
@@ -627,12 +630,21 @@ function i2b2_PanelController(parentCtrlr) {
 					}
 				}
 				
-				// Add option to temperal Constaint
-				//<option value="SAMEINSTANCENUM">Items Instance will be the same</option>
-				//this.QTController.enableSameTiming
-				//i2b2.CRC.view.QT.enableSameTiming();
+				//Get parent who is not a modifier
+				var modParent = sdxConcept.origData.parent;
+				while  (modParent != null)
+				{
+					if (modParent.isModifier)
+					{
+						modParent = modParent.parent;
+					} else {
+						sdxConcept.origData.newName = modParent.name + " [" + sdxConcept.origData.name + title + "]";
+						break;
+					}
+				}
 				
-				sdxConcept.origData.newName = sdxConcept.origData.parent.name + " [" + sdxConcept.origData.name + title + "]";
+				
+				
 				
 				var hasContainer = false;
 				var data = sdxConcept.origData;
@@ -793,6 +805,8 @@ function i2b2_PanelController(parentCtrlr) {
 
 // ================================================================================================== //
 	this._renameConcept = function(key, isModifier, pd) {
+				$('infoQueryStatusText').innerHTML = "";
+
 		//var pd = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex];
 		// remove the concept from panel
 		for (var i=0; i< pd.items.length; i++) {
@@ -941,6 +955,7 @@ function i2b2_PanelController(parentCtrlr) {
 
 // ================================================================================================== //
 	this.doDelete = function() { 
+		$('infoQueryStatusText').innerHTML = "";
 		// function fired when the [X] icon for the GUI panel is clicked
 		i2b2.CRC.ctrlr.QT.panelDelete(this.panelCurrentIndex);
 		// redraw the panels 

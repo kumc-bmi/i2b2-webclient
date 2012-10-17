@@ -10,7 +10,6 @@
 console.group('Load & Execute component file: CRC > ctrlr > Dates');
 console.time('execute time');
 
-
 // ================================================================================================== //
 i2b2.CRC.ctrlr.dateConstraint = {
 	defaultStartDate: '12/01/1979',
