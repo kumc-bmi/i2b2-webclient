@@ -6,9 +6,9 @@
 <!--
  *  *************************
  *       i2b2 Web Client
- *           v1.6.06
+ *           v1.6.07
  *  *************************
- *  @modified: 08/24/2012
+ *  @modified: 10/05/2012
  *  Contributors:
  *     Nick Benik
  *     Griffin Weber, MD, PhD
@@ -18,7 +18,7 @@
  */-->
 
 <script type="text/javascript">
-	var i2b2build = "1.6.006   [8/24/2012 4:07 PM] ";
+	var i2b2build = "1.6.007   [10/05/2012 4:07 PM] ";
 </script>
 
 <!-- LOAD YUI FROM Yahoo's CDN
@@ -55,6 +55,7 @@
 		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.6.0/build/assets/skins/sam/skin.css"> 
 -->
 	<link rel="stylesheet" type="text/css" href="js-ext/yui/build/assets/skins/sam/skin.css"> 
+	<link rel="stylesheet" type="text/css" href="js-i2b2/ui.styles/ui.styles.css"> 
 
 
 
@@ -162,6 +163,8 @@
 <link type="text/css" href="assets/i2b2.css" rel="stylesheet" />
 <link type="text/css" href="assets/i2b2-NEW.css" rel="stylesheet" />
 
+<!-- other auxiliary javascript source files -->
+<script type="text/javascript" src="js-i2b2/hive/hive.ui.js"></script>
 
 <script type="text/javascript">
 /****************************************************/
@@ -200,19 +203,27 @@ function initI2B2() {
 		})
 	);
 
-
 	i2b2.events.afterLogin.subscribe(
 		(function() {
 			// after successful login hide the login box and display the application GUI
 			$('topBar').style.display = 'block';
 			$('screenQueryData').style.display = 'block';
+			var splitterName = 'main.splitter';			
+
 			if (i2b2.PM.model.admin_only)
 			{
 				i2b2.hive.MasterView.setViewMode('Admin');
 				$('viewMode-Patients').style.display = 'none';
-				$('viewMode-Analysis').style.display = 'none';			
-			} else {
-				i2b2.hive.MasterView.setViewMode('Patients');
+				$('viewMode-Analysis').style.display = 'none';
+				// hide the splitter from view since we don't need it in admin-only mode
+				var splitter = $( splitterName );
+				splitter.style.visibility="hidden";
+			} 
+			else 
+			{
+				// create the splitter object only after login and not in admin-only mode
+				i2b2.hive.mySplitter = new Splitter(splitterName, {cont: 'screenQueryData'});
+				i2b2.hive.MasterView.initViewMode(); //tdw9
 			}
 			$('viewMode-Project').innerHTML = "Project: " + i2b2.PM.model.login_projectname;
 			$('viewMode-User').innerHTML = "User: " + i2b2.PM.model.login_fullname;
@@ -567,14 +578,14 @@ YAHOO.util.Event.addListener(window, "load", init);
 				<a href="JavaScript:i2b2.CRC.view.QT.showOptions();"><img src="assets/images/options.gif" border="0" width="16" height="16" alt="Show Options" title="Show Options" /></a>
 				<a href="JavaScript:i2b2.CRC.view.QT.ZoomView();"><img id="qtZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/CRC/assets/zoom_icon.gif" alt="Resize Workspace" title="Resize Workspace" /></a>			</div>
 		</div>
-  <div class="bodyBox" >
-			<div class="queryNameBar" style="width:512px;">
+  <div class="bodyBox" id="crcQueryToolBox.bodyBox">
+			<div class="queryNameBar" id="queryNameBar" style="width:512px;">
 				<div class="queryLabel">Query Name:&nbsp;</div>
 				<div id="queryName"></div>
 			</div>
-			<div class="queryNameBar" style="width:512px;">
-				<div class="queryLabel">Temporal Constraint:&nbsp;</div>
-                <div class="qryTemporalConstraint" style="float:left">
+			<div class="queryNameBar" id="temporalConstraintBar" style="width:512px;">
+				<div class="queryLabel" id="temporalConstraintLabel" style="width:120px">Temporal Constraint:&nbsp;</div>
+                <div class="qryTemporalConstraint" id="temporalConstraintDiv" style="float:left;overflow:hidden">
 						<input type="submit" id="queryTiming" name="queryTiming" value="Treat all groups independently"> 
                         <select id="menubutton1select" name="menubutton1select"> 
                             <option value="ANY">Treat all groups independently</option> 
@@ -585,7 +596,7 @@ YAHOO.util.Event.addListener(window, "load", init);
                 </div>
 			</div>
 			<div id="crcQryToolPanels" style="width:512px;overflow:hidden;">
-			<div style="width:550px;">
+			<div id = "crc.innerQueryPanel" style="width:550px;">
 				<div class="qryPanel">
 					<div class="qryPanelTitle">
 						<div class="qryPanelClear" style="float:right"><a href="JavaScript:i2b2.CRC.ctrlr.QT.panelControllers[0].doDelete();"><img src="js-i2b2/cells/CRC/assets/QryTool_b_clear.gif" border="0" alt="Clear" /></a></div>
@@ -685,7 +696,7 @@ YAHOO.util.Event.addListener(window, "load", init);
 			<div class="tabBox tabQueryStatus active"><div>Query Status</div></div>
 			<div class="opXML">
 
-				<a href="JavaScript:i2b2.CRC.ctrlr.QT.doPrintQuery();"><img id="qtZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/CRC/assets/zoom_icon.gif" alt="Print Query" title="Print Query" /></a>		
+				<a href="JavaScript:i2b2.CRC.ctrlr.QT.doPrintQuery();"><img id="qtPrintImg" width="16" height="16" border="0" src="js-i2b2/cells/CRC/assets/printer_img.gif" alt="Print Query" title="Print Query" /></a>		
              </div>            
             
 		</div>
@@ -986,8 +997,6 @@ YAHOO.util.Event.addListener(window, "load", init);
         </div>
 	</div>
 
-
-
 <!-- ############### <LabRange> ############### -->
 	<div id="itemLabRange" style="display:none;">
 		<div class="hd" style="background:#6677AA;">Lab Range Constraint</div>
@@ -1089,10 +1098,11 @@ YAHOO.util.Event.addListener(window, "load", init);
 						<span id="mlvUnitExcluded" style="color:#900; margin-left: 20px">A value cannot be specified for these units.</span>
 				</div>
 				<!-- END snm0 -->
+				</div>
+			</div>
 		</div>
 	</div>
 <!-- ############### </LabRange> ############### -->
-
 
 <!-- ############### <Query Rename Dialog> ############### -->
 	<div id="dialogQmName" style="display:none;">
@@ -1134,6 +1144,13 @@ YAHOO.util.Event.addListener(window, "load", init);
 	</div>
 <!-- ############### </Timeout Dialog> ############### -->
 
+<!-- ############### <Draggable Splitter> ############### -->
+	<div id="main.splitter" class="vertical_splitter" style="top:33px"></div>	<!-- Overwriting the default top position -->
+	<!-- Debug output -->
+	<!-- <div id="main.debug" style="position: absolute; top: 300px; left: 300px; color: red"> <p></p><br> </div> -->
+<!-- ############### <Draggable Splitter> ############### -->
+	
 </div>
+
 </body>
 </html>

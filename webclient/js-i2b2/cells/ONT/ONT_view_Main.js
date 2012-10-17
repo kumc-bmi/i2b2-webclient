@@ -89,7 +89,64 @@ i2b2.ONT.view.main.Resize = function(e) {
 		ve.hide();
 	}
 }
-YAHOO.util.Event.addListener(window, "resize", i2b2.ONT.view.main.Resize, i2b2.ONT.view.main);
+
+//YAHOO.util.Event.addListener(window, "resize", i2b2.ONT.view.main.Resize, i2b2.ONT.view.main); // tdw9
+
+
+/*
+ * Adjust width of ontMainBox after users drags splitter
+ */
+i2b2.ONT.view.main.splitterDragged = function()
+{
+	var splitter = $( i2b2.hive.mySplitter.name );
+	var ont = $("ontMainBox");
+	ont.style.width	= Math.max((parseInt(splitter.style.left) - ont.offsetLeft - 3), 0) + "px";
+	
+	$$('DIV#ontMainBox DIV#ontNavDisp')[0].style.width = Math.max((parseInt(ont.style.width)-20), 0) + 'px';
+	$$('DIV#ontMainBox DIV#ontSearchNamesResults')[0].style.width = Math.max((parseInt(ont.style.width)-14), 0) + 'px';
+	$$('DIV#ontMainBox DIV#ontSearchCodesResults')[0].style.width = Math.max((parseInt(ont.style.width)-14), 0) + 'px';
+}
+
+/*
+ * Window Resized
+ */
+i2b2.ONT.view.main.ResizeHeight = function() 
+{
+	// this function provides the resize functionality needed for this screen
+	var viewObj = i2b2.ONT.view.main;
+	var ve = $('ontMainBox');
+	if (viewObj.visible) {
+		var ds = document.viewport.getDimensions();
+		var h = ds.height;
+		if (h < 517) {h = 517;}
+		// resize our visual components
+		ve.show();
+		var ve = ve.style
+		switch(i2b2.hive.MasterView.getViewMode()) 
+		{
+			case "Patients":
+				if (i2b2.WORK && i2b2.WORK.isLoaded) {
+					var z = parseInt((h - 321)/2) + 16;
+					ve.height = z;
+				} else {
+					ve.height = h-289;
+				}
+				break;
+			case "Analysis":
+				if (i2b2.WORK && i2b2.WORK.isLoaded) 
+				{
+					var z = parseInt((h - 321)/2) + 16;
+					ve.height = z;
+				} else {
+					ve.height = h-289;
+				}
+				break;
+		}
+		if (viewObj.isZoomed) { ve.height = h-93; }
+	} else {
+		ve.hide();
+	}
+}
 
 
 // ================================================================================================== //
@@ -160,6 +217,18 @@ i2b2.events.afterCellInit.subscribe(
 	})
 );
 
+//================================================================================================== //
+i2b2.events.initView.subscribe((function(eventTypeName, newMode) {
+// -------------------------------------------------------
+	newMode = newMode[0];
+	this.viewMode = newMode;
+	this.visible = true;
+	$('ontMainBox').show();
+	this.Resize();
+// -------------------------------------------------------
+}),'',i2b2.ONT.view.main);
+
+
 // ================================================================================================== //
 i2b2.events.changedViewMode.subscribe((function(eventTypeName, newMode) {
 // -------------------------------------------------------
@@ -172,12 +241,14 @@ i2b2.events.changedViewMode.subscribe((function(eventTypeName, newMode) {
 			if (wlst.indexOf("HISTORY")!=-1 || wlst.indexOf("WORK")!=-1) { return; }
 			this.visible = true;
 			$('ontMainBox').show();
-			this.Resize();
+			i2b2.ONT.view.main.splitterDragged();
+			//;this.Resize(); //tdw9
 			break;
 		default:
 			this.visible = false;
 			$('ontMainBox').hide();
-			this.Resize();
+			i2b2.ONT.view.main.splitterDragged();
+			//this.Resize(); //tdw9
 			break;
 	}
 // -------------------------------------------------------
@@ -209,7 +280,8 @@ i2b2.events.changedZoomWindows.subscribe((function(eventTypeName, newMode) {
 				this.visible = true;
 		}
 	}
-	i2b2.ONT.view.main.Resize();
+	this.ResizeHeight();
+	this.splitterDragged();
 // -------------------------------------------------------
 }),'',i2b2.ONT.view.main);
 
