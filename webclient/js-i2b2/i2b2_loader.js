@@ -85,6 +85,12 @@ i2b2.hive.tempCellsList = [
 		   roles: [ "DATA_LDS", "DATA_DEID", "DATA_PROT" ],
 		  forceDir: "cells/plugins/standard"
 		},
+                { code: "DFBuilder",
+		  forceLoading: true,
+		  forceConfigMsg: { params: [] },
+		  roles: [ "DATA_LDS", "DATA_DEID", "DATA_PROT" ],
+		  forceDir: "cells/plugins/fsm"
+                },		
                 { code: "KaplanMeierStat",
 		  forceLoading: true,
 		  forceConfigMsg: { params: [] },
