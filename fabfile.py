@@ -19,5 +19,5 @@ def deploy_hg_tip(webspace='/srv/www/htdocs/',
     # hg archive sets permissions to 755 or 644.
     # We need them group-writeable.
     # This should only involve files that this user created.
-    local('find %s -not -perm -g=w -print0 | '
-          'xargs -0 chmod g+w' % dest)
+    local('find %s -type d -name plot_output -prune -o -not -perm -g=w -print0 | '
+          'xargs --no-run-if-empty -0 chmod g+w' % dest)
