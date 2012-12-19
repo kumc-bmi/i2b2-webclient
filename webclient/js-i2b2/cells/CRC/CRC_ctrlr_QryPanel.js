@@ -14,6 +14,7 @@ console.time('execute time');
 function i2b2_PanelController(parentCtrlr) {
 	// this is the base class for the single panel controllers
 	this.panelCurrentIndex = false;
+	this.actualPanelIndex = false;
 	this.QTController = parentCtrlr;
 	this.refTitle = undefined;
 	this.refButtonExclude = undefined;
@@ -24,6 +25,8 @@ function i2b2_PanelController(parentCtrlr) {
 	this.refButtonTiming = undefined;
 	this.refBalloon = undefined;
 	this.itemNumber = 0;
+	
+	var Event = YAHOO.util.Event;
 
 // ================================================================================================== //
 	this.doRedraw = function() {
@@ -48,6 +51,7 @@ function i2b2_PanelController(parentCtrlr) {
 		// do redraw
 		this._redrawTree(pd);
 		this._redrawButtons(pd);
+		this._redrawTiming(pd);
 	}
 
 // ================================================================================================== //
@@ -137,7 +141,30 @@ function i2b2_PanelController(parentCtrlr) {
 	}
 
 // ================================================================================================== //
+	this._redrawTiming = function(pd) {
+		// set panel GUI according to data in the "pd" object
+		if (undefined===pd) { pd = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex]; }
+
+	if (this.actualPanelIndex > 3) {return}
+	if (pd.timing == "SAMEVISIT" )
+	{ 
+	//this.refTiming.innerHTML = "Occurs in Same Encounter";
+	$("queryPanelTimingB" + (this.actualPanelIndex+1) + "-button").innerHTML = "Occurs in Same Encounter";
+	} else if (pd.timing == "SAMEINSTANCENUM") {
+	//	this.refTiming.innerHTML ="Items Instance will be the same";
+	$("queryPanelTimingB" + (this.actualPanelIndex+1) + "-button").innerHTML = "Items Instance will be the same";
+	} else {
+	//	this.refTiming.innerHTML = "Treat Independently";
+	$("queryPanelTimingB" + (this.actualPanelIndex+1) + "-button").innerHTML = "Treat Independently";
+	} 
+
+//		i2b2.CRC.view.QT.setPanelTiming(this.panelCurrentIndex + 1, pd.timing);
+	}
+
+// ================================================================================================== //
 	this._redrawButtons = function(pd) {
+				$('infoQueryStatusText').innerHTML = "";		
+
 		// set panel GUI according to data in the "pd" object
 		if (undefined===pd) { pd = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex]; }
 		if (pd.exclude) {
@@ -407,6 +434,8 @@ function i2b2_PanelController(parentCtrlr) {
 
 // ================================================================================================== //
 	this.doTiming = function(sTiming) { 
+		$('infoQueryStatusText').innerHTML = "";	
+
 		if (i2b2.CRC.model.queryCurrent.panels.length==0) { return;}
 		var bVal;
 		var dm = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex];
@@ -601,12 +630,21 @@ function i2b2_PanelController(parentCtrlr) {
 					}
 				}
 				
-				// Add option to temperal Constaint
-				//<option value="SAMEINSTANCENUM">Items Instance will be the same</option>
-				//this.QTController.enableSameTiming
-				//i2b2.CRC.view.QT.enableSameTiming();
+				//Get parent who is not a modifier
+				var modParent = sdxConcept.origData.parent;
+				while  (modParent != null)
+				{
+					if (modParent.isModifier)
+					{
+						modParent = modParent.parent;
+					} else {
+						sdxConcept.origData.newName = modParent.name + " [" + sdxConcept.origData.name + title + "]";
+						break;
+					}
+				}
 				
-				sdxConcept.origData.newName = sdxConcept.origData.parent.name + " [" + sdxConcept.origData.name + title + "]";
+				
+				
 				
 				var hasContainer = false;
 				var data = sdxConcept.origData;
@@ -767,6 +805,8 @@ function i2b2_PanelController(parentCtrlr) {
 
 // ================================================================================================== //
 	this._renameConcept = function(key, isModifier, pd) {
+				$('infoQueryStatusText').innerHTML = "";
+
 		//var pd = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex];
 		// remove the concept from panel
 		for (var i=0; i< pd.items.length; i++) {
@@ -907,13 +947,15 @@ function i2b2_PanelController(parentCtrlr) {
 
 
 // ================================================================================================== //
-	this.setPanelRecord = function (index) { 
+	this.setPanelRecord = function (index, actual) { 
 		this.panelCurrentIndex = index; 
+		this.actualPanelIndex = actual;
 		this.doRedraw();
 	}
 
 // ================================================================================================== //
 	this.doDelete = function() { 
+		$('infoQueryStatusText').innerHTML = "";
 		// function fired when the [X] icon for the GUI panel is clicked
 		i2b2.CRC.ctrlr.QT.panelDelete(this.panelCurrentIndex);
 		// redraw the panels 

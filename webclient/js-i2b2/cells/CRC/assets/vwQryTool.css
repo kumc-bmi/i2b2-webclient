@@ -125,11 +125,14 @@ DIV#crcQueryToolBox DIV.qryPanelTiming .yuimenuitemlabel {width:120px;}
 DIV#crcQueryToolBox DIV.qryPanelTiming Button {
 line-height:1;
 float:left;
-//width:160px;
+/*width:160px;*/
 min-height:1em;
 }
 
-DIV#crcQueryToolBox DIV.qryTemporalConstraint   {width:300px;text-align:center;}
+DIV#crcQueryToolBox DIV.qryTemporalConstraint{
+	width:300px;
+	text-align:center;
+}
 
 DIV#crcQueryToolBox DIV.qryTemporalConstraint .yuimenuitemlabel {width:200px;}
 
@@ -230,13 +233,14 @@ DIV#crcQueryToolBox DIV#scrollBox {
 	position:relative;
 	overflow:hidden;
 	float:right;
+	width:172px;
 	z-index:5;
 }
 
 DIV#crcQueryToolBox DIV#queryBalloonBox {
 	bottom:80px;
 	height:30px;
-	padding:37px 0px 37px 50px;
+	padding:0px 0px 0px 0px;
 	position:absolute;
 	width:100%;
 	z-index:10;
@@ -251,6 +255,7 @@ DIV#crcQueryToolBox DIV.queryBalloon {
 	font-weight:bold;
 	text-align:center;
 	line-height:13px;
+	position:absolute;
 	float:left;
 	display:none;
 }
@@ -264,7 +269,8 @@ DIV#crcQueryToolBox DIV.queryBalloonAnd {
 	font-weight:bold;
 	text-align:center;
 	line-height:20px;
+	position:absolute;
 	float:left;
-	margin:10px 27px;
+	/*margin:10px 27px;*/
 	display:none;
 }

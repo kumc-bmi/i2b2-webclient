@@ -53,6 +53,13 @@ i2b2.sdx.TypeControllers.QM.RenderHTML= function(sdxData, options, targetDiv) {
 	var conceptId = sdxData.name;
 	var id = "CRC_ID-" + i2b2.GUID();
 	
+	
+	if (Object.isUndefined(conceptId))
+	{
+		options.title = sdxData.sdxInfo.sdxDisplayName;	
+	}
+
+	
 	// process drag drop controllers
 	if (!Object.isUndefined(options.dragdrop)) {
 // NOTE TO SELF: should attachment of node dragdrop controller be handled by the SDX system as well? 
