@@ -72,8 +72,63 @@ i2b2.CRC.view.status.Resize = function(e) {
 	}
 }
 // ================================================================================================== //
-YAHOO.util.Event.addListener(window, "resize", i2b2.CRC.view.status.Resize, i2b2.CRC.view.status);
+// YAHOO.util.Event.addListener(window, "resize", i2b2.CRC.view.status.Resize, i2b2.CRC.view.status); // tdw9
 
+
+//================================================================================================== //
+i2b2.CRC.view.status.splitterDragged = function()
+{
+	var viewPortDim = document.viewport.getDimensions();
+	var splitter = $( i2b2.hive.mySplitter.name );	
+	var CRCStatus = $("crcStatusBox");
+	CRCStatus.style.left	= (parseInt(splitter.offsetWidth) + parseInt(splitter.style.left) + 3) + "px";
+	CRCStatus.style.width 	= Math.max(parseInt(viewPortDim.width) - parseInt(splitter.style.left) - parseInt(splitter.offsetWidth) - 29, 0) + "px";
+}
+
+//================================================================================================== //
+i2b2.CRC.view.status.ResizeHeight = function() 
+{
+	var viewObj = i2b2.CRC.view.status;
+	if (viewObj.visible) {
+		var ds = document.viewport.getDimensions();
+		var h = ds.height;
+		if (h < 517) {h = 517;}
+		// resize our visual components
+		var ve = $('crcStatusBox');
+		ve.show();
+		switch(viewObj.viewMode) {
+			case "Patients":
+				ve = ve.style;
+				if (i2b2.WORK && i2b2.WORK.isLoaded) 
+				{
+					$('infoQueryStatusText').style.height = '100px';
+					ve.top = h-152; //196+44;
+				} 
+				else 
+				{
+					$('infoQueryStatusText').style.height = '144px';
+					ve.top = h-196;
+				}
+				break;
+			default:
+				ve.hide();
+		}
+	}
+}
+
+// ================================================================================================== //
+i2b2.events.initView.subscribe((function(eventTypeName, newMode) {
+// -------------------------------------------------------
+	newMode = newMode[0];
+	this.viewMode = newMode;
+	this.visible = true;
+	$('crcStatusBox').show();
+	this.Resize();
+// -------------------------------------------------------
+}),'',i2b2.CRC.view.status);
+
+
+//================================================================================================== //
 i2b2.events.changedViewMode.subscribe((function(eventTypeName, newMode) {
 // -------------------------------------------------------
 	newMode = newMode[0];
@@ -94,7 +149,8 @@ i2b2.events.changedViewMode.subscribe((function(eventTypeName, newMode) {
 	}
 	if (this.visible) {
 		$('crcStatusBox').show();
-		this.Resize();
+		i2b2.CRC.view.status.splitterDragged();
+		//this.Resize();	// tdw9
 	} else {
 		$('crcStatusBox').hide();		
 	}
@@ -121,7 +177,8 @@ i2b2.events.changedZoomWindows.subscribe((function(eventTypeName, zoomMsg) {
 				i2b2.CRC.view.status.show();
 		}
 	}
-	this.Resize();
+	this.ResizeHeight();
+	//this.Resize();		// tdw9
 }),'',i2b2.CRC.view.status);
 
 

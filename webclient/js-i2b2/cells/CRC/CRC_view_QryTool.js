@@ -197,6 +197,7 @@ i2b2.CRC.view.QT.ContextMenuRouter = function(a, b, actionName) {
 	}
  }
 
+//================================================================================================== //
 i2b2.CRC.view.QT.enableSameTiming = function() {
 
 		if (YAHOO.util.Dom.inDocument(queryTimingButton.getMenu().element)) {
@@ -257,6 +258,7 @@ i2b2.CRC.view.QT.setQueryTiming = function(sText) {
 	}
 }
 
+//================================================================================================== //
 i2b2.CRC.view.QT.setPanelTiming = function(panelNum, sText) {
 	if (panelNum > 3) {return}
 	if (sText == "SAMEVISIT" )
@@ -305,8 +307,146 @@ i2b2.CRC.view.QT.Resize = function(e) {
 	$('QPD2').style.height = z;
 	$('QPD3').style.height = z;	
 }
-YAHOO.util.Event.addListener(window, "resize", i2b2.CRC.view.QT.Resize, i2b2.CRC.view.QT);
+//YAHOO.util.Event.addListener(window, "resize", i2b2.CRC.view.QT.Resize, i2b2.CRC.view.QT); // tdw9
 
+
+//================================================================================================== //
+i2b2.CRC.view.QT.splitterDragged = function()
+{
+	var viewPortDim = document.viewport.getDimensions();
+	var splitter = $( i2b2.hive.mySplitter.name );	
+	var CRCQT = $("crcQueryToolBox");
+	var CRCQTBodyBox = $("crcQueryToolBox.bodyBox");
+	
+	var CRCQueryName 			= $("queryName");
+	var CRCQueryNameBar 		= $("queryNameBar");
+	var temporalConstraintBar 	= $("temporalConstraintBar");
+	var temporalConstraintLabel = $("temporalConstraintLabel");
+	var temporalConstraintDiv	= $("temporalConstraintDiv");
+	var queryTiming				= $("queryTiming");
+	var queryTimingButton		= $("queryTiming-button");
+	
+	var CRCQueryPanels 			= $("crcQryToolPanels");
+	var CRCinnerQueryPanel		= $("crc.innerQueryPanel");
+	
+	var basicWidth					= parseInt(viewPortDim.width) - parseInt(splitter.style.left) - parseInt(splitter.offsetWidth);
+
+	/* Title, buttons, and panels */		
+	CRCQT.style.left				= parseInt(splitter.offsetWidth) + parseInt(splitter.style.left) + 3 + "px";
+	CRCQT.style.width				= Math.max(basicWidth - 24, 0) + "px";
+	CRCQTBodyBox.style.width 		= Math.max(basicWidth - 41, 0) + "px";
+	
+	CRCQueryNameBar.style.width 		= Math.max(basicWidth - 38, 0) + "px";
+	temporalConstraintBar.style.width 	= Math.max(basicWidth - 38, 0) + "px";
+	temporalConstraintDiv.style.width 	= Math.max( parseInt(temporalConstraintBar.style.width) - parseInt(temporalConstraintLabel.style.width)-2, 0) + "px";
+	queryTimingButton.style.width 		= Math.max( parseInt(temporalConstraintBar.style.width) - parseInt(temporalConstraintLabel.style.width)-23, 0) + "px";
+	
+	CRCQueryName.style.width			= Math.max(basicWidth - 128, 0) + "px"; // use max to avoid negative width
+	
+	CRCQueryPanels.style.width		= Math.max(basicWidth - 30, 0) + "px";
+	CRCinnerQueryPanel.style.width	= Math.max(basicWidth - 36, 0) + "px";
+	
+	
+	var panelWidth = (basicWidth - 36)/3 - 4;
+	
+	var panels = CRCinnerQueryPanel.childNodes;
+	var panelArray = new Array(3);
+	var panelCount = 0;
+	for ( var i = 0; i < panels.length; i++ )
+	{
+		if ( panels[i].className === "qryPanel")
+		{
+			panels[i].style.width = Math.max(panelWidth, 0) + "px";
+			var nodes = panels[i].childNodes;
+			for ( var j = 0; j < nodes.length; j++ )
+			{
+				if (nodes[j].className === "qryPanelTitle")
+					nodes[j].style.width = Math.max(panelWidth - 2, 0) + "px";
+				else if ( nodes[j].className === "qryPanelButtonBar" )
+				{
+					nodes[j].style.width = Math.max(panelWidth, 0) + "px";
+					var buttons = nodes[j].childNodes;
+					for ( var k = 0; k < buttons.length; k++)
+					{
+						if ( buttons[k].className === "qryButtonOccurs")
+							buttons[k].style.width = Math.max(panelWidth - 88, 0) + "px";	
+					}
+				}
+				else if ( nodes[j].className === "qryPanelTiming" )
+				{
+					nodes[j].style.width = Math.max(panelWidth, 0) + "px";
+					var queryPanelTimingChildren = nodes[j].childNodes;
+					for ( var k = 0; k < queryPanelTimingChildren.length; k++)
+					{
+						if ( queryPanelTimingChildren[k].style == null )
+							continue;
+						queryPanelTimingChildren[k].style.width = Math.max(panelWidth - 4, 0) + "px";
+					}
+					//handle the special "queryPanelTimingB1"
+					var queryPanelTimingB1 = $("queryPanelTimingB1");
+					queryPanelTimingB1.style.width = Math.max(panelWidth - 4, 0) + "px";
+					}
+				else if ( nodes[j].className === "queryPanel" || nodes[j].className === "queryPanel queryPanelDisabled" ) // QueryPanel or disabled QueryPanel
+					nodes[j].style.width =  Math.max(panelWidth - 8, 0) + "px";
+			}
+			panelArray[panelCount] = panels[i];
+			panelCount++;
+		}
+		else
+			continue;
+	}
+	
+	/* Deal with Footer and its components */	
+	var footer = $("qryToolFooter");	// footer
+	var printBox = $('printQueryBox');	// print query
+	var groupCount = $("groupCount");	// # of groups
+	var scrollBox = $("scrollBox");		// scroll control
+	
+	footer.style.width = Math.max(basicWidth - 40, 0) + "px"; // adjust footer width	
+	groupCount.style.width =  Math.max(parseInt(footer.style.width) - (printBox.offsetLeft + printBox.offsetWidth) - scrollBox.offsetWidth - 5, 0) + "px"; // adjust groupCount width
+	
+	/* Deal with Baloons */
+	var baloonBox	= $("queryBalloonBox");
+	var baloons = baloonBox.getElementsByTagName("div");
+	
+	for ( var i = 0; i < baloons.length; i++ )
+	{
+		if ( i%2 === 0) // even baloons 
+		{
+			var index = i/2;
+			if ( index < baloons.length)
+				baloons[i].style.left	= panelArray[index].offsetLeft + parseInt(panelArray[index].style.width)/2 - 35 + "px";			
+		}
+		else
+		{
+			var index = Math.floor(i/2);
+			baloons[i].style.left	= panelArray[index].offsetLeft + parseInt(panelArray[index].style.width) - 22.5 + "px";
+		}
+	}
+}
+
+//================================================================================================== //
+i2b2.CRC.view.QT.ResizeHeight = function() {
+	var ds = document.viewport.getDimensions();
+	var h = ds.height;
+	if (h < 517) {h = 517;}
+	// resize our visual components
+	if (i2b2.WORK && i2b2.WORK.isLoaded) {
+		var z = h - 400;
+		if (i2b2.CRC.view.QT.isZoomed) { z += 196 - 44; }	
+	} else {
+		var z = h - 434;
+		if (i2b2.CRC.view.QT.isZoomed) { z += 196; }
+	}
+	// display the topic selector bar if we are in SHRINE-mode
+ 	if (i2b2.h.isSHRINE()) {
+		$('queryTopicPanel').show();
+		z = z - 28;
+	}
+	$('QPD1').style.height = z;
+	$('QPD2').style.height = z;
+	$('QPD3').style.height = z;	
+}
 
 // This is done once the entire cell has been loaded
 console.info("SUBSCRIBED TO i2b2.events.afterCellInit");
@@ -930,7 +1070,10 @@ i2b2.events.afterCellInit.subscribe(
 					] }  
 			); 
 			i2b2.CRC.view.QT.ContextMenu.subscribe("triggerContextMenu", i2b2.CRC.view.QT.ContextMenuPreprocess); 
-			i2b2.CRC.view.QT.ContextMenu.subscribe("beforeShow", i2b2.CRC.view.QT.ContextMenuPreprocess); 
+			i2b2.CRC.view.QT.ContextMenu.subscribe("beforeShow", i2b2.CRC.view.QT.ContextMenuPreprocess);
+			
+			i2b2.hive.mySplitter.events.CRCInitialized.fire(); 	// initialize splitter's starting position
+			i2b2.CRC.view.QT.splitterDragged();					// initialize query tool's elements
 // ================================================================================================== //
 		}
 	})
@@ -978,6 +1121,23 @@ i2b2.CRC.view.QT.hballoon = {
 	}
 };
 
+//================================================================================================== //
+i2b2.events.initView.subscribe((function(eventTypeName, newMode) {
+// -------------------------------------------------------
+	this.visible = true;
+	$('crcQueryToolBox').show();
+	this.Resize();
+	
+	// initialize the dropdown menu for query timing
+	var temporalConstraintBar 	= $("temporalConstraintBar");
+	var temporalConstraintLabel = $("temporalConstraintLabel");
+	var queryTimingButton		= $("queryTiming-button");
+	temporalConstraintDiv.style.width 	= Math.max( parseInt(temporalConstraintBar.style.width) - parseInt(temporalConstraintLabel.style.width)-2, 0) + "px";
+	queryTimingButton.style.width 		= Math.max( parseInt(temporalConstraintBar.style.width) - parseInt(temporalConstraintLabel.style.width)-6, 0) + "px";
+	
+	// -------------------------------------------------------
+}),'',i2b2.CRC.view.QT);
+
 
 // ================================================================================================== //
 i2b2.events.changedViewMode.subscribe((function(eventTypeName, newMode) {
@@ -988,7 +1148,8 @@ i2b2.events.changedViewMode.subscribe((function(eventTypeName, newMode) {
 		case "Patients":
 			this.visible = true;
 			$('crcQueryToolBox').show();
-			this.Resize();
+			i2b2.CRC.view.QT.splitterDragged();
+			//this.Resize();
 			break;
 		default:
 			this.visible = false;
@@ -1017,7 +1178,7 @@ i2b2.events.changedZoomWindows.subscribe((function(eventTypeName, zoomMsg) {
 				this.visible = true;
 		}
 	}
-	this.Resize();
+	this.ResizeHeight();
 }),'',i2b2.CRC.view.QT);
 
 

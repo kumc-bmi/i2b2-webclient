@@ -141,6 +141,14 @@ function QueryToolController() {
 
 							var sdxDataNode = i2b2.sdx.Master.EncapsulateData('QM',o);
 							po.items.push(sdxDataNode);								
+						} else 	if (ckey.startsWith("masterid")) {
+							var o = new Object;
+							o.name =i2b2.h.getXNodeVal(pi[i2],'item_name');
+							o.id = ckey;
+							o.result_instance_id = o.PRS_id ;
+
+							var sdxDataNode = i2b2.sdx.Master.EncapsulateData('QM',o);
+							po.items.push(sdxDataNode);								
 						} else if (ckey.startsWith("patient_set_coll_id")) {
 							var o = new Object;
 							o.titleCRC =i2b2.h.getXNodeVal(pi[i2],'item_name');
@@ -691,13 +699,35 @@ function QueryToolController() {
 					break;
 					default:
 						if (sdxData.origData.isModifier) {
-							s += '\t\t\t<hlevel>' + sdxData.origData.level + '</hlevel>\n';
-							s += '\t\t\t<item_key>' + sdxData.origData.parent.key + '</item_key>\n';
-							s += '\t\t\t<item_name>' +  (sdxData.origData.parent.name != null ? i2b2.h.Escape(sdxData.origData.parent.name) : i2b2.h.Escape(sdxData.origData.name)) + '</item_name>\n';
+							
+							var modParent = sdxData.origData.parent;
+							var level = sdxData.origData.level;
+							var key = sdxData.origData.parent.key;
+							var name = (sdxData.origData.parent.name != null ? i2b2.h.Escape(sdxData.origData.parent.name) : i2b2.h.Escape(sdxData.origData.name)) ;
+							var tooltip = sdxData.origData.tooltip;
+							var itemicon = sdxData.origData.hasChildren;
+							while  (modParent != null)
+							{
+								if (modParent.isModifier)
+								{
+									modParent = modParent.parent;
+								} else {
+									level = modParent.level;
+									key = modParent.key;
+									name = modParent.name;
+									tooltip = modParent.tooltip;
+									itemicon = modParent.hasChildren;
+									break;
+								}
+							}							
+							
+							s += '\t\t\t<hlevel>' + level + '</hlevel>\n';
+							s += '\t\t\t<item_key>' + key + '</item_key>\n';
+							s += '\t\t\t<item_name>' +  name + '</item_name>\n';
 							// (sdxData.origData.newName != null ? sdxData.origData.newName : sdxData.origData.name) + '</item_name>\n';
-							s += '\t\t\t<tooltip>' + sdxData.origData.tooltip + '</tooltip>\n';
-							s += '\t\t\t<item_icon>' + sdxData.origData.hasChildren + '</item_icon>\n';
-							s += '\t\t\t<class>ENC</class>';
+							s += '\t\t\t<tooltip>' + tooltip + '</tooltip>\n';
+							s += '\t\t\t<item_icon>' + itemicon + '</item_icon>\n';
+							s += '\t\t\t<class>ENC</class>\n';
 
                          	s += '\t\t\t\t<constrain_by_modifier>\n';
                             s += '\t\t\t\t\t<modifier_name>' + sdxData.origData.name + '</modifier_name>\n';
@@ -881,11 +911,12 @@ function QueryToolController() {
 // ================================================================================================== //
 	this.doShowFrom = function(index_offset) {
 		// have all panel controllers redraw using new index offest
+		$('infoQueryStatusText').innerHTML = "";
 		if (index_offset===false) { return true; }
 		if (index_offset < 0) { index_offset = 0; }
 		for (var i=0; i<3; i++) {
 			this.panelControllers[i].refTitle.innerHTML = "Group "+(index_offset+i+1);
-			this.panelControllers[i].setPanelRecord(index_offset+i);
+			this.panelControllers[i].setPanelRecord(index_offset+i, i);
 			if (i > 0) {
 				if (index_offset+i <= i2b2.CRC.model.queryCurrent.panels.length) {
 					$('queryBalloonAnd'+(i)).style.display = 'block';
@@ -899,6 +930,7 @@ function QueryToolController() {
 
 // ================================================================================================== //
 	this._redrawAllPanels = function() {
+		$('infoQueryStatusText').innerHTML = "";		
 		for (var i=0; i<3; i++) {
 			this.panelControllers[i].doRedraw();
 			if (i > 0) {

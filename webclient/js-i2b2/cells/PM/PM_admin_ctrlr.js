@@ -1295,24 +1295,27 @@ i2b2.PM.admin.refreshTree = function(tvNode, onCompleteCallback) {
 // refresh treeview lists
 // --------------------------------------------------------------------------------------------------------------------
 i2b2.PM.admin.refreshProjectsUsers = function(tvNode, onCompleteCallback) {
+	i2b2.PM.view.admin.currentProject = tvNode.parent.data;
 	i2b2.PM.admin.refreshProjectUserListData();
 	for (var idx in i2b2.PM.model.admin.ProjectUserList) {
-		var d = i2b2.PM.model.admin.ProjectUserList[idx];
-		var tmpNode = new YAHOO.widget.TextNode({label: d.username, expanded: false}, tvNode);
-		tmpNode.data.i2b2NodeType = "PROJECTREC-USERS-ROLESNEW";
-		tmpNode.data.i2b2NodeUsername = d.username;
-		var tmpNode2 = new YAHOO.widget.TextNode({label: "Roles", expanded: false}, tmpNode);
-		tmpNode2.data.i2b2NodeType = "PROJECTREC-USERS-ROLES";
-		
-
-		i2b2.PM.view.admin.yuiTreeNodePARAMS = new YAHOO.widget.TextNode({label: "Params", expanded: false}, tmpNode);
+		if (idx != "undefined") {
+			var d = i2b2.PM.model.admin.ProjectUserList[idx];
+			var tmpNode = new YAHOO.widget.TextNode({label: d.username, expanded: false}, tvNode);
+			tmpNode.data.i2b2NodeType = "PROJECTREC-USERS-ROLESNEW";
+			tmpNode.data.i2b2NodeUsername = d.username;
+			var tmpNode2 = new YAHOO.widget.TextNode({label: "Roles", expanded: false}, tmpNode);
+			tmpNode2.data.i2b2NodeType = "PROJECTREC-USERS-ROLES";
+			
+	
+			i2b2.PM.view.admin.yuiTreeNodePARAMS = new YAHOO.widget.TextNode({label: "Params", expanded: false}, tmpNode);
 			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.id = d.projectid;
 			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.xmlId = "";
 			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.i2b2Table = "project_user_param";
 			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.xmlData = "<path>"+d.projectid+"</path><user_name>"+d.username+"</user_name>";
 			
 			i2b2.PM.view.admin.yuiTreeNodePARAMS.data.i2b2NodeType = "PARAMS";
-			i2b2.PM.view.admin.yuiTreeNodePARAMS.setDynamicLoad(i2b2.PM.admin.refreshParameters);			
+			i2b2.PM.view.admin.yuiTreeNodePARAMS.setDynamicLoad(i2b2.PM.admin.refreshParameters);		
+		}
 				
 	}	
 	if (onCompleteCallback) { onCompleteCallback(); }

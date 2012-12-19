@@ -483,7 +483,7 @@ i2b2.PM._processLaunchFramework = function() {
 			 //if (i2b2.PM.model.userRoles.indexOf(i2b2.hive.cfg.lstCells[cellKey].roles) == -1) {
 			//	deleteKeys[cellKey] = true;				 
 			 //}
-             if (!i2b2.PM.model.admin_only) {
+			 if (!i2b2.PM.model.admin_only) {
 			 var roleFound = -1;
 			for (var i=0; i<i2b2.hive.cfg.lstCells[cellKey].roles.length; i++) {
 				roleFound = 0;
