@@ -686,7 +686,7 @@ i2b2.Timeline.getResults = function() {
 }
 
 function date_val(txt){
-    var parts = txt.match(/^(\d\d\d\d)-(\d\d)-(\d\d)(?:.(\d\d):(\d\d):(\d\d))?$/);
+    var parts = txt.match(/^(\d\d\d\d)-(\d\d)-(\d\d)(?:.(\d\d):(\d\d):(\d\d).\d+\+?(-?\d+):\d+)?$/);
     if (!parts) {
 	return undefined;
     }
@@ -697,7 +697,8 @@ function date_val(txt){
     if (isNaN(parts[4])) {
 	return new Date(year, month, day);
     } else {
-	var hour = parts[4], min = parts[5], sec = parts[6];
-	return new Date(year, month, day, hour, min, sec);
+	var hour = parts[4], min = parts[5], sec = parts[6], tzhr = parts[7];
+	var d = new Date(Date.UTC(year, month, day, hour, min, sec));
+	return new Date(d.getTime() - (1000 * 60 * 60 * tzhr))
     }
 }
