@@ -594,16 +594,10 @@ i2b2.Timeline.getResults = function() {
 					o.concept_cd = i2b2.h.getXNodeVal(oData[i2], "concept_cd");
 					o.observer_id = i2b2.h.getXNodeVal(oData[i2], "observer_cd");
 					o.start_date_key = i2b2.h.getXNodeVal(oData[i2], "start_date");
-					var d = i2b2.h.getXNodeVal(oData[i2], "start_date");
-					if (d) { d = d.match(/^[0-9\-]*/).toString(); }
-					if (d) { d = d.replace(/-/g,'/'); }
-					if (d) { d = new Date(Date.parse(d)); }
-					if (d) { o.start_date = d; }
-					d = i2b2.h.getXNodeVal(oData[i2], "end_date");
-					if (d) { d = d.match(/^[0-9\-]*/).toString(); }
-					if (d) { d = d.replace(/-/g,'/'); }
-					if (d) { d = new Date(Date.parse(d)); }
-					if (d) { o.end_date = d; }
+				        var d = date_val(i2b2.h.getXNodeVal(oData[i2], "start_date"));
+				        if(d) { o.start_date = d; }
+				        d = date_val(i2b2.h.getXNodeVal(oData[i2], "end_date"));
+				        if(d) { o.end_date = d; }
 					if ( o.concept_cd && o.start_date && o.end_date && patients[patientID]) {
 						patients[patientID].concepts[i1].push(o);
 						if (o.start_date < first_date) {first_date = o.start_date;}
@@ -689,4 +683,21 @@ i2b2.Timeline.getResults = function() {
 		// AJAX CALL USING THE EXISTING CRC CELL COMMUNICATOR
 		i2b2.CRC.ajax.getPDO_fromInputList("Plugin:Timeline", {PDO_Request:msg_filter}, scopedCallback);
 	}
+}
+
+function date_val(txt){
+    var parts = txt.match(/^(\d\d\d\d)-(\d\d)-(\d\d)(?:.(\d\d):(\d\d):(\d\d))?$/);
+    if (!parts) {
+	return undefined;
+    }
+
+    parts = parts.map(function(x) { return parseInt(x) });
+    var year = parts[1], month = parts[2] - 1, day = parts[3];
+
+    if (isNaN(parts[4])) {
+	return new Date(year, month, day);
+    } else {
+	var hour = parts[4], min = parts[5], sec = parts[6];
+	return new Date(year, month, day, hour, min, sec);
+    }
 }
