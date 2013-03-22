@@ -655,14 +655,18 @@ function i2b2_PanelController(parentCtrlr) {
 						hasContainer = true;	
 						
 						var realdata = sdxConcept.origData;
-						while (realdata.hasChildren != "FA") {
+						while ((realdata.hasChildren != "FA") &&
+						(realdata.hasChildren != "FAE"))
+
+						{
 							realdata  = realdata.parent;	
 						}
 						sdxConcept.origData.level = realdata.level;
 						sdxConcept.origData.parent.key = realdata.key;
 						//sdxConcept.origData.parent.name = sdxConcept.origData.name;
 						//sdxConcept.origData.name = realdata.name;
-						sdxConcept.origData.newName = realdata.name + " [" + sdxConcept.origData.name + title + "]";
+						if (undefined == sdxConcept.origData.newName)
+							sdxConcept.origData.newName = realdata.name + " [" + sdxConcept.origData.name + title + "]";
 		//mm				sdxConcept.origData.tooltip = realdata.tooltip;	
 						sdxConcept.origData.hasChildren = realdata.hasChildren;	
 					}
@@ -775,6 +779,7 @@ function i2b2_PanelController(parentCtrlr) {
 // ================================================================================================== //
 	this._deleteConcept = function(key) {
 		var pd = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex];
+		$('infoQueryStatusText').innerHTML = "";
 		// remove the concept from panel
 		for (var i=0; i< pd.items.length; i++) {
 			if ((pd.items[i].origData.key == key)
@@ -830,9 +835,23 @@ function i2b2_PanelController(parentCtrlr) {
 				var tt3 = "";
 				if (isModifier) {
 					var values = rto.ModValues;
-					tt2 +=  rto.origData.parent.name + " ["+ rto.origData.name;
+
+
+				var modParent = rto.origData.parent;
+				while  (modParent != null)
+				{
+					if (modParent.isModifier)
+					{
+						modParent = modParent.parent;
+					} else {
+						break;
+					}
+				}
+				
+
+					tt2 +=  modParent.name + " ["+ rto.origData.name;
 					tt3 =  "]";
-					rto.origData.newName =  rto.origData.parent.name + " ["+ rto.origData.name;
+					rto.origData.newName =  modParent.name + " ["+ rto.origData.name;
 				} else  {
 					var values = rto.LabValues;				
 					tt2 +=  rto.origData.name;

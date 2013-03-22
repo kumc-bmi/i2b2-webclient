@@ -6,9 +6,9 @@
 <!--
  *  *************************
  *       i2b2 Web Client
- *           v1.6.07
+ *           v1.6.08
  *  *************************
- *  @modified: 10/05/2012
+ *  @modified: 12/20/2012
  *  Contributors:
  *     Nick Benik
  *     Griffin Weber, MD, PhD
@@ -18,7 +18,7 @@
  */-->
 
 <script type="text/javascript">
-	var i2b2build = "1.6.007   [10/05/2012 4:07 PM] ";
+	var i2b2build = "1.6.008   [12/20/2012 4:07 PM] ";
 </script>
 
 <!-- LOAD YUI FROM Yahoo's CDN
@@ -170,7 +170,15 @@
 /****************************************************/
 /******************** INITIALIZE ********************/
 /****************************************************/
-function initI2B2() {
+
+// declare and obtain the dimension of the initial browser viewport and initialize screen width division
+var rightSideProportion = 0.65;                         
+var initBrowserViewPortDim = document.viewport.getDimensions();
+var rightSideWidth = initBrowserViewPortDim.width * rightSideProportion; 	// this component will take up 75% of the screen
+
+function initI2B2() 
+{
+	//debugOnScreen("default.htm.initI2B2: browserViewPort = " + initBrowserViewPortDim.width + " " + initBrowserViewPortDim.height );
 	i2b2.events.afterCellInit.subscribe(
 		(function(en,co,a) {
 			var cellObj = co[0];
@@ -204,11 +212,16 @@ function initI2B2() {
 	);
 
 	i2b2.events.afterLogin.subscribe(
-		(function() {
+		(function() 
+		{
 			// after successful login hide the login box and display the application GUI
 			$('topBar').style.display = 'block';
 			$('screenQueryData').style.display = 'block';
 			var splitterName = 'main.splitter';			
+			
+			// update dimension values
+			initBrowserViewPortDim = document.viewport.getDimensions();
+			rightSideWidth = initBrowserViewPortDim.width * rightSideProportion; 	// this component will take up 60% of the screen
 
 			if (i2b2.PM.model.admin_only)
 			{
@@ -595,7 +608,8 @@ YAHOO.util.Event.addListener(window, "load", init);
                         </select>   
                 </div>
 			</div>
-			<div id="crcQryToolPanels" style="width:512px;overflow:hidden;">
+			
+		<div id="crcQryToolPanels" style="width:512px;overflow:hidden;">
 			<div id = "crc.innerQueryPanel" style="width:550px;">
 				<div class="qryPanel">
 					<div class="qryPanelTitle">

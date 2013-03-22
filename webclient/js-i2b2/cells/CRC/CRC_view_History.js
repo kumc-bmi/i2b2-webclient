@@ -112,7 +112,7 @@ i2b2.CRC.view.history.Resize = function(e) {
 			case "Patients":
 				if (i2b2.WORK && i2b2.WORK.isLoaded) {
 					// make room for the workspace window
-					ve.width = w-578;
+					ve.width = Math.max(initBrowserViewPortDim.width-rightSideWidth, 0);
 					ve.top = h-196+44;
 					$('crcHistoryData').style.height = '100px';
 				} else {
