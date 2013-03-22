@@ -52,8 +52,11 @@ i2b2.CRC.view.status.Resize = function(e) {
 		switch(viewObj.viewMode) {
 			case "Patients":
 				ve = ve.style;
-				ve.left = w-550;
-				ve.width = 524;
+				// keyoff splitter's position
+				ve.left 	=  addToProperty($('main.splitter').style.left, 9, "px", "px" );
+				ve.width 	= rightSideWidth - 51;
+				//ve.left = w-550;
+				//ve.width = 524;
 				if (i2b2.WORK && i2b2.WORK.isLoaded) {
 					$('infoQueryStatusText').style.height = '100px';
 					if (YAHOO.env.ua.ie > 0) {  

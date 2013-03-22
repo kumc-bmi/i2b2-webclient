@@ -740,8 +740,12 @@ function QueryToolController() {
 							
                         	s += '\t\t\t\t</constrain_by_modifier>\n';					
 						} else {
+                        sdxData.origData.key = (sdxData.origData.key).replace(/</g,"&lt;");
+                        sdxData.origData.name = (sdxData.origData.name).replace(/</g,"&lt;");
+                        sdxData.origData.tooltip = (sdxData.origData.tooltip).replace(/</g,"&lt;");
 							s += '\t\t\t<hlevel>' + sdxData.origData.level + '</hlevel>\n';
-							s += '\t\t\t<item_name>' + (sdxData.origData.newName != null ? i2b2.h.Escape(sdxData.origData.newName) : i2b2.h.Escape(sdxData.origData.name)) + '</item_name>\n';
+							//s += '\t\t\t<item_name>' + (sdxData.origData.newName != null ? i2b2.h.Escape(sdxData.origData.newName) : i2b2.h.Escape(sdxData.origData.name)) + '</item_name>\n';
+							s += '\t\t\t<item_name>' + (sdxData.origData.name != null ? i2b2.h.Escape(sdxData.origData.name) : i2b2.h.Escape(sdxData.origData.newName)) + '</item_name>\n';
 							s += '\t\t\t<item_key>' + sdxData.origData.key + '</item_key>\n';
 							s += '\t\t\t<tooltip>' + sdxData.origData.tooltip + '</tooltip>\n';
 							s += '\t\t\t<class>ENC</class>\n';

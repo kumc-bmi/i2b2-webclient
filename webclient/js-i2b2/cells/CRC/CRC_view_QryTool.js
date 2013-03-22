@@ -231,7 +231,13 @@ i2b2.CRC.view.QT.setQueryTiming = function(sText) {
 					queryTimingButton.getMenu().addItems([ 	 
 										{ text: "Treat Independently", value: "ANY"}]);	
 					queryTimingButton.getMenu().addItems([ 	 
-										{ text: "Selected groups occur in the same financial encounter", value: "SAMEVISIT" }]);	 
+										{ text: "Selected groups occur in the same financial encounter", value: "SAMEVISIT" }]);
+					if (sText == "SAMEINSTANCENUM") {
+										queryTimingButton.getMenu().addItems([ 	 
+										{ text: "Items Instance will be the same", value: "SAMEINSTANCENUM" }]);	 
+	
+						
+					}
 					queryTimingButton.getMenu().render();
 		}
 		queryTimingButton.getMenu().render();
@@ -288,7 +294,12 @@ i2b2.CRC.view.QT.Resize = function(e) {
 	var h = ds.height;
 	if (w < 840) {w = 840;}
 	if (h < 517) {h = 517;}
+	
 	// resize our visual components
+	//var queryToolWidth = ds.width * 0.6;
+	//$('crcQueryToolBox').style.left = w-queryToolWidth;
+	//debugOnScreen("crcQueryToolBox.width = " + queryToolWidth );
+	
 	$('crcQueryToolBox').style.left = w-550;
 	if (i2b2.WORK && i2b2.WORK.isLoaded) {
 		var z = h - 400; //392 + 44 - 17 - 25;
@@ -1069,10 +1080,10 @@ i2b2.events.afterCellInit.subscribe(
 						{ text: "Lab Values", 	onclick: { fn: op.ContextMenuRouter, obj: 'labvalues' } }
 					] }  
 			); 
+			
 			i2b2.CRC.view.QT.ContextMenu.subscribe("triggerContextMenu", i2b2.CRC.view.QT.ContextMenuPreprocess); 
 			i2b2.CRC.view.QT.ContextMenu.subscribe("beforeShow", i2b2.CRC.view.QT.ContextMenuPreprocess);
 			
-			i2b2.hive.mySplitter.events.CRCInitialized.fire(); 	// initialize splitter's starting position
 			i2b2.CRC.view.QT.splitterDragged();					// initialize query tool's elements
 // ================================================================================================== //
 		}

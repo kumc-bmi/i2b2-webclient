@@ -37,8 +37,8 @@ i2b2.PM.view.admin.Resize = function(e){
 	$('pmNav').style.height = h;
 	$('pmMain').style.left = 200;
 	$('pmMain').style.height = h;
-	$('pmMain').style.width = w - 225;
-	$('pmAdminMainView').style.width = w - 240;
+	$('pmMain').style.width = Math.max(w - 225, 0);
+	$('pmAdminMainView').style.width = Math.max(w - 240, 0);
 }
 
 // attach resize events

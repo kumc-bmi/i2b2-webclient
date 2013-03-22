@@ -24,7 +24,7 @@ i2b2.WORK.view.main.Resize = function(e){
 		// resize our visual components
 		switch(i2b2.hive.MasterView.getViewMode()) {
 			case "Patients":
-				w = w - 578;
+				w = Math.max(initBrowserViewPortDim.width-rightSideWidth, 0);
 				break;
 			case "Analysis":
 				w = parseInt(w/3)-10;
