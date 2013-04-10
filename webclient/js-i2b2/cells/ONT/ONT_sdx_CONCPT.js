@@ -580,7 +580,7 @@ i2b2.sdx.TypeControllers.CONCPT.LoadModifiers = function(node, onCompleteCallbac
 		// handle the YUI treeview	
 		//mm 10-7 cl_onCompleteCB();
 		if ((node.data.i2b2_SDX.origData.hasChildren != "DA") && (node.data.i2b2_SDX.origData.hasChildren != "OAE") &&
-		(node.data.i2b2_SDX.origData.hasChildren != "DAE") && (node.data.i2b2_SDX.origData.hasChildren != "OA") ){
+		(node.data.i2b2_SDX.origData.hasChildren != "OA") ){
 			i2b2.sdx.TypeControllers.CONCPT.LoadConcepts(node, onCompleteCallback, false);
 		} else {
 			cl_onCompleteCB();
@@ -623,10 +623,7 @@ i2b2.sdx.TypeControllers.CONCPT.LoadModifiers = function(node, onCompleteCallbac
 		options.modifier_applied_path = node.data.i2b2_SDX.origData.applied_path;
 		
 		var realdata = node.data.i2b2_SDX.origData;
-		while ((realdata.hasChildren != "FA") && (realdata.hasChildren != "CA")
-		&& (realdata.hasChildren != "FAE") && (realdata.hasChildren != "CAE")
-
-		) {
+		while ((realdata.hasChildren != "FA") && (realdata.hasChildren != "CA")) {
 			realdata  = realdata.parent;	
 		}		
 		options.modifier_applied_concept = realdata.key;//node.data.i2b2_SDX.origData.parent.key;

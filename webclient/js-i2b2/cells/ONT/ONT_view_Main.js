@@ -57,8 +57,7 @@ i2b2.ONT.view.main.Resize = function(e) {
 		var ve = ve.style
 		switch(i2b2.hive.MasterView.getViewMode()) {
 			case "Patients":
-				ve.width = Math.max(initBrowserViewPortDim.width-rightSideWidth, 0);
-				//debugOnScreen("ONT.view.main.ResizeResize: style.width set to be " + ve.width );
+				ve.width = w-578;
 				if (i2b2.WORK && i2b2.WORK.isLoaded) {
 					var z = parseInt((h - 321)/2) + 16;
 					ve.height = z;
@@ -226,8 +225,6 @@ i2b2.events.initView.subscribe((function(eventTypeName, newMode) {
 	this.visible = true;
 	$('ontMainBox').show();
 	this.Resize();
-	
-	i2b2.hive.mySplitter.events.ONTInitialized.fire(); 	// initialize splitter's starting position
 // -------------------------------------------------------
 }),'',i2b2.ONT.view.main);
 

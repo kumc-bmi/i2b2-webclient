@@ -15,12 +15,8 @@ Splitter = function( name, config )
 	{
 		var ve = $('ontMainBox');
 		if (ve.style.width === "")
-		{
 			return;
-		}
-		
 		var splitter = $( name );
-		
 		if ( this.leftProportion == null )
 		{
 			splitter.style.left = addToProperty( ve.style.width, 18, "px", "px" );
@@ -83,8 +79,8 @@ Splitter = function( name, config )
 	this.leftProportion = null;
 	Splitter.superclass.constructor.apply(this, arguments);
 
-	this.events.ONTInitialized = new YAHOO.util.CustomEvent("ONTInitialized", this);	// create event for ONTInitialization
-	this.events.ONTInitialized.subscribe( this.onCRCinit, this);	// listen to the event and attach handlers
+	this.events.CRCInitialized = new YAHOO.util.CustomEvent("CRCInitialized", this);	// create event for CRCInitialization
+	this.events.CRCInitialized.subscribe( this.onCRCinit, this);	// listen to the event and attach handlers
 }
 // extension must immediately follow constructor (this makes the Splitter Drag-and-Drop-able.)
 YAHOO.extend(Splitter, YAHOO.util.DD, 
