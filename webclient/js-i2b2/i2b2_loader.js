@@ -88,7 +88,7 @@ i2b2.hive.tempCellsList = [
                 { code: "DFBuilder",
 		  forceLoading: true,
 		  forceConfigMsg: { params: [] },
-		  roles: [ "DATA_LDS", "DATA_DEID", "DATA_PROT" ],
+		  roles: [ "HERON_ANALYSIS" ],
 		  forceDir: "cells/plugins/fsm"
                 },		
                 { code: "CopperJohnStat",
