@@ -592,6 +592,10 @@ i2b2.Timeline.getResults = function() {
 					var o = {};
 					o.event_id = i2b2.h.getXNodeVal(oData[i2], "event_id");
 					o.concept_cd = i2b2.h.getXNodeVal(oData[i2], "concept_cd");
+					o.concept_name = i2b2.h.XPath(oData[i2], "descendant-or-self::concept_cd/@name")[0].nodeValue;
+					o.nval_num = i2b2.h.getXNodeVal(oData[i2], "nval_num");
+					o.tval_char = i2b2.h.getXNodeVal(oData[i2], "tval_char");
+					o.modifier_cd = i2b2.h.getXNodeVal(oData[i2], "modifier_cd");
 					o.observer_id = i2b2.h.getXNodeVal(oData[i2], "observer_cd");
 					o.start_date_key = i2b2.h.getXNodeVal(oData[i2], "start_date");
 				        var d = date_val(i2b2.h.getXNodeVal(oData[i2], "start_date"));
@@ -639,8 +643,12 @@ i2b2.Timeline.getResults = function() {
 							var obs_keyval = {
 								event_id: patients[patientID].concepts[i1][i2].event_id,
 								patient_id: patientID,
+							    	concept_name: patients[patientID].concepts[i1][i2].concept_name,
 								concept_id: patients[patientID].concepts[i1][i2].concept_cd,
 								observer_id: patients[patientID].concepts[i1][i2].observer_id,
+								nval_num: patients[patientID].concepts[i1][i2].nval_num,
+								tval_char: patients[patientID].concepts[i1][i2].tval_char,
+								modifier_cd: patients[patientID].concepts[i1][i2].modifier_cd,
 								start_date_key: patients[patientID].concepts[i1][i2].start_date_key
 							};
 							observation_keys.push(obs_keyval);
@@ -651,7 +659,20 @@ i2b2.Timeline.getResults = function() {
 									s += '<div class="ptOb2" style="left:' + (100*w) + '%;width:' + (100*(w2-w)) + '%;"></div>';
 								}
 								if (w > .99) { w = .98;}
-								s += '<a id="TIMELINEOBS-'+obs_key+'" title="'+ i2b2.h.Escape(obs_keyval.concept_id) +'" href="Javascript:i2b2.Timeline.showObservation('+ obs_key +');" class="ptOb" style="left:' + (100*w) + '%;"></a>';
+								// Display the modifier code and the nval or tval in the hover text
+								var modVal='';
+								if (obs_keyval.modifier_cd != undefined && obs_keyval.modifier_cd != '@'){
+									modVal += ' ' + obs_keyval.modifier_cd;
+								}
+								if (obs_keyval.nval_num != undefined){
+									modVal += ' ' + obs_keyval.nval_num;
+								}
+								else if (obs_keyval.tval_char != undefined && obs_keyval.tval_char != '@'){
+									modVal += ' ' + obs_keyval.tval_char;
+								}
+								s += '<a id="TIMELINEOBS-' + obs_key + '" title="' + i2b2.h.Escape(obs_keyval.concept_name) + 
+								' (' + i2b2.h.Escape(obs_keyval.concept_id) + ')' + modVal + 
+								'" href="Javascript:i2b2.Timeline.showObservation(' + obs_key + ');" class="ptOb" style="left:' + (100*w) + '%;"></a>';
 							}
 						}
 						s += '</div>';
