@@ -620,7 +620,9 @@ i2b2.Timeline.getResults = function() {
 			i2b2.Timeline.model.last_time = last_time;
 			
 			var observation_keys = new Array();
-			for (var patientID in patients) {
+		        // Regular expressing to extract the hour, minute, and second from the observation time string
+			var obsTimeRe = new RegExp('[0-9]{4}-[0-9]{2}-[0-9]{2}T([0-9]{2}:[0-9]{2}:[0-9]{2})(\.[0-9]+)?([-,\+][0-9]{2}:[0-9]{2})')
+		        for (var patientID in patients) {
 				s += '<div class="ptBox">';
 				s += '<div class="ptName">' + patients[patientID].name + '</div>';
 				s += '<table class="ptData">';
@@ -670,8 +672,19 @@ i2b2.Timeline.getResults = function() {
 								else if (obs_keyval.tval_char != undefined && obs_keyval.tval_char != '@'){
 									modVal += ' ' + obs_keyval.tval_char;
 								}
+							        /* If the time is of the expected format, extract the hour, minute, second.
+							        Otherwise, just display whatever we got for the time string.
+								*/
+							        var tMatch = obsTimeRe.exec(obs_keyval.start_date_key)
+								if (tMatch == null || tMatch.length < 2){
+								    obsTime = obs_keyval.start_date_key;
+								}
+							        else {
+								    // Group 1 of the match is the HH:MM:SS
+								    obsTime = tMatch[1];
+								}
 								s += '<a id="TIMELINEOBS-' + obs_key + '" title="' + i2b2.h.Escape(obs_keyval.concept_name) + 
-								' (' + i2b2.h.Escape(obs_keyval.concept_id) + ')' + modVal + 
+								' (' + i2b2.h.Escape(obs_keyval.concept_id) + ')' + modVal + ' ' + obsTime + 
 								'" href="Javascript:i2b2.Timeline.showObservation(' + obs_key + ');" class="ptOb" style="left:' + (100*w) + '%;"></a>';
 							}
 						}
