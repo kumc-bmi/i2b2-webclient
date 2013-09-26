@@ -184,7 +184,7 @@ i2b2.CRC.view.QT.ContextMenuRouter = function(a, b, actionName) {
 	switch(actionName) {
 		case "delete":
 			// delete item from the panel
-			cdat.ctrlr._deleteConcept(cdat.data.sdxInfo.sdxKeyValue, cdat.data);
+			cdat.ctrlr._deleteConcept(cdat.data.renderData.htmlID, cdat.data);
 			break;
 		case "labvalues":
 			cdat.ctrlr.showLabValues(cdat.data.sdxInfo.sdxKeyValue, cdat.data);
