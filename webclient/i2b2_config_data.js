@@ -19,7 +19,8 @@
 		  urlCellPM: "http://127.0.0.1:8080/i2b2/rest/PMService/",
 		  allowAnalysis: true,
 		  adminOnly: false,
-			/*debug: true,*/
+			/*debug: true,
+*/
 		  debug: false,
 		  isSHRINE: false
 			},
