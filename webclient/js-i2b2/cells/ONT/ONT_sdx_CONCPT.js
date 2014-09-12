@@ -320,7 +320,7 @@ i2b2.sdx.TypeControllers.CONCPT.LoadConcepts = function(node, onCompleteCallback
 				//delete mod_options.ont_max_records;
 				//i2b2.ONT.ajax.GetChildConcepts("ONT:SDX:Concept", mod_options, scopedCallback );
 				//   return true;
-				t.max = t.max * 2;
+				t.max = t.max * 5;
 			}
 			// ROLLBACK the tree changes
 			cl_onCompleteCB();

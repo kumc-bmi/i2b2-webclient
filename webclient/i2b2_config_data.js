@@ -4,9 +4,9 @@
 	//-------------------------------------------------------------------------------------------
 	// THESE ARE ALL THE DOMAINS A USER CAN LOGIN TO
 	lstDomains: [
-		{ domain: "HarvardDemo",
+		{ domain: "i2b2demo",
 		  name: "HarvardDemo",
-		  urlCellPM: "http://webservices.i2b2.org/i2b2/rest/PMService/",
+		  urlCellPM: "http://services.i2b2.org/i2b2/services/PMService/",
 		  allowAnalysis: true,
 		  debug: false
 		}
