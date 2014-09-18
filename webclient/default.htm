@@ -6,9 +6,9 @@
 <!--
  *  *************************
  *       i2b2 Web Client
- *           v1.7.02
+ *           v1.7.03a
  *  *************************
- *  @modified: 07/01/2014
+ *  @modified: 08/26/2014
  *  Contributors:
  *     Nick Benik
  *     Griffin Weber, MD, PhD
@@ -18,7 +18,7 @@
  */-->
 
 <script type="text/javascript">
-	var i2b2build = "1.7.002   [07/01/2014 4:07 PM] ";
+	var i2b2build = "1.7.003   [08/26/2014 4:07 PM] ";
 </script>
 
 <!-- LOAD YUI FROM Yahoo's CDN
@@ -723,11 +723,12 @@ YAHOO.util.Event.addListener(window, "load", init);
                               <select id="instancevent1[0]" name="instancevent1[0]" style="width:100px;"><option value="Event 1"  selected="selected">Event 1</option><option value="Event 2">Event 2</option></select>
                           		<br/>
 
-                              <select id="postloc[0]" name="postloc[0]"  style="width:150px;"><option value="LESS">Occurs Before</option><option value="LESSEQUAL">On Or After</option>
-                              <option value="EQUAL">Equals</option>
-                              <option  value="GREATER">Occurs On Or After</option>
-                              <option  value="GREATEREQUAL">Occurs After</option>
-                              
+                              <select id="postloc[0]" name="postloc[0]"  style="width:150px;">
+                              <option value="LESS">Occurs Before</option>
+                              <option value="LESSEQUAL">Occurs On or Before</option>
+                              <option value="EQUAL">Occurs Simultaneously With</option>
+                              <option value="GREATER">Occurs After</option>
+                              <option value="GREATEREQUAL">Occurs On or After</option>
                               </select>
 
                           		<br/>

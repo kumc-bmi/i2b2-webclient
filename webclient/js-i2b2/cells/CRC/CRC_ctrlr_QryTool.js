@@ -1355,10 +1355,10 @@ function QueryToolController() {
 
                     html += '  </select>    		<br/> '
 
-                    + '          <select id="postloc[' + this.tenporalBuilders + ']" name="postloc[' + this.tenporalBuilders + ']"  style="width:150px;"><option value="LESS">Occurs Before</option><option value="LESSEQUAL">On Or After</option> '
-                     + '         <option value="EQUAL">Equals</option> '
-                     + '         <option  value="GREATER">Occurs On Or After</option> '
-                    + '          <option  value="GREATEREQUAL">Occurs After</option> '
+                    + '          <select id="postloc[' + this.tenporalBuilders + ']" name="postloc[' + this.tenporalBuilders + ']"  style="width:150px;"><option value="LESS">Occurs Before</option><option value="LESSEQUAL">Occurs On Or Before</option> '
+                     + '         <option value="EQUAL">Occurs Simultaneously With</option> '
+                    + '          <option  value="GREATER">Occurs After</option> '
+                     + '         <option  value="GREATEREQUAL">Occurs On or After</option> '
                               
                      + '         </select> '
 
@@ -1695,7 +1695,7 @@ function QueryToolController() {
 					win_html_inner += 
 						"<td width=30% style='align:center;solid;border-bottom-style:solid;border-right-style:solid;'>"+
 						"<span style='color:black;font-weight:normal;font-family:arial,helvetica;font-size:11px;'>"+
-						v_items[n].origData.name +
+						v_items[n].origData.newName +
 						"</span></td>";
 					
    					win_html_inner += 
@@ -1764,13 +1764,13 @@ function QueryToolController() {
 				
 				//end
 				
-					if (isTemporal == false)
-					break;
-				}
+					//if (isTemporal == false)
+					//break;
 			
 	
 			
 				win_html_inner += "</tbody></table>";
+			}
 				
 			}
 			
