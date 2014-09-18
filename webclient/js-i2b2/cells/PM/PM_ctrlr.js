@@ -302,11 +302,11 @@ i2b2.PM.changePassword = {
 					
 					// check for errors
 					if (results.error) {
-						alert('Original Password does not match current password');
+						alert('Current password is incorrect');
 						console.error("Bad Results from Cell Communicator: ",results);
 						return false;
 					}
-							
+					alert("Password successfully changed");	
 					i2b2.PM.changePassword.yuiPanel.hide();
 
 
