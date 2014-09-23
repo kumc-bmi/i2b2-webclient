@@ -280,6 +280,9 @@ i2b2.Timeline.showObservation = function(localkey) {
 				"\nconcept_id: " + t.concept_id + "<br />" +
 				"\nobserver_id: " + t.observer_id + "<br />" +
 				"\nstart_date: " + t.start_date_key;
+				
+	if ( i2b2.h.getXNodeVal(results.refXML, 'tval_char') != undefined)
+			disp +=  "<br />\ntval_char:" +	i2b2.h.getXNodeVal(results.refXML, 'tval_char') ;	
 	if (i2b2.Timeline.model.pData != undefined)
 	{
 		disp += "<hr/><pre>" + i2b2.Timeline.model.pData + "</pre>";	
@@ -598,10 +601,17 @@ i2b2.Timeline.getResults = function() {
 					o.modifier_cd = i2b2.h.getXNodeVal(oData[i2], "modifier_cd");
 					o.observer_id = i2b2.h.getXNodeVal(oData[i2], "observer_cd");
 					o.start_date_key = i2b2.h.getXNodeVal(oData[i2], "start_date");
-				        var d = date_val(i2b2.h.getXNodeVal(oData[i2], "start_date"));
-				        if(d) { o.start_date = d; }
-				        d = date_val(i2b2.h.getXNodeVal(oData[i2], "end_date"));
-				        if(d) { o.end_date = d; }
+				    var d = date_val(i2b2.h.getXNodeVal(oData[i2], "start_date"));
+				    if(d) { o.start_date = d; }
+					d = i2b2.h.getXNodeVal(oData[i2], "end_date");
+
+					//if there is no end_date use start_date as the end_date 					
+					if (d === undefined || d == null || d.length <= 0){  
+ 						d = i2b2.h.getXNodeVal(oData[i2], "start_date");
+ 					}
+
+				    d = date_val(d);
+				    if(d) { o.end_date = d; }
 					if ( o.concept_cd && o.start_date && o.end_date && patients[patientID]) {
 						patients[patientID].concepts[i1].push(o);
 						if (o.start_date < first_date) {first_date = o.start_date;}

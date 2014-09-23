@@ -1,37 +1,22 @@
 {
-	urlProxy: "index.php",
-	urlFramework: "js-i2b2/",
-	//-------------------------------------------------------------------------------------------
-	// THESE ARE ALL THE DOMAINS A USER CAN LOGIN TO
-	lstDomains: [
-		{ 
-		  domain: "i2b2demo",
-		  name: "I2B2 1.6 Query/Analysis Debug",
-		  urlCellPM: "http://127.0.0.1:8080/i2b2/rest/PMService/",
-		  allowAnalysis: true,
-		  adminOnly: false,
-		  debug: true,
-		  isSHRINE: false
-			},
-		{ 
-		  domain: "i2b2demo",
-		  name: "I2B2 1.6 Query/Analysis",
-		  urlCellPM: "http://127.0.0.1:8080/i2b2/rest/PMService/",
-		  allowAnalysis: true,
-		  adminOnly: false,
-			/*debug: true,*/
-		  debug: false,
-		  isSHRINE: false
-			},
-		{ 
-		  domain: "i2b2demo",
-		  name: "I2B2 1.6 Admin",
-		  urlCellPM: "http://127.0.0.1:8080/i2b2/rest/PMService/",
-		  allowAnalysis: true,
-		  adminOnly: false,
-		  debug: true,
-		  isSHRINE: false
-			},
-	]
-	//-------------------------------------------------------------------------------------------
+        urlProxy: "index.php",
+        urlFramework: "js-i2b2/",
+        //-------------------------------------------------------------------------------------------
+        // THESE ARE ALL THE DOMAINS A USER CAN LOGIN TO
+        lstDomains: [
+                { domain: "i2b2demo",
+                  name: "BlueHeron (i2b2 1.7.02)",
+                  urlCellPM: "http://localhost:9090/i2b2/services/PMService/",
+                  allowAnalysis: true,
+                  debug: true
+                },
+                { domain: "i2b2demo",
+                  name: "HarvardDemo",
+                  urlCellPM: "http://webservices.i2b2.org/i2b2/services/PMService/",
+                  allowAnalysis: true,
+                  debug: false
+                }
+        ]
+        //-------------------------------------------------------------------------------------------
 }
+
