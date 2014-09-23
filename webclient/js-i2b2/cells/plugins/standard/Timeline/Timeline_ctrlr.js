@@ -628,8 +628,13 @@ i2b2.Timeline.getResults = function() {
 				s += '<table class="ptData">';
 				for (i1=0; i1<i2b2.Timeline.model.concepts.length; i1++) {
 					if (patients[patientID].concepts[i1].length) {
+						var max_display_len = 75;
+						var display_name = i2b2.Timeline.model.concepts[i1].sdxInfo.sdxDisplayName.substring(0, max_display_len);
+						if (i2b2.Timeline.model.concepts[i1].sdxInfo.sdxDisplayName.length > max_display_len){
+							display_name += '...';
+						}
 						s += '<tr>';
-						s += '<td class="ptPanel">' + i2b2.h.Escape(i2b2.Timeline.model.concepts[i1].sdxInfo.sdxDisplayName) + '</td>';
+						s += '<td class="ptPanel">' + i2b2.h.Escape(display_name) + '</td>';
 						s += '<td class="ptObsTD" valign="top"><div class="spacer">&nbsp;</div>';
 						s += '<div class="ptObsDIV">';
 						s += '<div class="ptObsBack"></div>';
