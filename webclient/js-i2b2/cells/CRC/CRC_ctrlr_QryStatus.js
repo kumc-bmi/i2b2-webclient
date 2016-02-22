@@ -223,19 +223,29 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 			}
 			// force a redraw
 			i2b2.CRC.ctrlr.currentQueryStatus.refreshStatus();
+			//i2b2.CRC.view.graphs.clearGraphs('making graphs ...');
 		}
 		
 		
 		// fire off the ajax calls
 		i2b2.CRC.ajax.getQueryInstanceList_fromQueryMasterId("CRC:QueryStatus", {qm_key_value: self.QM.id}, scopedCallbackQI);
 
-}
+
+                // make graph - snm0
+								//alert("HERE WITH THIS:\n" + sCompiledResultsTest); //snm0 
+		//i2b2.CRC.view.graphs.createGraphs("infoQueryStatusChart", i2b2.CRC.view.graphs.returnTestString(false)), false);  // single site testing
+		//i2b2.CRC.view.graphs.createGraphs("infoQueryStatusChart", i2b2.CRC.view.graphs.returnTestString(true), true);  // multisite testing
+
+
+    }  // end of private_pollStatus
 	
 	function private_refresh_status() {
-		
+		var sCompiledResultsTest = "";  // snm0 - this is the text for the graph display
 				// callback processor to check the Query Instance
 		var scopedCallbackQRSI = new i2b2_scopedCallback();
 		scopedCallbackQRSI.scope = self;
+		// This is where each breakdown in the results is obtained
+		// each breakdown comes through here separately
 		scopedCallbackQRSI.callback = function(results) {
 			if (results.error) {
 				alert(results.errorMsg);
@@ -245,11 +255,13 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 
 				var ri_list = results.refXML.getElementsByTagName('query_result_instance');
 				var l = ri_list.length;
+				var description = "";  // Query Report BG
 				for (var i=0; i<l; i++) {
 					var temp = ri_list[i];
-					var description = i2b2.h.XPath(temp, 'descendant-or-self::description')[0].firstChild.nodeValue;
-					self.dispDIV.innerHTML += "<div style=\"clear: both;  padding-top: 10px; font-weight: bold;\">" + description + "</div>";					
-
+					// get the query name for display in the box
+					description = i2b2.h.XPath(temp, 'descendant-or-self::description')[0].firstChild.nodeValue;
+					self.dispDIV.innerHTML += "<div class=\"mainGrp\" style=\"clear: both;  padding-top: 10px; font-weight: bold;\">" + description + "</div>";					// Query Report BG
+					sCompiledResultsTest += description + '\n';  //snm0
 				} 
 				var crc_xml = results.refXML.getElementsByTagName('crc_xml_result');
 				l = crc_xml.length;
@@ -272,10 +284,15 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 						{
 							var value = params[i2].firstChild.nodeValue;							
 						}
-						self.dispDIV.innerHTML += "<div style=\"clear: both; margin-left: 20px; float: left; height: 16px; line-height: 16px;\">" + params[i2].getAttribute("column") + ": <font color=\"#0000dd\">" + value  + "</font></div>";
+						// display a line of results in the status box
+						self.dispDIV.innerHTML += "<div class=\'" + description + "\' style=\"clear: both; margin-left: 20px; float: left; height: 16px; line-height: 16px;\">" + params[i2].getAttribute("column") + ": <font color=\"#0000dd\">" + value  + "</font></div>";  //Query Report BG
+						sCompiledResultsTest += params[i2].getAttribute("column") + " : " + value + "\n"; //snm0
 					}
 					var ri_id = i2b2.h.XPath(temp, 'descendant-or-self::result_instance_id')[0].firstChild.nodeValue;
 				}
+				//alert(sCompiledResultsTest); //snm0 
+				i2b2.CRC.view.graphs.createGraphs("infoQueryStatusChart", sCompiledResultsTest, i2b2.CRC.view.graphs.bIsSHRINE);
+				if (i2b2.CRC.view.graphs.bisGTIE8) i2b2.CRC.view.status.selectTab('graphs');
 				//self.dispDIV.innerHTML += this.dispMsg;
 			}
 		}
@@ -298,6 +315,16 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 			self.dispDIV.innerHTML = '<div style="clear:both;"><div style="float:left; font-weight:bold">Finished Query: "'+self.QM.name+'"</div>';
 			self.dispDIV.innerHTML += '<div style="float:right">['+s+' secs]</div>';
 			
+			//Query Report BG
+			if((!Object.isUndefined(self.QI.start_date)) && (!Object.isUndefined(self.QI.end_date)))
+			{
+				var startDateElem = "<input type=\"hidden\" id=\"startDateElem\" value=\"" + self.QI.start_date + "\">";
+				var startDateMillsecElem = "<input type=\"hidden\" id=\"startDateMillsecElem\" value=\"" + moment(self.QI.start_date) + "\">";
+				var endDateElem = "<input type=\"hidden\" id=\"endDateElem\" value=\"" + self.QI.end_date + "\">";
+				var endDateMillisecElem = "<input type=\"hidden\" id=\"endDateMillsecElem\" value=\"" + moment(self.QI.end_date) + "\">";
+				self.dispDIV.innerHTML += startDateElem + startDateMillsecElem + endDateElem + endDateMillisecElem;
+			}
+			//End Query Report BG
 			//		self.dispDIV.innerHTML += '<div style="margin-left:20px; clear:both; height:16px; line-height:16px; "><div height:16px; line-height:16px; ">Compute Time: ' + (Math.floor((self.QI.end_date - self.QI.start_date)/100))/10 + ' secs</div></div>';
 			//		self.dispDIV.innerHTML += '</div>';
 			$('runBoxText').innerHTML = "Run Query";
@@ -314,6 +341,7 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 			var rec = self.QRS[i];			
 			if (rec.QRS_time) {
 				var t = '<font color="';
+				// display status of query in box
 				switch(rec.QRS_Status) {
 					case "ERROR":
 						self.dispDIV.innerHTML += '<div style="clear:both; height:16px; line-height:16px; "><div style="float:left; font-weight:bold; height:16px; line-height:16px; ">'+rec.title+'</div><div style="float:right; height:16px; line-height:16px; "><font color="#dd0000">ERROR</font></div>';
@@ -385,7 +413,7 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 								// Concepts
 								for (var i2=0; i2 < panel_list[p2].items.length; i2++) {
 									sdxData[0] = panel_list[p2].items[i2];
-									i2b2.Timeline.conceptDropped(sdxData);
+									i2b2.Timeline.conceptDropped(sdxData, false); // nw096 - turn off dialogs when auto-generating timeline
 								}
 							}
 							}
@@ -430,7 +458,8 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 							var value =  i2b2.h.XPath(xml_v, 'descendant::total_time_second/text()/..')[i2].firstChild.nodeValue;							
 						}					
 					self.dispDIV.innerHTML += '<div style="margin-left:20px; clear:both; line-height:16px; ">' + i2b2.h.XPath(xml_v, 'descendant::name/text()/..')[i2].firstChild.nodeValue + '<font color="#0000dd">: ' + value + ' secs</font></div>';
-	
+					//snm0
+					//alert('<div style="margin-left:20px; clear:both; line-height:16px; ">' + i2b2.h.XPath(xml_v, 'descendant::name/text()/..')[i2].firstChild.nodeValue + '<font color="#0000dd">: ' + value + ' secs</font></div>');
 					//self.dispDIV.innerHTML += '<div style="float: left; height: 16px; margin-right: 100px; line-height: 16px;"><font color="#0000dd">: ' + i2b2.h.XPath(xml_v, 'descendant::total_time_second/text()/..')[i2].firstChild.nodeValue + ' secs</font></div>';
 					} catch (e) {}
 				}
@@ -449,6 +478,8 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 				private_refreshInterrupt = false;
 			} catch (e) {}
 		}
+		
+
 	}
 
 	
@@ -515,11 +546,28 @@ i2b2.CRC.ctrlr.QueryStatus.prototype = function() {
 				}
 				var temp = results.refXML.getElementsByTagName('query_master')[0];
 				self.QM.id = i2b2.h.getXNodeVal(temp, 'query_master_id');
+				//Query Report BG
+				//Update the userid element when query is run first time
+				var userId = i2b2.h.getXNodeVal(temp,'user_id');
+				if(userId)
+				{
+					var existingUserIdElemList = $$("#userIdElem");
+					if(existingUserIdElemList)
+					{
+						existingUserIdElemList.each(function(existingUserIdElem){
+							existingUserIdElem.remove();
+						});
+					}
+					$("crcQueryToolBox.bodyBox").insert(new Element('input',{'type':'hidden','id':'userIdElem','value':userId}));
+				}
+				//End Query Report BG
 				self.QM.name = i2b2.h.XPath(temp, 'descendant-or-self::name')[0].firstChild.nodeValue;
 
 				// save the query instance
 				var temp = results.refXML.getElementsByTagName('query_instance')[0];
 				self.QI.id = i2b2.h.XPath(temp, 'descendant-or-self::query_instance_id')[0].firstChild.nodeValue;
+				self.QI.start_date = i2b2.h.XPath(temp, 'descendant-or-self::start_date')[0].firstChild.nodeValue; //Query Report BG
+				self.QI.end_date = i2b2.h.XPath(temp, 'descendant-or-self::end_date')[0].firstChild.nodeValue; //Query Report BG
 				self.QI.status = i2b2.h.XPath(temp, 'descendant-or-self::query_status_type/name')[0].firstChild.nodeValue;
 				self.QI.statusID = i2b2.h.XPath(temp, 'descendant-or-self::query_status_type/status_type_id')[0].firstChild.nodeValue;
 				

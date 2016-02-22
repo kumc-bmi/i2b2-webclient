@@ -7,6 +7,7 @@
  * ----------------------------------------------------------------------------------------
  * updated 11-06-08: 	Initial Launch [Griffin Weber] 
  * updated 01-13-09:	Performance tuning, added details dialogs [Nick Benik]
+ * updated 11-09-15:	Hid "<br>" in any of the concept names
  */
 
 i2b2.Timeline.Init = function(loadedDiv) {
@@ -74,17 +75,49 @@ i2b2.Timeline.prsDropped = function(sdxData) {
 };
 
 i2b2.Timeline.conceptDropped = function(sdxData, showDialog) {
+	showDialog = typeof showDialog !== 'undefined' ? showDialog : true;
 	sdxData = sdxData[0];	// only interested in first record
-	if (sdxData.origData.isModifier) {
-			alert("Modifier item being dropped is not supported.");
-			return false;	
+	
+	if(sdxData.sdxInfo.sdxType == "QM"){ // item is a previous query
+		if(showDialog)
+			alert("Previous query item being dropped is not supported.");
+		return false;
 	}
 	
+	if (sdxData.origData.isModifier) {
+		if(showDialog)
+			alert("Modifier item being dropped is not supported.");
+		return false;	
+	}
+	
+	if (typeof sdxData.origData.table_name == 'undefined'){ // BUG FIX: WEBCLIENT-138
+		var results = i2b2.ONT.ajax.GetTermInfo("ONT", {ont_max_records:'max="1"', ont_synonym_records:'false', ont_hidden_records: 'false', concept_key_value: sdxData.origData.key}).parse();
+		if(results.model.length > 0){
+			sdxData = results.model[0];
+		}
+ 	}
+	if (sdxData.origData.table_name.toUpperCase() == "PATIENT_DIMENSION"){
+		if(showDialog)
+			alert("Patient dimension item being dropped is not supported.");
+		return false;
+	}
 	// save the info to our local data model
 	i2b2.Timeline.model.concepts.push(sdxData);
 	
 					var cdetails = i2b2.ONT.ajax.GetTermInfo("CRC:QueryTool", {concept_key_value:sdxData.origData.key, ont_synonym_records: true, ont_hidden_records: true} );
-									var c = i2b2.h.XPath(cdetails.refXML, 'descendant::concept');
+					
+					try { new ActiveXObject ("MSXML2.DOMDocument.6.0"); isActiveXSupported =  true; } catch (e) { isActiveXSupported =  false; }
+	
+					if (isActiveXSupported) {
+						//Internet Explorer
+						xmlDocRet = new ActiveXObject("Microsoft.XMLDOM");
+						xmlDocRet.async = "false";
+						xmlDocRet.loadXML(cdetails.msgResponse);
+						xmlDocRet.setProperty("SelectionLanguage", "XPath");
+						var c = i2b2.h.XPath(xmlDocRet, 'descendant::concept');						
+					} else {										
+						var c = i2b2.h.XPath(cdetails.refXML, 'descendant::concept');
+					}
 					if (c.length > 0) {
 							sdxData.origData.xmlOrig = c[0];					
 					 }	
@@ -217,7 +250,7 @@ i2b2.Timeline.conceptsRender = function() {
 				}			
 			
 			
-			s += '<a class="concptItem" href="JavaScript:i2b2.Timeline.conceptDelete('+i1+');">' + i2b2.h.Escape(i2b2.Timeline.model.concepts[i1].sdxInfo.sdxDisplayName) + tt + '</a>';
+			s += '<a class="concptItem" href="JavaScript:i2b2.Timeline.conceptDelete('+i1+');">' + i2b2.h.Escape(i2b2.h.HideBreak(i2b2.Timeline.model.concepts[i1].sdxInfo.sdxDisplayName)) + tt + '</a>';
 		}
 		// show the delete message
 		$("Timeline-DeleteMsg").style.display = 'block';
@@ -281,8 +314,19 @@ i2b2.Timeline.showObservation = function(localkey) {
 				"\nobserver_id: " + t.observer_id + "<br />" +
 				"\nstart_date: " + t.start_date_key;
 				
+	if ( i2b2.h.getXNodeVal(results.refXML, 'end_date') != undefined)
+		disp +=  "<br />\nend_date:" +	i2b2.h.getXNodeVal(results.refXML, 'end_date') ;	
 	if ( i2b2.h.getXNodeVal(results.refXML, 'tval_char') != undefined)
 			disp +=  "<br />\ntval_char:" +	i2b2.h.getXNodeVal(results.refXML, 'tval_char') ;	
+	if ( i2b2.h.getXNodeVal(results.refXML, 'nval_num') != undefined)
+			disp +=  "<br />\nnval_num:" +	i2b2.h.getXNodeVal(results.refXML, 'nval_num') ;	
+	if ( i2b2.h.getXNodeVal(results.refXML, 'valueflag_cd') != undefined)
+			disp +=  "<br />\nvalueflag_cd:" +	i2b2.h.getXNodeVal(results.refXML, 'valueflag_cd') ;	
+	if ( i2b2.h.getXNodeVal(results.refXML, 'units_cd') != undefined)
+			disp +=  "<br />\nunits_cd:" +	i2b2.h.getXNodeVal(results.refXML, 'units_cd') ;	
+	if ( i2b2.h.getXNodeVal(results.refXML, 'modifier_cd') != undefined)
+		disp +=  "<br />\nmodifier_cd:" +	i2b2.h.getXNodeVal(results.refXML, 'modifier_cd') ;	
+			
 	if (i2b2.Timeline.model.pData != undefined)
 	{
 		disp += "<hr/><pre>" + i2b2.Timeline.model.pData + "</pre>";	
@@ -308,7 +352,7 @@ i2b2.Timeline.showObservation = function(localkey) {
 	      minHeight: 100, 
 	      status: false 
 	}); 
-	
+	/*
 	resize.on('resize', function(args) { 
 	    var panelHeight = args.height; 
 	    this.cfg.setProperty("height", panelHeight + "px"); 
@@ -330,6 +374,7 @@ i2b2.Timeline.showObservation = function(localkey) {
 	        resize.set("maxHeight", null); 
 	    } 
 	}, panel, true);  
+	*/
 		}
 	
 			// AJAX CALL USING THE EXISTING CRC CELL COMMUNICATOR
@@ -618,7 +663,7 @@ i2b2.Timeline.getResults = function() {
 				}
 			}
 			
-			//i2b2.Timeline.model.patients = patients;
+			i2b2.Timeline.model.patients = patients;
 			
 			var first_time = first_date.getTime()*1.0;
 			var last_time = last_date.getTime()*1.0;
@@ -635,7 +680,7 @@ i2b2.Timeline.getResults = function() {
 				for (i1=0; i1<i2b2.Timeline.model.concepts.length; i1++) {
 					if (patients[patientID].concepts[i1].length) {
 						s += '<tr>';
-						s += '<td class="ptPanel">' + i2b2.h.Escape(i2b2.Timeline.model.concepts[i1].sdxInfo.sdxDisplayName) + '</td>';
+						s += '<td class="ptPanel">' + i2b2.h.Escape(i2b2.h.HideBreak(i2b2.Timeline.model.concepts[i1].sdxInfo.sdxDisplayName)) + '</td>';
 						s += '<td class="ptObsTD" valign="top"><div class="spacer">&nbsp;</div>';
 						s += '<div class="ptObsDIV">';
 						s += '<div class="ptObsBack"></div>';
