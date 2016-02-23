@@ -92,7 +92,8 @@ i2b2.sdx.TypeControllers.QM.RenderHTML= function(sdxData, options, targetDiv) {
 	if (options.dblclick) {sMainEvents += ' ondblclick="'+ options.dblclick +'" '; }
 	if (options.context) {sMainEvents += ' oncontext="'+ options.context +'" '; } else {retHtml += ' oncontextmenu="return false" '; }
 	// **** Render the HTML ***
-	var retHtml = '<DIV id="' + id + '" ' + sMainEvents + ' style="white-space:nowrap;cursor:pointer;">';
+	var retHtml = '<DIV id="' + id + '" ' + sMainEvents + ' style="white-space:nowrap;cursor:pointer;" >';
+	if (options.tooltip) { var retHtml = '<DIV id="' + id + '" ' + sMainEvents + ' style="white-space:nowrap;cursor:pointer;" title="' + options.tooltip + '">'; }
 	retHtml += '<DIV ';
 	if (Object.isString(options.cssClass)) {
 		retHtml += ' class="'+options.cssClass+'" ';
@@ -426,9 +427,12 @@ i2b2.sdx.TypeControllers.QM.DragDrop.prototype.alignElWithMouse = function(el, i
 	} else {
 		var posX = (oCoord.x + this.deltaSetXY[0]);
 		var posY = (oCoord.y + this.deltaSetXY[1]);
-		var scrSize = document.viewport.getDimensions();
-		var maxX = parseInt(scrSize.width-25-160);
-		var maxY = parseInt(scrSize.height-25);
+		//var scrSize = document.viewport.getDimensions();
+	    var w =  window.innerWidth || (window.document.documentElement.clientWidth || window.document.body.clientWidth);
+	    var h =  window.innerHeight || (window.document.documentElement.clientHeight || window.document.body.clientHeight);
+		
+		var maxX = parseInt(w-25-160);
+		var maxY = parseInt(h-25);
 		if (posX > maxX) {posX = maxX;}
 		if (posX < 6) {posX = 6;}
 		if (posY > maxY) {posY = maxY;}

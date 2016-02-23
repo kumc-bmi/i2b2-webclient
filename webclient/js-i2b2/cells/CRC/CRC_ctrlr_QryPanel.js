@@ -24,7 +24,7 @@ function i2b2_PanelController(parentCtrlr) {
 	this.refDispContents = undefined;
 	this.refButtonTiming = undefined;
 	this.refBalloon = undefined;
-	this.itemNumber = 0;
+	this.itemNumber = 1;
 	
 	var Event = YAHOO.util.Event;
 
@@ -60,6 +60,8 @@ function i2b2_PanelController(parentCtrlr) {
 		this._redrawTree(pd);
 		this._redrawButtons(pd);
 		this._redrawTiming(pd);
+		this._redrawDates(pd); // nw096 - Date Constraints overhaul
+		this._redrawExclude(pd); // nw096 - Excludes improvement
 		//}
 	}
 
@@ -172,7 +174,9 @@ function i2b2_PanelController(parentCtrlr) {
 
 // ================================================================================================== //
 	this._redrawButtons = function(pd) {
-				$('infoQueryStatusText').innerHTML = "";		
+		$('infoQueryStatusText').innerHTML = "";		
+		$('infoQueryStatusChart').innerHTML = "";
+		$('infoQueryStatusReport').innerHTML = "";
 
 		// set panel GUI according to data in the "pd" object
 		if (undefined===pd) { pd = i2b2.CRC.model.queryCurrent.panels[i2b2.CRC.ctrlr.QT.temporalGroup][this.panelCurrentIndex]; }
@@ -202,7 +206,44 @@ function i2b2_PanelController(parentCtrlr) {
 			Element.removeClassName(this.refButtonDates,'queryPanelButtonSelected');					
 		}
 	}
+	
+	// ================================================================================================== //
+	this._redrawDates = function(pd) {
+		if (undefined===pd) { pd = i2b2.CRC.model.queryCurrent.panels[i2b2.CRC.ctrlr.QT.temporalGroup][this.panelCurrentIndex]; }
+		
+		jQuery('#QPD'+(this.panelCurrentIndex+1)+' table.ygtvdepth0 [class^="sdxDefault"]').find('span.itemDateConstraint').remove();
+		if(pd.items.length > 0){
+			for(var i=0;i<pd.items.length;i++){
+				if(pd.items[i].dateFrom && pd.items[i].dateTo){
+					jQuery('<span title="This item has a date constraint" class="itemDateConstraint">&nbsp;['+pd.items[i].dateFrom.Month+'/'+pd.items[i].dateFrom.Day+'/'+pd.items[i].dateFrom.Year+' to '+pd.items[i].dateTo.Month+'/'+pd.items[i].dateTo.Day+'/'+pd.items[i].dateTo.Year+']</span>').appendTo(jQuery('#QPD'+(this.panelCurrentIndex+1)+' table.ygtvdepth0 [class^="sdxDefault"]')[i]);
+				}
+				if(pd.items[i].dateFrom && !pd.items[i].dateTo){
+					jQuery('<span title="This item has a date constraint" class="itemDateConstraint">&nbsp;[&ge;'+pd.items[i].dateFrom.Month+'/'+pd.items[i].dateFrom.Day+'/'+pd.items[i].dateFrom.Year+']</span>').appendTo(jQuery('#QPD'+(this.panelCurrentIndex+1)+' table.ygtvdepth0 [class^="sdxDefault"]')[i]);					
+				}
+				if(!pd.items[i].dateFrom && pd.items[i].dateTo){
+					jQuery('<span title="This item has a date constraint" class="itemDateConstraint">&nbsp;[&le;'+pd.items[i].dateTo.Month+'/'+pd.items[i].dateTo.Day+'/'+pd.items[i].dateTo.Year+']</span>').appendTo(jQuery('#QPD'+(this.panelCurrentIndex+1)+' table.ygtvdepth0 [class^="sdxDefault"]')[i]);										
+				}
+			}
+		}
+	}
+	
+	// ================================================================================================== //
+	this._redrawExclude = function(pd) {
+		if (undefined===pd) { pd = i2b2.CRC.model.queryCurrent.panels[i2b2.CRC.ctrlr.QT.temporalGroup][this.panelCurrentIndex]; }
+		
+		jQuery('#QPD'+(this.panelCurrentIndex+1)+' [class^="sdxDefault"]').find('span.itemExclude').remove();
+		if(pd.exclude){
+			for(var i=0;i<pd.items.length;i++){
+				jQuery('<span title="This item is being excluded" class="itemExclude">&nbsp;NOT&nbsp;</span>').prependTo(jQuery('#QPD'+(this.panelCurrentIndex+1)+' [class^="sdxDefault"]')[i]);
+			}
+		}
+	}
 
+// ================================================================================================== //
+	this.showDateConstraint = function(key, extData) {
+		i2b2.CRC.ctrlr.dateConstraint.showDate(this.panelCurrentIndex, key, extData);
+	}
+	
 // ================================================================================================== //
 	this.showLabValues = function(key, extData) {
 		i2b2.CRC.view.modalLabValues.show(this.panelCurrentIndex, this, key, extData, false);
@@ -435,6 +476,7 @@ function i2b2_PanelController(parentCtrlr) {
 			}
 			dm.exclude = bVal;
 			this._redrawButtons(dm);
+			this._redrawExclude(dm);
 		}
 		// clear the query name and set the query as having dirty data
 		var QT = i2b2.CRC.ctrlr.QT;
@@ -444,6 +486,8 @@ function i2b2_PanelController(parentCtrlr) {
 // ================================================================================================== //
 	this.doTiming = function(sTiming) { 
 		$('infoQueryStatusText').innerHTML = "";	
+		$('infoQueryStatusChart').innerHTML = "";
+		$('infoQueryStatusReport').innerHTML = "";
 
 		if (i2b2.CRC.model.queryCurrent.panels[i2b2.CRC.ctrlr.QT.temporalGroup].length==0) { return;}
 		var bVal;
@@ -541,6 +585,14 @@ function i2b2_PanelController(parentCtrlr) {
 		//delete sdxConcept.ModValues;
 		sdxConcept.itemNumber = this.itemNumber++;
 		
+		// nw096 - Date Constraints overhaul
+		if(dm.panels[i2b2.CRC.ctrlr.QT.temporalGroup][targetPanelIndex].dateFrom){
+			sdxConcept.dateFrom = dm.panels[i2b2.CRC.ctrlr.QT.temporalGroup][targetPanelIndex].dateFrom;
+		}
+		if(dm.panels[i2b2.CRC.ctrlr.QT.temporalGroup][targetPanelIndex].dateTo){
+			sdxConcept.dateTo = dm.panels[i2b2.CRC.ctrlr.QT.temporalGroup][targetPanelIndex].dateTo;
+		}
+		
 		// save data
 		this._addConcept(sdxConcept,this.yuiTree.root, true);
 		// reset the query name to be blank and flag as having dirty data
@@ -575,18 +627,19 @@ function i2b2_PanelController(parentCtrlr) {
 					switch(values.MatchBy) {
 								case "FLAG":
 								//mm ??not sure tvChildren[i].html = ' = '+i2b2.h.Escape(values.ValueFlag) + "</div></div>";
+									title = ' = '+i2b2.h.Escape(values.ValueFlag);
 									break;
 								case "VALUE":
-									if (values.GeneralValueType== "LARGESTRING") {
-										title = "";
-									} else if ((values.GeneralValueType=="ENUM") || (values.GeneralValueType=="TEXT")) {
+                                    if ((values.GeneralValueType== "LARGESTRING") || (values.GeneralValueType=="TEXT")) {
+                                        title = ' = ("' + values.ValueString +'")';
+                                    } else if (values.GeneralValueType=="ENUM") { 
 										try {
 											var sEnum = [];
 											for (var i2=0;i2<values.ValueEnum.length;i2++) {
 												sEnum.push(i2b2.h.Escape(values.ValueEnum[i2]));
 											}
 											sEnum = sEnum.join("\", \"");
-											sEnum = ' =  ('+sEnum+')';
+											sEnum = ' =  ("'+sEnum+'")';
 											//tvChildren[i].html =  sEnum + "</div></div>"
 											title = sEnum;
 										} catch (e) {
@@ -617,6 +670,10 @@ function i2b2_PanelController(parentCtrlr) {
 												break;	
 											}
 											title =   numericOp +i2b2.h.Escape(values.Value);
+											if (!Object.isUndefined(values.UnitsCtrl))
+											{
+												title += " " + values.UnitsCtrl;				
+											}
 										}
 									}
 									break;
@@ -632,7 +689,18 @@ function i2b2_PanelController(parentCtrlr) {
 				if (isDragged) {
 					var cdetails = i2b2.ONT.ajax.GetModifierInfo("CRC:QueryTool", {modifier_applied_path:sdxConcept.origData.applied_path, modifier_key_value:sdxConcept.origData.key, ont_synonym_records: true, ont_hidden_records: true} );
 					// this is what comes out of the old AJAX call
-					var c = i2b2.h.XPath(cdetails.refXML, 'descendant::modifier');
+					try { new ActiveXObject ("MSXML2.DOMDocument.6.0"); isActiveXSupported =  true; } catch (e) { isActiveXSupported =  false; }
+	
+					if (isActiveXSupported) {
+						//Internet Explorer
+						xmlDocRet = new ActiveXObject("Microsoft.XMLDOM");
+						xmlDocRet.async = "false";
+						xmlDocRet.loadXML(cdetails.msgResponse);
+						xmlDocRet.setProperty("SelectionLanguage", "XPath");
+						var c = i2b2.h.XPath(xmlDocRet, 'descendant::modifier');						
+					} else {					
+						var c = i2b2.h.XPath(cdetails.refXML, 'descendant::modifier');
+					}					
 					if (c.length > 0) {
 							sdxConcept.origData.xmlOrig = c[0];
 							
@@ -703,7 +771,18 @@ function i2b2_PanelController(parentCtrlr) {
 			} else {
 				if (isDragged) {
 					var cdetails = i2b2.ONT.ajax.GetTermInfo("CRC:QueryTool", {concept_key_value:sdxConcept.origData.key, ont_synonym_records: true, ont_hidden_records: true} );
-									var c = i2b2.h.XPath(cdetails.refXML, 'descendant::concept');
+					try { new ActiveXObject ("MSXML2.DOMDocument.6.0"); isActiveXSupported =  true; } catch (e) { isActiveXSupported =  false; }
+	
+					if (isActiveXSupported) {
+						//Internet Explorer
+						xmlDocRet = new ActiveXObject("Microsoft.XMLDOM");
+						xmlDocRet.async = "false";
+						xmlDocRet.loadXML(cdetails.msgResponse);
+						xmlDocRet.setProperty("SelectionLanguage", "XPath");
+						var c = i2b2.h.XPath(xmlDocRet, 'descendant::concept');						
+					} else {					
+						var c = i2b2.h.XPath(cdetails.refXML, 'descendant::concept');
+					}
 					if (c.length > 0) {
 							sdxConcept.origData.xmlOrig = c[0];					
 					 }
@@ -745,15 +824,19 @@ function i2b2_PanelController(parentCtrlr) {
 				icon: "sdx_CRC_PRS.jpg"
 			};		
 		} else if (sdxConcept.sdxInfo.sdxType == "QM") {
+			var iconSrc = "sdx_CRC_QM.gif";
 			var sdxDataNode = i2b2.sdx.Master.EncapsulateData('QM',sdxConcept.origData);
 			var title = sdxConcept.origData.titleCRC;
-			if (title == undefined)
-			{
+			if(typeof title === 'undefined')
 				title = sdxConcept.origData.title;
+			if(typeof title !== 'undefined'){ // BUG FIX - WEBCLIENT-149
+				if(title.indexOf("(PrevQuery)(t)") == 0) { // BUG FIX - WEBCLIENT-125
+					iconSrc = "sdx_CRC_QMT.gif";
+				}
 			}
 			var renderOptions = {
 				title: title,
-				icon: "sdx_CRC_QM.gif"
+				icon: iconSrc
 			};
 		
 		}
@@ -762,7 +845,10 @@ function i2b2_PanelController(parentCtrlr) {
 
 		var sdxRenderData = i2b2.sdx.Master.RenderHTML(tvTree.id, sdxDataNode, renderOptions);
 	
-		sdxRenderData.itemNumber = sdxConcept.itemNumber;
+		if (sdxConcept.itemNumber)
+			sdxRenderData.itemNumber = sdxConcept.itemNumber;
+		else 
+			sdxRenderData.itemNumber = this.itemNumber++;
 	
 		if (!sdxConcept.origData.isModifier) {
 			//check if lab has value if so than auto popup
@@ -789,6 +875,9 @@ function i2b2_PanelController(parentCtrlr) {
 	this._deleteConcept = function(htmlID) {
 		var pd = i2b2.CRC.model.queryCurrent.panels[i2b2.CRC.ctrlr.QT.temporalGroup][this.panelCurrentIndex];
 		$('infoQueryStatusText').innerHTML = "";
+		$('infoQueryStatusChart').innerHTML = "";
+		$('infoQueryStatusReport').innerHTML = "";
+
 		if (undefined===htmlID) { return; } 
 		// remove the node in the treeview
 		var tvChildren = pd.tvRootNode.children
@@ -796,6 +885,8 @@ function i2b2_PanelController(parentCtrlr) {
 			 if (tvChildren[i].data.nodeid===htmlID) { 
 				this.yuiTree.removeNode(tvChildren[i],false);
 				this._redrawTree.call(this, pd);
+				this._redrawDates.call(this, pd);
+				this._redrawExclude.call(this,pd);
 				break;
 			}
 		}
@@ -805,11 +896,15 @@ function i2b2_PanelController(parentCtrlr) {
 		if (pd.items.length == 0) { this.doDelete(); }
 		// clear the query name if it was set
 		this.QTController.doSetQueryName.call(this,'');
+		this._redrawDates(pd);
+		this._redrawExclude(pd);
 	}
 
 // ================================================================================================== //
 	this._renameConcept = function(key, isModifier, pd) {
-				$('infoQueryStatusText').innerHTML = "";
+		$('infoQueryStatusText').innerHTML = "";
+		$('infoQueryStatusChart').innerHTML = "";
+		$('infoQueryStatusReport').innerHTML = "";
 
 		//var pd = i2b2.CRC.model.queryCurrent.panels[this.panelCurrentIndex];
 		// remove the concept from panel
@@ -974,12 +1069,16 @@ function i2b2_PanelController(parentCtrlr) {
 // ================================================================================================== //
 	this.doDelete = function() { 
 		$('infoQueryStatusText').innerHTML = "";
+		$('infoQueryStatusChart').innerHTML = "";
+		$('infoQueryStatusReport').innerHTML = "";
 		// function fired when the [X] icon for the GUI panel is clicked
 		i2b2.CRC.ctrlr.QT.panelDelete(this.panelCurrentIndex);
 		// redraw the panels 
 		var idx = this.panelCurrentIndex - this.ctrlIndex;
 		if (idx < 0) { idx = 0; }
 		i2b2.CRC.ctrlr.QT.doShowFrom(idx);
+		
+		
 	}	
 }
 

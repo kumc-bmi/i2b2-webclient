@@ -23,20 +23,23 @@ i2b2.PLUGINMGR.view.PlugView.visible = false;
 //================================================================================================== //
 i2b2.PLUGINMGR.view.PlugView.splitterDragged = function()
 {
-	var viewPortDim = document.viewport.getDimensions();
+	//var viewPortDim = document.viewport.getDimensions();
+	
+	    var w =  window.innerWidth || (window.document.documentElement.clientWidth || window.document.body.clientWidth);
+	
 	var splitter = $( i2b2.hive.mySplitter.name );
 	var pluginBox = $("anaPluginViewBox");
 	
 	if (splitter.style.visibility=="visible")
 	{
-		var basicWidth	= parseInt(viewPortDim.width) - parseInt(splitter.style.left) - parseInt(splitter.offsetWidth);
+		var basicWidth	= parseInt(w) - parseInt(splitter.style.left) - parseInt(splitter.offsetWidth);
 		pluginBox.style.left				= parseInt(splitter.offsetWidth) + parseInt(splitter.style.left) + 3 + "px";
 		pluginBox.style.width				= Math.max(basicWidth - 24, 0) + "px";
 	}
 	else
 	{
 		pluginBox.style.left				= 15 + "px";
-		pluginBox.style.width				= Math.max( parseInt(viewPortDim.width)-36, 0) + "px";
+		pluginBox.style.width				= Math.max( parseInt(w)-36, 0) + "px";
 	}	
 }
 
@@ -46,8 +49,11 @@ i2b2.PLUGINMGR.view.PlugView.ResizeHeight = function(e) {
 	var viewObj = i2b2.PLUGINMGR.view.PlugView;
 	var ve = $('anaPluginViewBox');
 	if (viewObj.visible) {
-		var ds = document.viewport.getDimensions();
-		var h = ds.height;
+		
+	    var h =  window.innerHeight || (window.document.documentElement.clientHeight || window.document.body.clientHeight);
+
+		//var ds = document.viewport.getDimensions();
+		//var h = ds.height;
 		if (h < 517) {h = 517;}
 		ve.show();
 		// resize our visual components
@@ -57,7 +63,8 @@ i2b2.PLUGINMGR.view.PlugView.ResizeHeight = function(e) {
 			case "Analysis":
 				ve.show();
 				if (i2b2.WORK && i2b2.WORK.isLoaded) {
-					var z = h - 390 + 142;
+					//var z = h - 390 + 142;
+					var z = h - 390 + 142 + 153;
 				} else {
 					var z = h - 390 + 100;
 				}
@@ -79,7 +86,8 @@ i2b2.PLUGINMGR.view.PlugView.ResizeHeight = function(e) {
 				if (i2b2.hive.MasterView.getViewMode() == "AnalysisZoomed") {
 					tn.style.height = (h - 34);
 				} else {
-					tn.style.height = (h - 283);
+					//tn.style.height = (h - 283);
+					tn.style.height = (h - 283 + 155);
 				}
 			}
 			if (t.Resize) {
@@ -107,9 +115,13 @@ i2b2.PLUGINMGR.view.PlugView.Resize = function(e) {
 	var viewObj = i2b2.PLUGINMGR.view.PlugView;
 	var ve = $('anaPluginViewBox');
 	if (viewObj.visible) {
-		var ds = document.viewport.getDimensions();
-		var w = ds.width;
-		var h = ds.height;
+		//var ds = document.viewport.getDimensions();
+		//var w = ds.width;
+		//var h = ds.height;
+		
+	    var w =  window.innerWidth || (window.document.documentElement.clientWidth || window.document.body.clientWidth);
+	    var h =  window.innerHeight || (window.document.documentElement.clientHeight || window.document.body.clientHeight);
+
 		if (w < 840) {w = 840;}
 		if (h < 517) {h = 517;}
 		ve.show();

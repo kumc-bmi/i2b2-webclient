@@ -235,10 +235,24 @@ i2b2.sdx.TypeControllers.QI.getChildRecords = function(sdxParentNode, onComplete
 			o.start_date = i2b2.h.getXNodeVal(ps[i1],'start_date');
 			o.end_date = i2b2.h.getXNodeVal(ps[i1],'end_date');
 			try {
-				o.title = i2b2.h.getXNodeVal(ps[i1],'description'); //[0].nodeValue;
+				//o.title = i2b2.h.getXNodeVal(ps[i1],'description'); //[0].nodeValue;
+				o.title = i2b2.h.getXNodeVal(ps[i1],'query_result_instance/description');
 			} catch (e) {
 				o.title = i2b2.h.getXNodeVal(ps[i1],'name');
 			}
+			if (i2b2.h.getXNodeVal(ps[i1],'query_result_type/name') == "PATIENT_COUNT_XML"){ //nw096
+				if(i2b2.PM.model.isObfuscated){
+					if(parseInt(i2b2.h.getXNodeVal(ps[i1],'query_result_instance/set_size')) < 4){
+						o.title += " is <span style='background: #C9F3C9;font-weight:bold;padding: 2px;color: #0C5D0C;'>&lt;3</span>";
+					} else {
+						o.title += " is <span style='background: #C9F3C9;font-weight:bold;padding: 2px;color: #0C5D0C;'>" + i2b2.h.getXNodeVal(ps[i1],'query_result_instance/set_size') + "&plusmn;3</span>";
+					}
+					
+				} else {
+					o.title += " is <span style='background: #C9F3C9;font-weight:bold;padding: 2px;color: #0C5D0C;'>" + i2b2.h.getXNodeVal(ps[i1],'query_result_instance/set_size') + "</span>";
+				}
+			}
+			
 			if (i2b2.h.XPath(ps[i1],'query_status_type/name/text()')[0].nodeValue != "COMPLETED")
 			{
 				o.title += " - " +  i2b2.h.XPath(ps[i1],'query_status_type/name/text()')[0].nodeValue;	
@@ -541,9 +555,12 @@ i2b2.sdx.TypeControllers.QI.DragDrop.prototype.alignElWithMouse = function(el, i
 	} else {
 		var posX = (oCoord.x + this.deltaSetXY[0]);
 		var posY = (oCoord.y + this.deltaSetXY[1]);
-		var scrSize = document.viewport.getDimensions();
-		var maxX = parseInt(scrSize.width-25-160);
-		var maxY = parseInt(scrSize.height-25);
+		//var scrSize = document.viewport.getDimensions();
+		var w =  window.innerWidth || (window.document.documentElement.clientWidth || window.document.body.clientWidth);
+	    var h =  window.innerHeight || (window.document.documentElement.clientHeight || window.document.body.clientHeight);
+
+		var maxX = parseInt(w-25-160);
+		var maxY = parseInt(h-25);
 		if (posX > maxX) {posX = maxX;}
 		if (posX < 6) {posX = 6;}
 		if (posY > maxY) {posY = maxY;}
