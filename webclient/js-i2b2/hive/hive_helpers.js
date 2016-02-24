@@ -5,7 +5,8 @@
  * @author		Nick Benik, Griffin Weber MD PhD
  * @version 	1.3
  * ----------------------------------------------------------------------------------------
- * updated 9-15-08: RC4 launch [Nick Benik] 
+ * updated 09-15-08: RC4 launch [Nick Benik] 
+ * updated 11-09-15: added .HideBreak() & .getXNodeValNoKids() [Wayne Chan]
  */
 console.group('Load & Execute component file: hive > helpers');
 console.time('execute time');
@@ -32,7 +33,11 @@ delete i2b2.protoObjhack;
 // ================================================================================================== //
 i2b2.h.parseXml = function(xmlString){
 	var xmlDocRet = false;
-	if (typeof window.ActiveXObject != "undefined" && new window.ActiveXObject("Microsoft.XMLDOM")) {  
+	var isActiveXSupported = false;
+
+	try { new ActiveXObject ("MSXML2.DOMDocument.6.0"); isActiveXSupported =  true; } catch (e) { isActiveXSupported =  false; }
+
+	if (isActiveXSupported) {
 		//Internet Explorer
 		xmlDocRet = new ActiveXObject("Microsoft.XMLDOM");
 		xmlDocRet.async = "false";
@@ -43,25 +48,7 @@ i2b2.h.parseXml = function(xmlString){
 		parser = new DOMParser();
 		xmlDocRet = parser.parseFromString(xmlString, "text/xml");
 	}
-	/* oring
-	try //Internet Explorer
-	{
-		xmlDocRet = new ActiveXObject("Microsoft.XMLDOM");
-		xmlDocRet.async = "false";
-		xmlDocRet.loadXML(xmlString);
-		xmlDocRet.setProperty("SelectionLanguage", "XPath");
-	} 
-	catch (e) {
-		try //Firefox, Mozilla, Opera, etc.
-		{
-			parser = new DOMParser();
-			xmlDocRet = parser.parseFromString(xmlString, "text/xml");
-		} 
-		catch (e) {
-			console.error(e.message)
-		}
-	}
-	*/
+
 	return xmlDocRet;
 };
 
@@ -73,7 +60,13 @@ i2b2.h.XPath = function(xmlDoc, xPath) {
 		return retArray;
 	}
 	try {
-		if (window.ActiveXObject) {
+		if (window.ActiveXObject  || "ActiveXObject" in window) {
+			if((!!navigator.userAgent.match(/Trident.*rv\:11\./)) && (typeof xmlDoc.selectNodes == "undefined")) { // IE11 handling
+				var doc = new ActiveXObject('Microsoft.XMLDOM');
+				doc.loadXML(new XMLSerializer().serializeToString(xmlDoc));
+				xmlDoc = doc;
+			}
+			
 			// Microsoft's XPath implementation
 			// HACK: setProperty attempts execution when placed in IF statements' test condition, forced to use try-catch
 			try {  
@@ -82,8 +75,9 @@ i2b2.h.XPath = function(xmlDoc, xPath) {
 				try {
 					xmlDoc.ownerDocument.setProperty("SelectionLanguage", "XPath");
 				} catch(e) {}
-			}
+			} 
 			retArray = xmlDoc.selectNodes(xPath);
+			
 		}
 		else if (document.implementation && document.implementation.createDocument) {
 			// W3C XPath implementation (Internet standard)
@@ -120,6 +114,15 @@ i2b2.h.getXNodeVal = function(xmlElement, nodeName, includeChildren) {
 		final = undefined;
 	}
 	return final;
+}
+
+i2b2.h.getXNodeValNoKids = function(xmlElement, nodeName) {
+	var gotten = i2b2.h.XPath(xmlElement, "descendant-or-self::"+nodeName+"/text()");
+	if (gotten.length > 0) {
+		return gotten[0].nodeValue;
+	} else {
+		return undefined;
+	}
 }
 
 i2b2.h.GenerateAlphaNumId = function(ReqIdLength) {
@@ -187,6 +190,17 @@ i2b2.h.GenerateISO8601DateTime = function(inDate) {
 };
 
 
+i2b2.h.HideBreak = function(inStrValue) {
+	if (typeof inStrValue == "number") {
+		var t = inStrValue.toString();
+	} else {
+		var t = new String(inStrValue);
+		t = t.replace(/<br>/gi, " ");
+	}
+	return t;
+};
+
+
 i2b2.h.Escape = function(inStrValue) {
 	if (typeof inStrValue == "number") {
 		var t = inStrValue.toString();
@@ -226,8 +240,10 @@ i2b2.h.EscapeTemplateVars = function(refTemplateVals, arryIgnoreVars) {
 i2b2.h.LoadingMask = {
 	show: function() {
 		var sz = document.viewport.getDimensions();
-		var w = sz.width;
-		var h = sz.height;
+
+    		var w =  window.innerWidth || (window.document.documentElement.clientWidth || window.document.body.clientWidth);
+    		var h =  window.innerHeight || (window.document.documentElement.clientHeight || window.document.body.clientHeight);
+
 		if (w < 840) {w = 840;}
 		if (h < 517) {h = 517;}
 		var mn = $('topMask');
