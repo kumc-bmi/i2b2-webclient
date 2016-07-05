@@ -87,7 +87,7 @@ i2b2.Timeline.conceptDropped = function(sdxData, showDialog) {
 	if (sdxData.origData.isModifier) {
 		if(showDialog)
 			alert("Modifier item being dropped is not supported.");
-		return false;	
+			return false;	
 	}
 	
 	if (typeof sdxData.origData.table_name == 'undefined'){ // BUG FIX: WEBCLIENT-138
@@ -116,7 +116,7 @@ i2b2.Timeline.conceptDropped = function(sdxData, showDialog) {
 						xmlDocRet.setProperty("SelectionLanguage", "XPath");
 						var c = i2b2.h.XPath(xmlDocRet, 'descendant::concept');						
 					} else {										
-						var c = i2b2.h.XPath(cdetails.refXML, 'descendant::concept');
+									var c = i2b2.h.XPath(cdetails.refXML, 'descendant::concept');
 					}
 					if (c.length > 0) {
 							sdxData.origData.xmlOrig = c[0];					
@@ -640,21 +640,23 @@ i2b2.Timeline.getResults = function() {
 					var o = {};
 					o.event_id = i2b2.h.getXNodeVal(oData[i2], "event_id");
 					o.concept_cd = i2b2.h.getXNodeVal(oData[i2], "concept_cd");
+					o.concept_name = i2b2.h.XPath(oData[i2], "descendant-or-self::concept_cd/@name")[0].nodeValue;
+					o.nval_num = i2b2.h.getXNodeVal(oData[i2], "nval_num");
+					o.tval_char = i2b2.h.getXNodeVal(oData[i2], "tval_char");
+					o.modifier_cd = i2b2.h.getXNodeVal(oData[i2], "modifier_cd");
 					o.observer_id = i2b2.h.getXNodeVal(oData[i2], "observer_cd");
 					o.start_date_key = i2b2.h.getXNodeVal(oData[i2], "start_date");
-					var d = i2b2.h.getXNodeVal(oData[i2], "start_date");
-					if (d) { d = d.match(/^[0-9\-]*/).toString(); }
-					if (d) { d = d.replace(/-/g,'/'); }
-					if (d) { d = new Date(Date.parse(d)); }
-					if (d) { o.start_date = d; }
+				    var d = date_val(i2b2.h.getXNodeVal(oData[i2], "start_date"));
+				    if(d) { o.start_date = d; }
 					d = i2b2.h.getXNodeVal(oData[i2], "end_date");
+
+					//if there is no end_date use start_date as the end_date 					
  					if (d === undefined || d == null || d.length <= 0){  
  						d = i2b2.h.getXNodeVal(oData[i2], "start_date");
  					}					
-					if (d) { d = d.match(/^[0-9\-]*/).toString(); }
-					if (d) { d = d.replace(/-/g,'/'); }
-					if (d) { d = new Date(Date.parse(d)); }
-					if (d) { o.end_date = d; }
+
+				    d = date_val(d);
+				    if(d) { o.end_date = d; }
 					if ( o.concept_cd && o.start_date && o.end_date && patients[patientID]) {
 						patients[patientID].concepts[i1].push(o);
 						if (o.start_date < first_date) {first_date = o.start_date;}
@@ -663,7 +665,7 @@ i2b2.Timeline.getResults = function() {
 				}
 			}
 			
-			i2b2.Timeline.model.patients = patients;
+			//i2b2.Timeline.model.patients = patients;
 			
 			var first_time = first_date.getTime()*1.0;
 			var last_time = last_date.getTime()*1.0;
@@ -673,14 +675,21 @@ i2b2.Timeline.getResults = function() {
 			i2b2.Timeline.model.last_time = last_time;
 			
 			var observation_keys = new Array();
+		        // Regular expressing to extract the hour, minute, and second from the observation time string
+			var obsTimeRe = new RegExp('[0-9]{4}-[0-9]{2}-[0-9]{2}T([0-9]{2}:[0-9]{2}:[0-9]{2})(\.[0-9]+)?([-,\+][0-9]{2}:[0-9]{2})')
 			for (var patientID in patients) {
 				s += '<div class="ptBox">';
 				s += '<div class="ptName">' + patients[patientID].name + '</div>';
 				s += '<table class="ptData">';
 				for (i1=0; i1<i2b2.Timeline.model.concepts.length; i1++) {
 					if (patients[patientID].concepts[i1].length) {
+						var max_display_len = 75;
+						var display_name = i2b2.Timeline.model.concepts[i1].sdxInfo.sdxDisplayName.substring(0, max_display_len);
+						if (i2b2.Timeline.model.concepts[i1].sdxInfo.sdxDisplayName.length > max_display_len){
+							display_name += '...';
+						}
 						s += '<tr>';
-						s += '<td class="ptPanel">' + i2b2.h.Escape(i2b2.h.HideBreak(i2b2.Timeline.model.concepts[i1].sdxInfo.sdxDisplayName)) + '</td>';
+						s += '<td class="ptPanel">' + i2b2.h.Escape(i2b2.h.HideBreak(display_name)) + '</td>';
 						s += '<td class="ptObsTD" valign="top"><div class="spacer">&nbsp;</div>';
 						s += '<div class="ptObsDIV">';
 						s += '<div class="ptObsBack"></div>';
@@ -696,8 +705,12 @@ i2b2.Timeline.getResults = function() {
 							var obs_keyval = {
 								event_id: patients[patientID].concepts[i1][i2].event_id,
 								patient_id: patientID,
+							    	concept_name: patients[patientID].concepts[i1][i2].concept_name,
 								concept_id: patients[patientID].concepts[i1][i2].concept_cd,
 								observer_id: patients[patientID].concepts[i1][i2].observer_id,
+								nval_num: patients[patientID].concepts[i1][i2].nval_num,
+								tval_char: patients[patientID].concepts[i1][i2].tval_char,
+								modifier_cd: patients[patientID].concepts[i1][i2].modifier_cd,
 								start_date_key: patients[patientID].concepts[i1][i2].start_date_key
 							};
 							observation_keys.push(obs_keyval);
@@ -708,7 +721,31 @@ i2b2.Timeline.getResults = function() {
 									s += '<div class="ptOb2" style="left:' + (100*w) + '%;width:' + (100*(w2-w)) + '%;"></div>';
 								}
 								if (w > .99) { w = .98;}
-								s += '<a id="TIMELINEOBS-'+obs_key+'" title="'+ i2b2.h.Escape(obs_keyval.concept_id) +'" href="Javascript:i2b2.Timeline.showObservation('+ obs_key +');" class="ptOb" style="left:' + (100*w) + '%;"></a>';
+								// Display the modifier code and the nval or tval in the hover text
+								var modVal='';
+								if (obs_keyval.modifier_cd != undefined && obs_keyval.modifier_cd != '@'){
+									modVal += ' ' + obs_keyval.modifier_cd;
+								}
+								if (obs_keyval.nval_num != undefined){
+									modVal += ' ' + obs_keyval.nval_num;
+								}
+								else if (obs_keyval.tval_char != undefined && obs_keyval.tval_char != '@'){
+									modVal += ' ' + obs_keyval.tval_char;
+								}
+							        /* If the time is of the expected format, extract the hour, minute, second.
+							        Otherwise, just display whatever we got for the time string.
+								*/
+							        var tMatch = obsTimeRe.exec(obs_keyval.start_date_key)
+								if (tMatch == null || tMatch.length < 2){
+								    obsTime = obs_keyval.start_date_key;
+								}
+							        else {
+								    // Group 1 of the match is the HH:MM:SS
+								    obsTime = tMatch[1];
+								}
+								s += '<a id="TIMELINEOBS-' + obs_key + '" title="' + i2b2.h.Escape(obs_keyval.concept_name) + 
+								' (' + i2b2.h.Escape(obs_keyval.concept_id) + ')' + modVal + ' ' + obsTime + 
+								'" href="Javascript:i2b2.Timeline.showObservation(' + obs_key + ');" class="ptOb" style="left:' + (100*w) + '%;"></a>';
 							}
 						}
 						s += '</div>';
@@ -739,5 +776,23 @@ i2b2.Timeline.getResults = function() {
 		
 		// AJAX CALL USING THE EXISTING CRC CELL COMMUNICATOR
 		i2b2.CRC.ajax.getPDO_fromInputList("Plugin:Timeline", {PDO_Request:msg_filter}, scopedCallback);
+	}
+}
+
+function date_val(txt){
+    var parts = txt.match(/^(\d\d\d\d)-(\d\d)-(\d\d)(?:.(\d\d):(\d\d):(\d\d).\d+\+?(-?\d+):\d+)?$/);
+    if (!parts) {
+	return undefined;
+    }
+
+    parts = parts.map(function(x) { return parseInt(x) });
+    var year = parts[1], month = parts[2] - 1, day = parts[3];
+
+    if (isNaN(parts[4])) {
+	return new Date(year, month, day);
+    } else {
+	var hour = parts[4], min = parts[5], sec = parts[6], tzhr = parts[7];
+	var d = new Date(Date.UTC(year, month, day, hour, min, sec));
+	return new Date(d.getTime() - (1000 * 60 * 60 * tzhr))
 	}
 }
