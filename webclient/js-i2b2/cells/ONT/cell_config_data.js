@@ -3,6 +3,7 @@
 {
 	files: [
 		"ONT_view_Main.js",
+		"ONT_view_Help.js",
 		"ONT_view_Nav.js",
 		"ONT_view_Find.js",
 		"ONT_ctrlr_FindBy.js",
