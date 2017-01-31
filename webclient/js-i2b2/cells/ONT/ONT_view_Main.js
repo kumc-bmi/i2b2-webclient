@@ -1,11 +1,11 @@
 /**
- * @projectDescription	Special view controller for ONT that manages/routes events to "Find" tab or "Navigate" tab view controllers.
+ * @projectDescription	Special view controller for ONT that manages/routes events to "Navigate," "Find," or "Help" tab view controllers.
  * @inherits 	i2b2.ONT.view
  * @namespace	i2b2.ONT.view.main
- * @author		Nick Benik, Griffin Weber MD PhD
+ * @author		Brennan Connolly Nick Benik, Griffin Weber MD PhD
  * @version 	1.3
  * ----------------------------------------------------------------------------------------
- * updated 9-15-08: RC4 launch [Nick Benik] 
+ * updated 7-25-16: Added Help tab to selectTab cases [Brennan Connolly]
  */
 console.group('Load & Execute component file: ONT > view > Main');
 console.time('execute time');
@@ -25,18 +25,26 @@ i2b2.ONT.view.main.showOptions = function(subscreen) {
 
 // ================================================================================================== //
 i2b2.ONT.view.main.selectTab = function(tabCode) {
-	// toggle between the Navigate and Find Terms tabs
+	// toggle between the Navigate Terms, Find [Terms], and Help tabs
 	switch (tabCode) {
 		case "find":
 			this.currentTab = 'find';
 			this.cellRoot.view['nav'].hideView();
 			this.cellRoot.view['find'].showView();
+			this.cellRoot.view['help'].hideView();
 		break;
 		case "nav":
 			this.currentTab = 'nav';
 			this.cellRoot.view['nav'].showView();
 			this.cellRoot.view['find'].hideView();
+			this.cellRoot.view['help'].hideView();
 		break;
+		case "help":
+        	this.currentTab = 'help';
+        	this.cellRoot.view['nav'].hideView();
+        	this.cellRoot.view['find'].hideView();
+        	this.cellRoot.view['help'].showView();
+        break;
 	}
 }
 
