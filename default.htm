@@ -7,7 +7,7 @@
  *  *************************
  *       i2b2 Web Client
  *           v1.7.08
- *  ************************* 
+ *  *************************
  *  @modified: 09/2/16
  *  Contributors:
  *     Nick Benik
@@ -17,6 +17,7 @@
  *     David Wang
  *     Hannah Murphy
  *     Nich Wattanasin
+ *     Brennan Connolly
  *
  */-->
 
@@ -89,6 +90,13 @@
 <script type="text/javascript" src="js-ext/excanvas.js"></script>
 <script type="text/javascript" src="js-ext/bubbling-min.js"></script>
 <script type="text/javascript" src="js-ext/accordion-min.js"></script>
+
+<!-- per http://code.google.com/p/i2b2-r-engine-project/wiki/HowTo -->
+<script type="text/javascript" src="js-ext/jquery-1.4.1.min.js"></script>
+<script>
+  var $j = jQuery.noConflict();
+</script>
+
 <style type="text/css">
 .myAccordion {
 	float: left;
@@ -225,7 +233,12 @@ function initI2B2()
 					// by editing the CSS file.  You can remark out the lines below with no ill effect.  Use the following
 					// javascript function to display the modal login form: i2b2.hive.PM.doLoginDialog();
 					//cellObj.doConnectForm($('loginusr'),$('loginpass'),$('logindomain'), $('loginsubmit'));
+				        var creds = i2b2.PM.pre_authz();
+				        if (creds) {
+						i2b2.PM.authz_login(creds);
+					} else {
 					i2b2.PM.doLoginDialog();
+					}
 					break;
 			}
 		})
@@ -417,7 +430,22 @@ YAHOO.util.Event.addListener(window, "load", init);
     	        &nbsp;|&nbsp;
             </span>
             --> 
-        <span id="viewMode-Analysis"> <a href="Javascript:void(0)" onClick="i2b2.hive.MasterView.setViewMode('Analysis');">Analysis Tools</a> <a href="#" onclick="return false;" id="pluginsMenu"><img src="assets/images/p_dropdown.png" align="absbottom" border="0"/></a>&nbsp;|&nbsp; </span> <span id="adminPlugins" style="display:none"> <a href="#" onClick="invokeWCPinstaller();return false;" target="_blank">Install Plugins from i2b2 Gallery</a> &nbsp;|&nbsp; </span> <span id="debugMsgSniffer" style="display:none"> <a href="Javascript:void(0)" onClick="i2b2.hive.MsgSniffer.show();">Message Log</a> &nbsp;|&nbsp; </span> <a id="helpLink" href="Javascript:void(0)" onClick="i2b2.hive.HelpViewer.show();">Help</a> &nbsp;|&nbsp; <span id="changePasswordLink"><a id="helpLink" href="Javascript:void(0)" onClick="i2b2.PM.changePassword.show();">Change Password</a> &nbsp;|&nbsp;</span> <a href="Javascript:void(0);" onClick="i2b2.PM.doLogout();">Logout</a> </div></td>
+            <span id="viewMode-Analysis">
+                <a href="Javascript:void(0)" onClick="i2b2.hive.MasterView.setViewMode('Analysis');">Analysis Tools</a>
+                <a href="#" onclick="return false;" id="pluginsMenu"><img src="assets/images/p_dropdown.png" align="absbottom" border="0"/>
+            </a>&nbsp;|&nbsp; </span>
+            <span id="debugMsgSniffer" style="display:none">
+                <a href="Javascript:void(0)"
+                   onClick="i2b2.hive.MsgSniffer.show();">Message Log</a>
+                &nbsp;|&nbsp; </span>
+			<a id="helpLink" href="Javascript:void(0)" onClick="i2b2.hive.HelpViewer.show();">i2b2 Help</a>
+			&nbsp;|&nbsp;
+			<a id="helpLink" href="http://frontiersresearch.org/frontiers/HERON-Introduction">HERON Help</a>
+			&nbsp;|&nbsp;			
+			<a id="helpLink" href="https://redcap.kumc.edu/surveys/?s=3SBkPg&tool=1">Gripe</a>
+			&nbsp;|&nbsp;
+			<a href="Javascript:void(0);" onClick="i2b2.PM.doLogout();">Logout</a>		</div>	</td>
+  </div></td>
   </tr>
 </table>
 <div id="screenQueryData" style="display:none"> 
@@ -432,11 +460,17 @@ YAHOO.util.Event.addListener(window, "load", init);
         <div id="tabFind" class="tabBox" onClick="i2b2.ONT.view.main.selectTab('find')">
           <div>Find</div>
         </div>
+        <div id="tabHelp" class="tabBox" onClick="i2b2.ONT.view.main.selectTab('help')">
+          <div>Help</div>
+        </div>
       </div>
       <div class="opXML"> 
         <!--				<a href="JavaScript:showXML('ONT',i2b2.ONT.view.main.currentTab,'Request');" class="debug"><img src="assets/images/msg_request.gif" border="0" width="16" height="16" alt="Show XML Request" title="Show XML Request" /></a> --> 
         <!--				<a href="JavaScript:showXML('ONT',i2b2.ONT.view.main.currentTab,'Response');" class="debug"><img src="assets/images/msg_response.gif" border="0" width="16" height="16"  alt="Show XML Response" title="Show XML Response" /></a> --> 
-        <a href="JavaScript:showXML('ONT',i2b2.ONT.view.main.currentTab,'Stack');" class="debug"><img src="assets/images/msg_stack.gif" border="0" width="16" height="16"  alt="Show XML Message Stack" title="Show XML Message Stack" /></a> <a href="JavaScript:i2b2.ONT.view.main.showOptions();"><img src="assets/images/options.gif" border="0" width="16" height="16" alt="Show Options" title="Show Options" /></a> <a href="JavaScript:i2b2.ONT.view.main.ZoomView();"><img id="ontZoomImg" width="16" height="16" border="0" src="js-i2b2/cells/ONT/assets/zoom_icon.gif" alt="Resize Workspace" title="Resize Workspace" /></a> </div>
+        <a href="JavaScript:showXML('ONT',i2b2.ONT.view.main.currentTab,'Stack');" class="debug"><img src="assets/images/msg_stack.gif" border="0" width="16" height="16" alt="Show XML Message Stack" title="Show XML Message Stack" /></a>
+        <a href="JavaScript:i2b2.ONT.view.main.showOptions();" class="options"><img src="assets/images/options.gif" border="0" width="16" height="16" alt="Show Options" title="Show Options" /></a>
+        <a href="JavaScript:i2b2.ONT.view.main.ZoomView();" class="zoom"><img id="ontZoomImg" src="js-i2b2/cells/ONT/assets/zoom_icon.gif" border="0" width="16" height="16" alt="Resize Workspace" title="Resize Workspace" /></a>
+      </div>
     </div>
     <div id="ontMainDisp">
       <div id="ontNavDisp"> 
@@ -516,6 +550,47 @@ YAHOO.util.Event.addListener(window, "load", init);
           </form>
         </div>
         <div id="ontSearchModifiersResults" oncontextmenu="return false"></div>
+      </div>
+      <div id="ontHelpDisp">
+        <h3><a target="_blank" href="http://frontiersresearch.org/frontiers/informatics-training-videos">Training Videos</a></h3>
+          <p>If you need help getting used to the basics of using HERON, don't worry, we have some video demonstrations for you.
+            Watching these three takes just over 10 minutes.</p>
+          <ul>
+            <li>Simple Search: "Introduction on creating and executing a simple search.
+              Video demonstrates browsing and searching for terms in addition to placing concepts into groups for searching."</li>
+            <li>Interface Overview: "Introduction to functionality available in the HERON interface including options to focus or expand your search."</li>
+            <li>Temporal Constraints: "Introduction to independent search constraint and the same financial encounter constraint."</li>
+          </ul>
+        <h3><a target="_blank" href="https://informatics.kumc.edu/work/blog">HERON Contents Summary</a></h3>
+          <p>Click here for the HERON blog article that summarizes the amount and sources of information that can be queried.</p>
+        <h3><a target="_blank" href="http://frontiersresearch.org/frontiers/HERON-FAQs">FAQs</a></h3>
+          <p>If you're asking yourself one of these questions, check out the HERON FAQs page for answers.</p>
+          <ul>
+            <li>Can I access HERON off campus?</li>
+            <li>How do I search HERON? (see above)</li>
+            <li>What data is in HERON? (see above)</li>
+            <li>How is the data de-identified?</li>
+            <li>Can I get more than just the number of patients that meet my search criteria?</li>
+            <li>How do I get a list of patients I can contact who meet my search criteria?</li>
+            <li>I need help...what do I do?</li>
+          </ul>
+        <h3>Running Previously Constructed Queries:</h3>
+          <p>If you want to re-run a previous query, don't drag and drop it into one of the big "Group" panels used for constructing queries.
+            Instead, drop into the "Query Name" field above those panels.</p>
+            <img src="assets/images/example_prev_query.jpg" border="1" width="424" height="212">
+        <h3>Modifiers And How To Use Them</h3>
+          <p>Modifiers are tools that allow you to narrow your search criteria, particularly when those criteria include medications data.
+            You can distinguish them by the blue ring icon they have in front of their names.</p>
+            <img src="assets/images/example_meds_mods.jpg" border="1" width="424" height="212">
+          <p>Commonly available modifiers include:</p>
+          <ul>
+            <li>Inpatient Meds</li>
+            <li>Outpatient Meds</li>
+            <li>Historical Meds</li>
+            <li>Quantity</li>
+            <li>Refills</li>
+          </ul>
+        <p>To use them in a query, drag and drop the desired modifier into the Query Tool panels like you would with any other piece of criteria.</p>
       </div>
       <div id="ontBalloonBox" xonmouseover="i2b2.ONT.view.main.hballoon.hideBalloons()"> 
         <!--
