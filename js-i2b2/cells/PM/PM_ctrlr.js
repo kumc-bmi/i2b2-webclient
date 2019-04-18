@@ -229,9 +229,10 @@ i2b2.PM._processUserConfig = function (data) {
 			alert("Requires ADMIN role, please contact your system administrator");
 		try { i2b2.PM.view.modal.login.show(); } catch(e) {}
 		return true;
-	} else if (i2b2.PM.model.admin_only) {	
+	} else if ((i2b2.PM.model.admin_only)  || (i2b2.PM.model.isAdmin && projs.length == 0)) {	
 		// default to the first project
 		$('crcQueryToolBox').hide(); 
+		i2b2.PM.model.admin_only = true;
 		i2b2.PM.model.login_project = ""; //i2b2.h.XPath(projs[0], 'attribute::id')[0].nodeValue;
 		i2b2.PM._processLaunchFramework();
 	} else 	if (projs.length == 0) {
@@ -242,7 +243,13 @@ i2b2.PM._processUserConfig = function (data) {
 		if (s.length > 0) {
 			// we have a proper error msg
 			try {
+				if (s[0].firstChild.nodeValue == "Password Expired.")
+				{
+					i2b2.PM.changePassword.show();
+				} else
+				{
 					alert("ERROR: "+s[0].firstChild.nodeValue);				
+				}
 			} catch (e) {
 				alert("An unknown error has occured during your login attempt!");
 			}
@@ -256,7 +263,7 @@ i2b2.PM._processUserConfig = function (data) {
 		}
 		try { i2b2.PM.view.modal.login.show(); } catch(e) {}
 		return true;
-	} else if (projs.length == 1) {
+	} else if ((projs.length == 1)  && (!i2b2.PM.model.isAdmin)) {
 		// default to the only project the user has access to
 		i2b2.PM.model.login_project = i2b2.h.XPath(projs[0], 'attribute::id')[0].nodeValue;
 		i2b2.PM.model.login_projectname = i2b2.h.getXNodeVal(projs[0], "name");
@@ -312,6 +319,9 @@ i2b2.PM.changePassword = {
 	},
 	hide: function() {
 		try {
+                        $('curpass').value = "";                
+                        $('newpass').value = "";
+                        $('retypepass').value = "";			
 			i2b2.PM.changePassword.yuiPanel.hide();
 			//$("changepassword-viewer-panel").hide();
 		} catch (e) {}
@@ -323,7 +333,7 @@ i2b2.PM.changePassword = {
 			var retypepass = $('retypepass').value;
 			
 			if (newpass != retypepass) {
-				alert("New password and Retype Password dont match");
+				alert("Password doesn't match the confirm password");
 			} else { 
 				
 				// callback processor
@@ -341,11 +351,27 @@ i2b2.PM.changePassword = {
 					
 					// check for errors
 					if (results.error) {
-						alert('Current password is incorrect');
+						
+ 						var s = i2b2.h.XPath(results.refXML, 'descendant::result_status/status[@type="ERROR"]');
+						if (s.length > 0) {
+							// we have a proper error msg
+							 try {
+ 								if (s[0].firstChild.nodeValue == "Password Validation Failed")
+                                                                        alert("Password Requirements\n\t- Be at least 8 characters\n\n- Must contain\n\t- upper case letters (A-Z)\n\t- lower case letters (a-z)\n\t- numbers (0-9)\n\t- special character (,.!@()}{#$%^&+=)\n\n- Must NOT contain\n\t- spaces\n\t- start or end with a special characters");
+                                                                else				 
+									alert(s[0].firstChild.nodeValue);
+							} catch(e) { alert("Error in PM Response");}    
+						}
+
+						
+						
 						console.error("Bad Results from Cell Communicator: ",results);
 						return false;
 					}
 					alert("Password successfully changed");	
+                      			$('curpass').value = "";                
+                        		$('newpass').value = "";
+                        		$('retypepass').value = "";								
 					i2b2.PM.changePassword.yuiPanel.hide();
 
 
@@ -405,6 +431,15 @@ i2b2.PM.view.modal.projectDialog = {
 			pno.appendChild(pnt);
 			pli.appendChild(pno);			
 		}
+
+		// Add admin project
+		if (i2b2.PM.model.isAdmin) {
+                        pno = document.createElement('OPTION');
+                        pno.setAttribute('value', 'admin_HY!5Axu&');
+                        var pnt = document.createTextNode('Administrator');
+                        pno.appendChild(pnt);
+                        pli.appendChild(pno);
+		}
 		// select first project
 		$('loginProjs').selectedIndex = 0;
 
@@ -421,6 +456,7 @@ i2b2.PM.view.modal.projectDialog = {
 		var projectCode = p.options[p.selectedIndex].value;
 		
 		// show details
+		if (projectCode != 'admin_HY!5Axu&')
 		for (var i in i2b2.PM.model.projects[projectCode].details) {
 			// ignore "announcement" param
 			if (i != "announcement") {
@@ -451,9 +487,16 @@ i2b2.PM.view.modal.projectDialog = {
 			ProjId = p.options[p.selectedIndex].value;
 			ProjName = p.options[p.selectedIndex].text;
 		}
+
+ i2b2.PM.view.modal.projectDialog.yuiDialog.destroy();
+		//If admin project goto admin 
+		if (ProjId == 'admin_HY!5Axu&') {
+			$('crcQueryToolBox').hide(); 
+			i2b2.PM.model.login_project = ""; //i2b2.h.XPath(projs[0], 'attribute::id')[0].nodeValue;
+			i2b2.PM.model.admin_only = true;
+		} else {
 		i2b2.PM.model.login_project = ProjId;
 		i2b2.PM.model.login_projectname = ProjName;
-		i2b2.PM.view.modal.projectDialog.yuiDialog.destroy();
 		try {
 			var announcement = i2b2.PM.model.projects[ProjId].details.announcement;
 			if (announcement) {
@@ -461,6 +504,7 @@ i2b2.PM.view.modal.projectDialog = {
 				return;
 			}
 		} catch(e) {}
+		}
 		i2b2.PM._processLaunchFramework();
 	}
 }

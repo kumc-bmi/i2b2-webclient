@@ -6,6 +6,7 @@
 		"ONT_view_Help.js",
 		"ONT_view_Nav.js",
 		"ONT_view_Find.js",
+		"ONT_view_Info.js",
 		"ONT_ctrlr_FindBy.js",
 		"ONT_ctrlr_general.js",
 		"ONT_sdx_CONCPT.js",

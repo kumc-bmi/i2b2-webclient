@@ -145,6 +145,7 @@ try {
 		graph_multiplesite_patient_number("chart0", asUniqueBreakdownTypes[0], asInputArray);
 		for (var i=1; i<asUniqueBreakdownTypes.length; i++){
 			graph_multiplesite_patient_breakdown("chart"+i, asUniqueBreakdownTypes[i], asInputArray);
+			document.getElementById('chart'+i).style.maxHeight = '236px';//swc20171025 added to prevent x-axis label clipping			
 		}		
      }
 	
@@ -200,8 +201,8 @@ try {
 		var asInputSentences = sInputString.split("\n");
 		var iFragmentArrayCounter = 0;
 		for(var i = 0; i < asInputSentences.length; i++) {
-			if (asInputSentences[i].indexOf("for") > 0) { 
-				asTempArray = asInputSentences[i].split("for");
+			if (asInputSentences[i].indexOf('for "') > 0) { 
+				asTempArray = asInputSentences[i].split('for "');
 				sLatestTitle = asTempArray[0];
 				sLatestQueryName = asTempArray[1];
 				sLatestSite = ".";
@@ -238,8 +239,8 @@ try {
 		var asInputSentences = sInputString.split("\n");
 		var iFragmentArrayCounter = 0;
 		for (var i = 0; i < asInputSentences.length; i++) {
-			if (asInputSentences[i].indexOf("for") > 0) { 
-				asTempArray = asInputSentences[i].split("for");
+			if (asInputSentences[i].indexOf('for "') > 0) { 
+				asTempArray = asInputSentences[i].split('for "');
 				sLatestTitle = asTempArray[0];
 				if (asTempArray[1].indexOf("=") > 0) {
 					asTemp2Array = asTempArray[1].split("=");
@@ -490,7 +491,8 @@ try {
 		bindto: '#' + sDivName,
 		size: { 
 			//width: 535,
-			height: 146
+//			height: 146
+			height: 196 //swc20171025 updated to prevent x-axis label clipping
 		},
 		data: {
 			x: 'x',
@@ -529,9 +531,12 @@ try {
 			x: {
 				type: 'category',
 				tick: {
-					rotate: 25
+//					rotate: 25
+					rotate: -45,//swc20171027 updated to improve readability
+					multiline: false //swc20171027 added to improve readability (prevents random wrapping of labels)
 				},
-				height: 45
+//				height: 45
+				height: 95 //swc20171025 updated to prevent x-axis label clipping
 			},
 			y: {
 				label: {
@@ -590,7 +595,8 @@ try {
 		bindto: '#' + sDivName,
 		size: { 
 			width: 535,
-			height: 146
+//			height: 146
+			height: 196 //swc20171025 updated to prevent x-axis label clipping
 		},
 		data: {
 			columns: c3values,
@@ -610,9 +616,12 @@ try {
 			x: {
 				type: 'category',
 				tick: {
-					rotate: 25
+//					rotate: 25
+					rotate: -45,//swc20171027 updated to improve readability
+					multiline: false //swc20171027 added to improve readability (prevents random wrapping of labels)
 				},
-				height: 45
+//				height: 45
+				height: 95 //swc20171025 updated to prevent x-axis label clipping
 			},
 			y: {
 				label: {
@@ -751,7 +760,8 @@ try {
 		bindto: '#' + sDivName,
 		size: { 
 			width: 535,
-			height: 146
+//			height: 146
+			height: 196 //swc20171025 updated to prevent x-axis label clipping
 		},
 		data: {
 			x: 'x',
@@ -770,9 +780,12 @@ try {
 			x: {
 				type: 'category',
 				tick: {
-					rotate: 25
+//					rotate: 25
+					rotate: -45,//swc20171027 updated to improve readability
+					multiline: false //swc20171027 added to improve readability (prevents random wrapping of labels)
 				},
-				height: 45
+//				height: 45
+				height: 95 //swc20171025 updated to prevent x-axis label clipping
 			},
 			y: {
 				label: {
