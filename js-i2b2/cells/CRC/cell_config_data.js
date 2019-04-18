@@ -9,6 +9,11 @@
 		"CRC_ctrlr_QryPanel.js",
 		"CRC_ctrlr_QryTool.js",
 		"CRC_ctrlr_QryStatus.js",
+        "CRC_ctrlr_TQryRelationship.js", /* tdw9 1707c: added temporal query relationship datamodel*/
+        "CRC_ctrlr_TQryEvent.js",        /* tdw9 1707c: added temporal query Event controller */
+        "CRC_ctrlr_TQryPanel.js",        /* tdw9 1707c: added temporal query Panel controller */
+        "CRC_view_TemporalRelationshipEditor.js", /* tdw9 1707c: added editor for temporal relationship */
+        "CRC_eventGraph.js",             /* tdw9 1707c: added graph model to check for temporal query reload modes to be SIMPLE or ADVANCED */
 		"CRC_sdx_QM.js",
 		"CRC_sdx_QI.js",
 		"CRC_sdx_PRC.js",
@@ -17,6 +22,7 @@
 		"CRC_sdx_PR.js",
 		"CRC_sdx_QDEF.js",
 		"CRC_sdx_QGDEF.js",
+		"CRC_sdx_WRKF.js",
 		"CRC_view_History.js",
 		"CRC_view_Find.js",
 		"CRC_view_QryTool.js",
@@ -24,7 +30,16 @@
 		"CRC_view_Status.js",
 		"CRC_view_QueryReport.js",
 		"CRC_view_modLabRange.js",
-		"i2b2_msgs.js"
+		"i2b2_msgs.js",
+		"ModLabValues/CRC_ModLabValues_config_data.js",
+		"ModLabValues/CRC_view_ModLabValues_ctrlr.js",
+		"ModLabValues/CRC_view_GENOTYPE.js",
+		"ModLabValues/CRC_view_NUMBER.js",
+		"ModLabValues/CRC_view_STR.js",
+		"ModLabValues/CRC_view_LRGSTR.js",
+		"ModLabValues/CRC_view_ENUM.js",
+		"ModLabValues/CRC_view_NODATATYPE.js",
+		"ModLabValues/CRC_view_PPV.js"
 	],
 	files_updated: [
 		{origName: "i2b2_msgs.js", newName: "i2b2_msgs-Ver1_3.js", versionLevel: 1.3},
