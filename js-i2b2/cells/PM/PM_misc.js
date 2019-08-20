@@ -77,8 +77,6 @@ i2b2.PM.model.IdleTimer.subscribe("idle", function(){
 				// kumc heron login hack
 				var creds = i2b2.PM.pre_authz();
 				i2b2.PM.authz_login(creds);
-
-				//i2b2.PM.doLogin();
 				i2b2.PM.model.dialogTimeout.hide();
 				i2b2.h.LoadingMask.hide();
 				};														   
